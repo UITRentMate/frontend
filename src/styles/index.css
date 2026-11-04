@@ -1,1 +1,187 @@
+@import url('https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap');
 @import "tailwindcss";
+
+@theme {
+  /* Typography */
+  --font-heading: 'Be Vietnam Pro', system-ui, -apple-system, sans-serif;
+  --font-sans: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+
+  /* Brand Primary - Royal Campus Blue */
+  --color-brand-50: #EEF0FF;
+  --color-brand-100: #E0E5FF;
+  --color-brand-200: #C2CBFF;
+  --color-brand-300: #7692FF;
+  --color-brand-400: #4B6BFA;
+  --color-brand-500: #1B2CC1;
+  --color-brand-600: #16239A;
+  --color-brand-700: #101A74;
+  --color-brand-800: #0C1355;
+  --color-brand-900: #091540;
+
+  /* Eco / Trade Secondary - Mint Green */
+  --color-secondary-50: #ECFDF5;
+  --color-secondary-100: #D1FAE5;
+  --color-secondary-200: #A7F3D0;
+  --color-secondary-500: #10B981;
+  --color-secondary-600: #059669;
+  --color-secondary-700: #047857;
+
+  /* Aliases for Eco */
+  --color-eco-50: #ECFDF5;
+  --color-eco-100: #D1FAE5;
+  --color-eco-200: #A7F3D0;
+  --color-eco-500: #10B981;
+  --color-eco-600: #059669;
+
+  /* Accent & Surfaces */
+  --color-accent-300: #7692FF;
+  --color-canvas: #F2F8FF;
+  --color-surface-card: #FFFFFF;
+  --color-surface-muted: #D8ECFA;
+  --color-surface-accent: #DFE6FF;
+
+  /* Text Colors */
+  --color-text-primary: #091540;
+  --color-text-secondary: #1C2B59;
+  --color-text-muted: #6E7DB4;
+  --color-text-disabled: #9FA8CD;
+
+  /* Subtle Border */
+  --color-border-subtle: #D8ECFA;
+
+  /* Semantic Alerts & Badges */
+  --color-success: #10B981;
+  --color-success-soft: #ECFDF5;
+  --color-success-border: #A7F3D0;
+
+  --color-warning: #F59E0B;
+  --color-warning-soft: #FFFBEB;
+  --color-warning-border: #FDE68A;
+
+  --color-danger: #EF4444;
+  --color-danger-soft: #FEF2F2;
+  --color-danger-border: #FECACA;
+
+  --color-info: #0EA5E9;
+  --color-info-soft: #F0F9FF;
+  --color-info-border: #BAE6FD;
+
+  /* Border Radius */
+  --radius-xs: 6px;
+  --radius-sm: 8px;
+  --radius-md: 10px;
+  --radius-lg: 14px;
+  --radius-xl: 20px;
+  --radius-pill: 9999px;
+
+  /* Navy Soft Shadows */
+  --shadow-soft-xs: 0 1px 3px rgba(9, 21, 64, 0.04);
+  --shadow-soft-sm: 0 2px 8px rgba(9, 21, 64, 0.06);
+  --shadow-soft-md: 0 4px 16px rgba(9, 21, 64, 0.10);
+  --shadow-soft-lg: 0 8px 26px rgba(9, 21, 64, 0.14);
+  --shadow-focus: 0 0 0 3px rgba(27, 44, 193, 0.20);
+}
+
+:root {
+  --bg-canvas: #F2F8FF;
+  --text-primary: #091540;
+  --text-secondary: #1C2B59;
+  --text-muted: #6E7DB4;
+  --border-subtle: #D8ECFA;
+}
+
+body {
+  background-color: var(--bg-canvas);
+  color: var(--text-primary);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  margin: 0;
+  padding: 0;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-heading);
+}
+
+/* Typography scale utilities based on RentMate System Design */
+.type-display {
+  font-family: var(--font-heading);
+  font-size: 40px;
+  line-height: 48px;
+  font-weight: 700;
+  color: var(--color-text-primary);
+}
+
+.type-h1 {
+  font-family: var(--font-heading);
+  font-size: 32px;
+  line-height: 40px;
+  font-weight: 700;
+  color: var(--color-text-primary);
+}
+
+.type-h2 {
+  font-family: var(--font-heading);
+  font-size: 24px;
+  line-height: 32px;
+  font-weight: 600;
+  color: var(--color-text-primary);
+}
+
+.type-h3 {
+  font-family: var(--font-heading);
+  font-size: 18px;
+  line-height: 26px;
+  font-weight: 600;
+  color: var(--color-text-primary);
+}
+
+.type-body-lg {
+  font-family: var(--font-sans);
+  font-size: 16px;
+  line-height: 24px;
+  font-weight: 400;
+  color: var(--color-text-primary);
+}
+
+.type-body {
+  font-family: var(--font-sans);
+  font-size: 15px;
+  line-height: 22px;
+  font-weight: 400;
+  color: var(--color-text-secondary);
+}
+
+.type-body-sm {
+  font-family: var(--font-sans);
+  font-size: 13px;
+  line-height: 18px;
+  font-weight: 400;
+  color: var(--color-text-muted);
+}
+
+.type-caption {
+  font-family: var(--font-sans);
+  font-size: 12px;
+  line-height: 16px;
+  font-weight: 500;
+}
+
+/* Custom interactive utility classes */
+.card-hover {
+  transition: transform 250ms cubic-bezier(0.25, 0.8, 0.25, 1), box-shadow 250ms cubic-bezier(0.25, 0.8, 0.25, 1);
+}
+
+.card-hover:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-soft-md);
+}
+
+.button-press {
+  transition: transform 150ms ease-out;
+}
+
+.button-press:active {
+  transform: scale(0.98);
+}
