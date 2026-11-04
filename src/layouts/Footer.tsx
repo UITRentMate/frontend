@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { ROUTES } from '../../routes/paths';
+import { ROUTES } from '@/routes/paths';
 
 export const Footer: React.FC = () => {
   return (
@@ -32,50 +32,70 @@ export const Footer: React.FC = () => {
                 </Link>
               </li>
               <li>
-                <Link to={ROUTES.ROOMS} className="hover:text-brand-500 transition-colors">
-                  KTX & Căn hộ ghép
+                <Link to={ROUTES.SECONDHAND} className="hover:text-brand-500 transition-colors">
+                  Trao đổi đồ cũ (0đ)
                 </Link>
               </li>
               <li>
-                <Link to={ROUTES.SECONDHAND} className="hover:text-brand-500 transition-colors">
-                  Tặng đồ 0đ & Giáo trình
+                <Link to={ROUTES.ROOMS} className="hover:text-brand-500 transition-colors">
+                  Tìm bạn ở ghép
                 </Link>
               </li>
             </ul>
           </div>
 
-          {/* Campus areas */}
+          {/* Support */}
           <div>
             <h4 className="text-xs font-semibold uppercase tracking-wider text-text-primary mb-3">
-              Khu vực Campus
+              Hỗ trợ sinh viên
             </h4>
             <ul className="space-y-2 text-xs text-text-muted">
-              <li>KTX Khu A - ĐHQG TP.HCM</li>
-              <li>KTX Khu B - ĐHQG TP.HCM</li>
-              <li>Khu vực Bách Khoa / Sư Phạm Kỹ Thuật</li>
-              <li>Khu đô thị Đại học Quốc gia</li>
+              <li>
+                <a href="#rules" className="hover:text-brand-500 transition-colors">
+                  Quy chế hoạt động
+                </a>
+              </li>
+              <li>
+                <a href="#safety" className="hover:text-brand-500 transition-colors">
+                  Cẩm nang an toàn thuê trọ
+                </a>
+              </li>
+              <li>
+                <a href="#faq" className="hover:text-brand-500 transition-colors">
+                  Câu hỏi thường gặp (FAQ)
+                </a>
+              </li>
             </ul>
           </div>
 
-          {/* Safety & Trust */}
+          {/* Project Info */}
           <div>
             <h4 className="text-xs font-semibold uppercase tracking-wider text-text-primary mb-3">
-              An toàn & Trợ giúp
+              Đồ án môn học
             </h4>
             <p className="text-xs text-text-muted leading-relaxed mb-2">
-              Ưu tiên gặp gỡ trực tiếp tại sảnh KTX hoặc canteen trường để kiểm tra phòng và trao đổi đồ an toàn.
+              SE100 — Nhóm 15
             </p>
-            <span className="inline-block px-2.5 py-1 bg-secondary-50 text-secondary-600 rounded-pill text-[11px] font-medium border border-secondary-200">
-              Verified Campus Trust
-            </span>
+            <p className="text-xs text-text-muted leading-relaxed">
+              Trường ĐH Công nghệ Thông tin (UIT) — ĐHQG-HCM
+            </p>
           </div>
         </div>
 
-        <div className="pt-6 border-t border-border-subtle flex flex-col sm:flex-row items-center justify-between text-xs text-text-muted gap-2">
-          <p>© {new Date().getFullYear()} RentMate - Đồ án môn học Nhóm 15.</p>
-          <p className="flex items-center gap-1">
-            Xây dựng với <span className="text-brand-500">React 19</span> & <span className="text-secondary-500">Tailwind v4</span>
-          </p>
+        {/* Bottom copyright */}
+        <div className="pt-6 border-t border-border-subtle flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-text-muted">
+          <p>© 2026 RentMate. Phát triển vì cộng đồng sinh viên UIT & ĐHQG-HCM.</p>
+          <div className="flex gap-4">
+            <a href="#privacy" className="hover:underline">
+              Bảo mật
+            </a>
+            <a href="#terms" className="hover:underline">
+              Điều khoản
+            </a>
+            <a href="#contact" className="hover:underline">
+              Liên hệ
+            </a>
+          </div>
         </div>
       </div>
     </footer>

@@ -11,6 +11,20 @@ export interface LoginResponseData {
   tokens: AuthTokens;
 }
 
+export interface RegisterCredentials {
+  fullName: string;
+  email: string;
+  password: string;
+  confirmPassword?: string;
+  role: 'tenant' | 'landlord';
+}
+
+export interface RegisterResponseData {
+  user: User;
+  tokens: AuthTokens;
+  message: string;
+}
+
 export interface AuthState {
   user: User | null;
   tokens: AuthTokens | null;

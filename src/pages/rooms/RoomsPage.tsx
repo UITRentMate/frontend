@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
-import { useRooms } from '../../features/rooms/hooks/useRooms';
-import RoomCard from '../../features/rooms/components/RoomCard';
-import RoomFilterBar from '../../features/rooms/components/RoomFilterBar';
-import Button from '../../components/ui/Button';
-import type { RoomFilterParams } from '../../features/rooms/types/room.types';
+import { useRooms } from '@/features/rooms/hooks/useRooms';
+import RoomCard from '@/features/rooms/components/RoomCard';
+import RoomFilterBar from '@/features/rooms/components/RoomFilterBar';
+import Button from '@/components/ui/Button';
+import EmptyState from '@/components/ui/EmptyState';
+import type { RoomFilterParams } from '@/features/rooms/types/room.types';
 
 export const RoomsPage: React.FC = () => {
   const [filters, setFilters] = useState<RoomFilterParams>({});
@@ -57,14 +58,12 @@ export const RoomsPage: React.FC = () => {
       )}
 
       {!isLoading && !isError && (!rooms || rooms.length === 0) && (
-        <div className="p-16 text-center bg-white rounded-lg border border-border-subtle text-text-muted space-y-3">
-          <span className="text-4xl block">📦</span>
-          <h3 className="text-base font-semibold text-text-primary">Không có kết quả</h3>
-          <p className="text-xs">Hãy thử đổi khu vực campus hoặc từ khóa tìm kiếm khác.</p>
-          <Button variant="outline" size="sm" onClick={() => setFilters({})}>
-            Đặt lại bộ lọc
-          </Button>
-        </div>
+        <EmptyState
+          title="Không có kết quả phòng trọ"
+          description="Hãy thử thay đổi khu vực campus hoặc từ khóa tìm kiếm để khám phá thêm nhiều lựa chọn phù hợp."
+          actionLabel="Đặt lại bộ lọc"
+          onAction={() => setFilters({})}
+        />
       )}
     </div>
   );

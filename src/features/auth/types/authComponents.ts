@@ -5,6 +5,34 @@ export interface RentMateLoginProps {
   className?: string;
 }
 
+export interface RentMateRegisterProps {
+  onSuccess?: () => void;
+  className?: string;
+}
+
+export interface RoleSwitcherProps {
+  selectedRole: 'tenant' | 'landlord';
+  onChange: (role: 'tenant' | 'landlord') => void;
+  className?: string;
+}
+
+export interface PasswordCriteriaProps {
+  hasMinLength: boolean;
+  hasLetterAndNumber: boolean;
+  className?: string;
+}
+
+export interface RegisterSubHeaderProps {
+  className?: string;
+}
+
+export interface RegisterBannerProps {
+  headline?: string;
+  subtext?: string;
+  imageUrl?: string;
+  className?: string;
+}
+
 export interface AuthHeaderProps {
   className?: string;
 }

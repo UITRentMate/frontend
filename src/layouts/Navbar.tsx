@@ -1,8 +1,8 @@
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { ROUTES } from '../../routes/paths';
-import { useAuth } from '../../hooks/useAuth';
-import Button from '../ui/Button';
+import { ROUTES } from '@/routes/paths';
+import { useAuth } from '@/hooks/useAuth';
+import Button from '@/components/ui/Button';
 
 export const Navbar: React.FC = () => {
   const location = useLocation();

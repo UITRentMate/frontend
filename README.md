@@ -110,4 +110,4 @@ frontend/
 ## 7. Quy tắc đóng góp & Hướng dẫn dành cho AI Agents
 
 - Hướng dẫn quy trình làm việc nhóm, phân chia nhánh, mở Pull Request và checklist review: xem tại [CONTRIBUTING.md](CONTRIBUTING.md).
-- Hướng dẫn và quy tắc an toàn dành cho AI Coding Assistants (Antigravity, Cursor, Copilot...): xem tại [AGENTS.md](AGENTS.md).
+- Hướng dẫn và quy tắc an toàn dành cho AI Coding Assistants (Antigravity, Cursor, Copilot...): xem tại [AGENT.md](AGENT.md).
