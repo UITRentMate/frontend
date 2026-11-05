@@ -16,7 +16,7 @@ export const Footer: React.FC = () => {
               <span className="text-lg font-heading font-bold text-brand-500">RentMate</span>
             </div>
             <p className="text-xs text-text-muted leading-relaxed">
-              Nền tảng tìm phòng trọ, KTX & trao đổi đồ cũ an toàn, tiết kiệm dành riêng cho cộng đồng sinh viên.
+              Nền tảng tìm kiếm, thuê và quản lý phòng trọ, KTX an toàn, tiết kiệm dành riêng cho cộng đồng sinh viên.
             </p>
           </div>
 
@@ -32,8 +32,8 @@ export const Footer: React.FC = () => {
                 </Link>
               </li>
               <li>
-                <Link to={ROUTES.SECONDHAND} className="hover:text-brand-500 transition-colors">
-                  Trao đổi đồ cũ (0đ)
+                <Link to={ROUTES.ROOMS} className="hover:text-brand-500 transition-colors">
+                  Ký túc xá sinh viên
                 </Link>
               </li>
               <li>

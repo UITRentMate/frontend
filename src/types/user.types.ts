@@ -1,6 +1,6 @@
 import type { ReactNode } from 'react';
 
-export type UserRole = 'student' | 'tenant' | 'landlord' | 'admin';
+export type UserRole = 'tenant' | 'landlord' | 'admin';
 
 export interface User {
   id: string;
@@ -8,10 +8,7 @@ export interface User {
   email: string;
   avatarUrl?: string;
   role: UserRole;
-  university?: string;
-  dormitory?: string;
   phoneNumber?: string;
-  isVerifiedStudent?: boolean;
 }
 
 export interface AuthTokens {

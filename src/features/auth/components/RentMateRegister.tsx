@@ -1,13 +1,13 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { ROUTES } from '../../../routes/paths';
+import { ROUTES } from '@/routes/paths';
 import {
   EyeIcon,
   EyeOffIcon,
   AlertCircleIcon,
   CheckCircle2Icon,
   SpinnerIcon,
-} from '../../../components/ui/icons';
+} from '@/components/ui/icons';
 import { useRegister } from '../hooks/useRegister';
 import RegisterSubHeader from './RegisterSubHeader';
 import RoleSwitcher from './RoleSwitcher';
@@ -23,10 +23,10 @@ export const RentMateRegister: React.FC<RentMateRegisterProps> = ({
   const navigate = useNavigate();
   const registerMutation = useRegister();
 
-  // State quản lý form bám sát yêu cầu kỹ thuật
+  // State quản lý form bám sát yêu cầu kỹ thuật: không hardcode credentials
   const [role, setRole] = useState<'tenant' | 'landlord'>('tenant');
-  const [fullName, setFullName] = useState<string>('Phan Gia Đạt');
-  const [email, setEmail] = useState<string>('phangiadat300106@gmail.com');
+  const [fullName, setFullName] = useState<string>('');
+  const [email, setEmail] = useState<string>('');
   const [password, setPassword] = useState<string>('');
   const [confirmPassword, setConfirmPassword] = useState<string>('');
   const [showPassword, setShowPassword] = useState<boolean>(false);
@@ -166,7 +166,7 @@ export const RentMateRegister: React.FC<RentMateRegisterProps> = ({
                 autoComplete="name"
                 value={fullName}
                 onChange={(e) => setFullName(e.target.value)}
-                placeholder="Phan Gia Đạt"
+                placeholder="Nguyễn Văn A"
                 className="w-full px-4 py-2.5 rounded-lg border border-[#D8ECFA] text-sm text-[#091540] placeholder:text-[#9FA8CD] focus:outline-none focus:border-[#1B2CC1] focus:ring-2 focus:ring-[#1B2CC1]/15 transition"
               />
             </div>
@@ -186,7 +186,7 @@ export const RentMateRegister: React.FC<RentMateRegisterProps> = ({
                 autoComplete="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                placeholder="phangiadat300106@gmail.com"
+                placeholder="name@example.com"
                 className="w-full px-4 py-2.5 rounded-lg border border-[#D8ECFA] text-sm text-[#091540] placeholder:text-[#9FA8CD] focus:outline-none focus:border-[#1B2CC1] focus:ring-2 focus:ring-[#1B2CC1]/15 transition"
               />
             </div>

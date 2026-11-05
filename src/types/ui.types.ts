@@ -7,7 +7,7 @@ export interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
 }
 
 export interface BadgeProps extends HTMLAttributes<HTMLSpanElement> {
-  variant?: 'trade' | 'pass' | 'free' | 'condition' | 'info' | 'campus';
+  variant?: 'info' | 'campus' | 'verified' | 'success' | 'warning' | 'trade' | 'pass' | 'free' | 'condition';
 }
 
 export interface InputProps extends InputHTMLAttributes<HTMLInputElement> {

@@ -3,7 +3,7 @@ trigger: model_decision
 description: "Quy chuẩn thiết kế UI/UX RentMate: Typography Be Vietnam Pro & Plus Jakarta Sans, Bảng màu Royal Campus Blue #1B2CC1, Eco Mint #10B981, Canvas #F2F8FF, Midnight Navy shadows, bo góc mềm mại."
 ---
 # RENTMATE FRONTEND — HƯỚNG DẪN THIẾT KẾ UI/UX (UI/UX GUIDELINES)
-> **Dự án:** RentMate — Nền tảng Thuê phòng trọ, KTX & Trao đổi đồ Secondhand Sinh viên  
+> **Dự án:** RentMate — Nền tảng Tìm kiếm, Thuê & Quản lý Phòng trọ Sinh viên  
 > **Ngôn ngữ thiết kế:** Modern Campus & Trust-Driven (Hiện đại, Tinh tế, An toàn, Dịu mắt & Kết nối Sinh viên)  
 > **Màu thương hiệu chủ đạo:** `#1B2CC1` (Royal Campus Blue - Trẻ trung, công nghệ và đáng tin cậy)  
 > **Tài liệu:** Quy chuẩn Giao diện & Trải nghiệm Người dùng (UI/UX Specifications căn cứ theo `RentMate System Design.md`)

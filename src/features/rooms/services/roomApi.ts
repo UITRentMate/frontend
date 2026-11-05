@@ -1,4 +1,4 @@
-import apiClient from '../../../lib/apiClient';
+import apiClient from '@/lib/apiClient';
 import type { Room, RoomFilterParams } from '../types/room.types';
 import { MOCK_ROOMS } from './mockData';
 
@@ -20,9 +20,6 @@ export const roomApi = {
             r.title.toLowerCase().includes(query) ||
             r.specificAddress.toLowerCase().includes(query)
         );
-      }
-      if (filters?.isEcoTrade) {
-        filtered = filtered.filter((r) => r.isEcoTrade);
       }
       return filtered;
     }

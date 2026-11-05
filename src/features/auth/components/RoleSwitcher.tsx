@@ -1,5 +1,5 @@
 import React from 'react';
-import { UserIcon, HomeIcon } from '../../../components/ui/icons';
+import { UserIcon, HomeIcon } from '@/components/ui/icons';
 import type { RoleSwitcherProps } from '../types';
 
 export const RoleSwitcher: React.FC<RoleSwitcherProps> = ({
@@ -21,13 +21,13 @@ export const RoleSwitcher: React.FC<RoleSwitcherProps> = ({
         onClick={() => onChange('tenant')}
         className={`py-2 px-3 flex items-center justify-center gap-2 rounded-lg font-medium text-sm transition-all duration-200 cursor-pointer ${
           selectedRole === 'tenant'
-            ? 'bg-white text-[#091540] shadow-sm font-semibold'
-            : 'text-[#6E7DB4] hover:text-[#091540]'
+            ? 'bg-[#1B2CC1] text-white shadow-sm font-semibold hover:bg-[#16239A]'
+            : 'text-[#6E7DB4] hover:text-[#1B2CC1] hover:bg-[#1B2CC1]/10'
         }`}
       >
         <UserIcon
           className={`w-4 h-4 transition-colors ${
-            selectedRole === 'tenant' ? 'text-[#1B2CC1]' : 'text-[#6E7DB4]'
+            selectedRole === 'tenant' ? 'text-white' : 'text-current'
           }`}
         />
         <span>Người thuê</span>
@@ -41,13 +41,13 @@ export const RoleSwitcher: React.FC<RoleSwitcherProps> = ({
         onClick={() => onChange('landlord')}
         className={`py-2 px-3 flex items-center justify-center gap-2 rounded-lg font-medium text-sm transition-all duration-200 cursor-pointer ${
           selectedRole === 'landlord'
-            ? 'bg-white text-[#091540] shadow-sm font-semibold'
-            : 'text-[#6E7DB4] hover:text-[#091540]'
+            ? 'bg-[#1B2CC1] text-white shadow-sm font-semibold hover:bg-[#16239A]'
+            : 'text-[#6E7DB4] hover:text-[#1B2CC1] hover:bg-[#1B2CC1]/10'
         }`}
       >
         <HomeIcon
           className={`w-4 h-4 transition-colors ${
-            selectedRole === 'landlord' ? 'text-[#1B2CC1]' : 'text-[#6E7DB4]'
+            selectedRole === 'landlord' ? 'text-white' : 'text-current'
           }`}
         />
         <span>Chủ trọ</span>

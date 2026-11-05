@@ -43,10 +43,6 @@ export const router = createBrowserRouter([
         path: 'rooms/:id',
         element: <RoomDetailPage />,
       },
-      {
-        path: 'secondhand',
-        element: <RoomsPage />,
-      },
 
       // Tuyến bảo vệ yêu cầu đăng nhập (Protected Routes)
       {

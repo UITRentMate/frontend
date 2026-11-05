@@ -1,6 +1,6 @@
-# Sinh Viên Secondhand Design System (Modern Campus & Trust-Driven)
+# RentMate Design System (Modern Campus & Trust-Driven)
 
-- **Project:** Nền tảng Trao đổi & Mua bán Đồ Secondhand Sinh viên
+- **Project:** RentMate — Nền tảng tìm kiếm, thuê và quản lý phòng trọ sinh viên
 - **Brand Primary:** `#1B2CC1` (Royal Campus Blue - Trẻ trung, công nghệ và đáng tin cậy)
 - **Style Direction:** Hiện đại, tinh tế, an toàn, giao diện dịu mắt (soft low-glare) và gắn kết cộng đồng học đường sinh viên.
 

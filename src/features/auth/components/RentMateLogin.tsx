@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { ROUTES } from '../../../routes/paths';
-import { EyeIcon, EyeOffIcon, AlertCircleIcon, SpinnerIcon } from '../../../components/ui/icons';
+import { ROUTES } from '@/routes/paths';
+import { EyeIcon, EyeOffIcon, AlertCircleIcon, SpinnerIcon } from '@/components/ui/icons';
 import { useLogin } from '../hooks/useLogin';
-import { useAuth } from '../../../hooks/useAuth';
+import { useAuth } from '@/hooks/useAuth';
 import AuthHeader from './AuthHeader';
 import AuthFooter from './AuthFooter';
 import AuthBanner from './AuthBanner';
@@ -14,9 +14,9 @@ export const RentMateLogin: React.FC<RentMateLoginProps> = ({ onSuccess, classNa
   const { setUser } = useAuth();
   const loginMutation = useLogin();
 
-  // State management bám sát yêu cầu kỹ thuật
-  const [email, setEmail] = useState<string>('hoangminh.hcm@gmail.com');
-  const [password, setPassword] = useState<string>('Password@123');
+  // State management bám sát yêu cầu kỹ thuật: không hardcode credentials
+  const [email, setEmail] = useState<string>('');
+  const [password, setPassword] = useState<string>('');
   const [showPassword, setShowPassword] = useState<boolean>(false);
   const [rememberMe, setRememberMe] = useState<boolean>(true);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
@@ -128,7 +128,7 @@ export const RentMateLogin: React.FC<RentMateLoginProps> = ({ onSuccess, classNa
                       setEmail(e.target.value);
                       if (errorMessage) setErrorMessage(null);
                     }}
-                    placeholder="hoangminh.hcm@gmail.com"
+                    placeholder="name@example.com"
                     className="w-full px-4 py-2.5 rounded-lg border border-[#D8ECFA] text-sm text-[#091540] placeholder:text-[#6E7DB4]/60 focus:outline-none focus:border-[#1B2CC1] focus:ring-2 focus:ring-[#1B2CC1]/20 transition disabled:bg-slate-50 disabled:cursor-not-allowed"
                   />
                 </div>

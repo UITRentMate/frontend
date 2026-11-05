@@ -1,6 +1,6 @@
-# Sinh Viên Secondhand Design System (Modern Campus & Trust-Driven)
+# RentMate Design System (Modern Campus & Trust-Driven)
 
-- **Project:** Nền tảng Trao đổi & Mua bán Đồ Secondhand Sinh viên
+- **Project:** RentMate — Nền tảng tìm kiếm, thuê và quản lý phòng trọ sinh viên
 - **Brand Primary:** `#1B2CC1` (Royal Campus Blue - Trẻ trung, công nghệ và đáng tin cậy)
 - **Style Direction:** Hiện đại, tinh tế, an toàn, giao diện dịu mắt (soft low-glare) và gắn kết cộng đồng học đường sinh viên.
 
@@ -8,10 +8,10 @@
 
 ## 1) Nguyên lý Thiết kế (Design Principles)
 
-- **Cool Soft-Glare & High Legibility:** Sử dụng nền xanh phấn dịu mắt `--bg-canvas` (`#F2F8FF`) kết hợp với sắc chữ xanh đêm sâu thẳm `--text-primary` (`#091540`) thay cho nền trắng chói và chữ đen tuyền cơ học (`#000000`). Giảm thiểu bức xạ chói, chống mỏi mắt cho sinh viên khi lướt tìm đồ vào ban đêm tại KTX.
-- **Soft & Friendly Geometry:** Duy trì hệ bo góc mềm mại (`8px` – `14px`) và dạng viên thuốc (`pill radius`) để xóa bỏ cảm giác khô cứng, tạo thiện cảm gần gũi, khích lệ sinh viên chia sẻ và kết nối bạn bè.
-- **Eco-Trade & Campus Transparency:** Đặt trọng tâm vào các hành vi đặc thù: tặng đồ 0đ, trao đổi giáo trình học phần, công khai độ mới sản phẩm và hiển thị rõ ràng địa điểm khuôn viên trường/KTX để giao dịch trực tiếp.
-- **Reliable & Fluid Motion:** Chuyển động nâng thẻ nhẹ nhàng (`translateY(-2px)`) kết hợp bóng đổ nhuộm sắc Midnight Navy sâu lắng, tạo cảm giác an tâm, vững chãi trong từng tương tác mua bán và đổi đồ.
+- **Cool Soft-Glare & High Legibility:** Sử dụng nền xanh phấn dịu mắt `--bg-canvas` (`#F2F8FF`) kết hợp với sắc chữ xanh đêm sâu thẳm `--text-primary` (`#091540`) thay cho nền trắng chói và chữ đen tuyền cơ học (`#000000`). Giảm thiểu bức xạ chói, chống mỏi mắt cho sinh viên khi lướt tìm phòng trọ vào ban đêm.
+- **Soft & Friendly Geometry:** Duy trì hệ bo góc mềm mại (`8px` – `14px`) và dạng viên thuốc (`pill radius`) để xóa bỏ cảm giác khô cứng, tạo thiện cảm gần gũi, khích lệ sinh viên tìm nơi ở an toàn và kết nối chủ trọ uy tín.
+- **Campus Transparency & Trust:** Đặt trọng tâm vào việc tìm kiếm phòng trọ, KTX minh bạch, công khai giá cả, diện tích, tiện nghi và định vị khu vực campus làng đại học để xem phòng trực tiếp.
+- **Reliable & Fluid Motion:** Chuyển động nâng thẻ nhẹ nhàng (`translateY(-2px)`) kết hợp bóng đổ nhuộm sắc Midnight Navy sâu lắng, tạo cảm giác an tâm, vững chãi trong từng tương tác tìm phòng và đặt lịch hẹn.
 
 ---
 

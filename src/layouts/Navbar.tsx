@@ -51,16 +51,6 @@ export const Navbar: React.FC = () => {
           >
             Phòng trọ & KTX
           </Link>
-          <Link
-            to={ROUTES.SECONDHAND}
-            className={`px-3 py-1.5 rounded-sm text-sm font-medium transition-colors ${
-              isActive(ROUTES.SECONDHAND)
-                ? 'text-brand-500 bg-brand-50 font-semibold'
-                : 'text-text-primary hover:text-brand-500 hover:bg-surface-muted/50'
-            }`}
-          >
-            Đổi đồ sinh viên
-          </Link>
           {isAuthenticated && user?.role === 'admin' && (
             <Link
               to="/admin/dashboard"

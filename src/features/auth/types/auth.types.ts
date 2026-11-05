@@ -1,4 +1,4 @@
-import type { User, AuthTokens, UserRole } from '../../../types';
+import type { User, AuthTokens, UserRole } from '@/types';
 
 export interface LoginCredentials {
   email: string;

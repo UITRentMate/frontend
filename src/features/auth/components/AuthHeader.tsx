@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { ROUTES } from '../../../routes/paths';
-import { Building2Icon } from '../../../components/ui/icons';
+import { ROUTES } from '@/routes/paths';
+import { Building2Icon } from '@/components/ui/icons';
 import type { AuthHeaderProps } from '../types';
 
 export const AuthHeader: React.FC<AuthHeaderProps> = ({ className = '' }) => {

@@ -3,7 +3,7 @@ trigger: model_decision
 description: "Kiến trúc 5 lớp của RentMate, phân quyền RBAC (GUEST/MEMBER/ADMIN), luồng nghiệp vụ gạ đổi đồ ngang."
 ---
 # RENTMATE FRONTEND — ARCHITECTURE SPECIFICATION
-> **Hệ thống:** RentMate (Nền tảng Trao đổi, Pass đồ & Tặng đồ dùng Sinh viên)  
+> **Hệ thống:** RentMate Nền tảng Tìm kiếm, Thuê &amp; Quản lý Phòng trọ Sinh viên  
 > **Tài liệu:** Kiến trúc Tổng thể Hệ thống Frontend (System Architecture Specification)  
 > **Phiên bản:** 1.0.0  
 > **Đối tượng:** AI Coding Agents & Frontend Engineers

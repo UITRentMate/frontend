@@ -9,8 +9,3 @@ export interface RoomFilterBarProps {
   onFilterChange: (filters: RoomFilterParams) => void;
 }
 
-export interface CampusSafetyAlertProps {
-  type?: 'safety' | 'warning' | 'info';
-  message?: string;
-  className?: string;
-}

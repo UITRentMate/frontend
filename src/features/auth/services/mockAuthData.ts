@@ -31,10 +31,10 @@ export const DEMO_ACCOUNTS: DemoAccount[] = [
   {
     role: 'tenant',
     label: 'Sinh viên / Cư dân',
-    badge: 'Sinh viên',
+    badge: 'Người thuê',
     email: 'hoangminh.hcm@gmail.com',
     password: 'Password@123',
-    description: 'Tìm kiếm phòng trọ, KTX, trao đổi và pass đồ dùng học tập',
+    description: 'Tìm kiếm và thuê phòng trọ, ký túc xá sinh viên',
     targetRoute: '/rooms',
   },
 ];
@@ -58,13 +58,10 @@ export function authenticateMockUser(credentials: LoginCredentials): LoginRespon
           ? 'Quản Trị Viên Hệ Thống' 
           : matched.role === 'landlord' 
           ? 'Nguyễn Văn Chủ Trọ (Làng ĐH)' 
-          : 'Lê Hoàng Minh (ĐH Bách Khoa TP.HCM)',
+          : 'Lê Hoàng Minh',
         email: matched.email,
         role: matched.role,
-        university: matched.role === 'tenant' ? 'Đại học Quốc gia TP.HCM' : undefined,
-        dormitory: matched.role === 'tenant' ? 'KTX Khu B - Tòa BA2' : undefined,
         phoneNumber: '0909123456',
-        isVerifiedStudent: matched.role === 'tenant',
         avatarUrl: matched.role === 'tenant' 
           ? 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=200&q=80'
           : undefined,
@@ -82,15 +79,12 @@ export function authenticateMockUser(credentials: LoginCredentials): LoginRespon
     credentials.password.length >= 6 &&
     !normalizedEmail.includes('wrong')
   ) {
-    const isEdu = normalizedEmail.endsWith('.edu.vn');
     return {
       user: {
         id: `user-tenant-${Date.now()}`,
         name: normalizedEmail.split('@')[0].replace('.', ' ').toUpperCase(),
         email: normalizedEmail,
         role: 'tenant',
-        university: isEdu ? 'Đại học Bách Khoa TP.HCM' : 'Đại học Quốc gia TP.HCM',
-        isVerifiedStudent: isEdu,
       },
       tokens: {
         accessToken: `rentmate_mock_jwt_tenant_${Date.now()}`,
@@ -136,7 +130,6 @@ export async function registerMockUser(
   }
 
   const role = credentials.role;
-  const isEdu = normalizedEmail.endsWith('.edu.vn');
 
   return {
     user: {
@@ -144,8 +137,6 @@ export async function registerMockUser(
       name: credentials.fullName.trim(),
       email: normalizedEmail,
       role,
-      university: isEdu ? 'Đại học Bách Khoa TP.HCM' : undefined,
-      isVerifiedStudent: isEdu,
     },
     tokens: {
       accessToken: `rentmate_jwt_${role}_${Date.now()}`,

@@ -1,12 +1,11 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { useRooms } from '../../features/rooms/hooks/useRooms';
-import RoomCard from '../../features/rooms/components/RoomCard';
-import RoomFilterBar from '../../features/rooms/components/RoomFilterBar';
-import CampusSafetyAlert from '../../features/rooms/components/CampusSafetyAlert';
-import Button from '../../components/ui/Button';
-import { ROUTES } from '../../routes/paths';
-import type { RoomFilterParams } from '../../features/rooms/types/room.types';
+import { useRooms } from '@/features/rooms/hooks/useRooms';
+import RoomCard from '@/features/rooms/components/RoomCard';
+import RoomFilterBar from '@/features/rooms/components/RoomFilterBar';
+import Button from '@/components/ui/Button';
+import { ROUTES } from '@/routes/paths';
+import type { RoomFilterParams } from '@/features/rooms/types/room.types';
 
 export const HomePage: React.FC = () => {
   const [filters, setFilters] = useState<RoomFilterParams>({});
@@ -23,11 +22,11 @@ export const HomePage: React.FC = () => {
           </div>
 
           <h1 className="text-3xl sm:text-4xl lg:text-5xl font-heading font-extrabold text-text-primary tracking-tight leading-tight">
-            Dọn KTX, thuê phòng & <span className="text-brand-500">trao đổi đồ cũ</span>
+            Tìm kiếm, thuê phòng & <span className="text-brand-500">quản lý nhà trọ</span>
           </h1>
 
           <p className="text-sm sm:text-base text-text-muted leading-relaxed">
-            Tìm phòng trọ sinh viên gần khuôn viên trường, bạn ở ghép KTX và pass giáo trình, đồ gia dụng uy tín không lo lừa đảo.
+            Nền tảng kết nối người thuê và chủ nhà trọ, tìm kiếm phòng trọ sinh viên gần trường, quản lý hợp đồng và hóa đơn minh bạch.
           </p>
 
           <div className="pt-2 flex flex-wrap items-center gap-3">
@@ -36,9 +35,9 @@ export const HomePage: React.FC = () => {
                 Tìm phòng ngay
               </Button>
             </Link>
-            <Link to={ROUTES.SECONDHAND}>
-              <Button variant="eco" size="lg">
-                Góc đồ 0đ & Đổi đồ
+            <Link to={ROUTES.REGISTER}>
+              <Button variant="outline" size="lg">
+                Đăng ký tài khoản
               </Button>
             </Link>
           </div>
@@ -47,9 +46,6 @@ export const HomePage: React.FC = () => {
         {/* Decorative elements */}
         <div className="hidden lg:block absolute -right-6 -bottom-8 w-80 h-80 bg-brand-200/40 rounded-full blur-2xl pointer-events-none" />
       </section>
-
-      {/* Campus Safety Reminder */}
-      <CampusSafetyAlert />
 
       {/* Filter Bar */}
       <section className="space-y-4">

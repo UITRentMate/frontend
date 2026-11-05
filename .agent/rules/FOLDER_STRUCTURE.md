@@ -3,7 +3,7 @@ trigger: model_decision
 description: "Cấu trúc thư mục chi tiết, vai trò của từng thư mục, quy tắc Feature-Sliced và Centralized Types."
 ---
 # RENTMATE FRONTEND — CẤU TRÚC THƯ MỤC CHI TIẾT (FOLDER STRUCTURE)
-> **Dự án:** RentMate (Hệ thống Trao đổi, Pass đồ & Tặng đồ dùng Sinh viên)  
+> **Dự án:** RentMate Nền tảng Tìm kiếm, Thuê &amp; Quản lý Phòng trọ Sinh viên  
 > **Kiến trúc:** Feature-Driven Modular Architecture & Atomic Component Design  
 > **Mục tiêu:** Mô tả chi tiết vai trò, trách nhiệm và quy tắc tổ chức của từng thư mục, từng tệp tin trong toàn bộ mã nguồn.
 

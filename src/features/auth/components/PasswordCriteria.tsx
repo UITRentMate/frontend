@@ -1,5 +1,5 @@
 import React from 'react';
-import { CircleIcon, CheckCircle2Icon } from '../../../components/ui/icons';
+import { CircleIcon, CheckCircle2Icon } from '@/components/ui/icons';
 import type { PasswordCriteriaProps } from '../types';
 
 export const PasswordCriteria: React.FC<PasswordCriteriaProps> = ({

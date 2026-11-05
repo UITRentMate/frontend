@@ -1,10 +1,9 @@
 import React from 'react';
 import { useParams, Link } from 'react-router-dom';
-import { useRoom } from '../../features/rooms/hooks/useRooms';
-import CampusSafetyAlert from '../../features/rooms/components/CampusSafetyAlert';
-import Button from '../../components/ui/Button';
-import Badge from '../../components/ui/Badge';
-import { ROUTES } from '../../routes/paths';
+import { useRoom } from '@/features/rooms/hooks/useRooms';
+import Button from '@/components/ui/Button';
+import Badge from '@/components/ui/Badge';
+import { ROUTES } from '@/routes/paths';
 
 export const RoomDetailPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -62,10 +61,7 @@ export const RoomDetailPage: React.FC = () => {
               className="w-full h-full object-cover"
             />
             <div className="absolute top-4 left-4 flex gap-2">
-              {room.tradeTag === 'trade' && <Badge variant="trade">Đổi đồ</Badge>}
-              {room.tradeTag === 'pass' && <Badge variant="pass">Pass gấp</Badge>}
-              {room.tradeTag === 'free' && <Badge variant="free">Tặng 0đ</Badge>}
-              {room.conditionBadge && <Badge variant="condition">{room.conditionBadge}</Badge>}
+              <Badge variant="verified">Đang cho thuê</Badge>
             </div>
           </div>
 
@@ -73,7 +69,7 @@ export const RoomDetailPage: React.FC = () => {
           <div className="bg-white p-6 rounded-lg border border-border-subtle shadow-soft-xs space-y-4">
             <div className="flex items-baseline justify-between gap-4">
               <span className="text-2xl font-bold font-heading text-brand-500">
-                {room.price === 0 ? 'Tặng 0đ' : `${room.price.toLocaleString('vi-VN')} đ/tháng`}
+                {room.price.toLocaleString('vi-VN')} đ/tháng
               </span>
               <span className="text-sm font-semibold text-text-muted bg-surface-muted px-3 py-1 rounded-sm">
                 Diện tích: {room.area} m²
@@ -111,9 +107,6 @@ export const RoomDetailPage: React.FC = () => {
               </div>
             </div>
           </div>
-
-          {/* Safety Reminder */}
-          <CampusSafetyAlert />
         </div>
 
         {/* Right Column: Author card & actions */}
@@ -126,21 +119,19 @@ export const RoomDetailPage: React.FC = () => {
               </div>
               <div>
                 <h4 className="text-sm font-bold text-text-primary">{room.author.name}</h4>
-                <p className="text-xs text-text-muted">{room.author.university}</p>
-                {room.author.isVerifiedStudent && (
-                  <span className="inline-flex items-center gap-1 text-[11px] text-secondary-600 font-medium mt-0.5">
-                    ✓ Đã xác minh sinh viên
-                  </span>
-                )}
+                <p className="text-xs text-text-muted">Chủ phòng trọ</p>
+                <span className="inline-flex items-center gap-1 text-[11px] text-secondary-600 font-medium mt-0.5">
+                  ✓ Tài khoản đã xác minh
+                </span>
               </div>
             </div>
 
             <div className="space-y-2 pt-2">
               <Button variant="primary" size="md" className="w-full">
-                💬 Nhắn tin trao đổi ngay
+                💬 Liên hệ chủ trọ
               </Button>
-              <Button variant="eco" size="md" className="w-full">
-                🤝 Gửi đề xuất đổi đồ / cọc
+              <Button variant="secondary" size="md" className="w-full">
+                📅 Đặt lịch xem phòng
               </Button>
             </div>
           </div>

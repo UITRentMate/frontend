@@ -1,5 +1,5 @@
 import { useQuery } from '@tanstack/react-query';
-import { queryKeys } from '../../../lib/queryKeys';
+import { queryKeys } from '@/lib/queryKeys';
 import { roomApi } from '../services/roomApi';
 import type { RoomFilterParams } from '../types/room.types';
 

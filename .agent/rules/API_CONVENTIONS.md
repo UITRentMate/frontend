@@ -3,7 +3,7 @@ trigger: model_decision
 description: "Quy chuẩn API, Axios client, TanStack Query v5, Query Key Factory, Mock service và xử lý lỗi."
 ---
 # RENTMATE FRONTEND — API & DATA FETCHING CONVENTIONS
-> **Hệ thống:** RentMate (Nền tảng Trao đổi, Sang nhượng & Tặng đồ dùng Sinh viên)  
+> **Hệ thống:** RentMate Nền tảng Tìm kiếm, Thuê &amp; Quản lý Phòng trọ Sinh viên  
 > **Phiên bản tài liệu:** 1.0.0  
 > **Mục đích:** Quy chuẩn hóa toàn bộ tầng tích hợp API, Data Contract, TanStack Query Hooks, Mock Service và State Management giúp AI Agent & Developer triển khai code chính xác, nhất quán 100% thông qua Prompt.
 
