@@ -7,6 +7,7 @@ export const ROUTES = {
   REGISTER: '/register',
   PROFILE: '/profile',
   ADMIN_DASHBOARD: '/admin/dashboard',
+  LANDLORD_DASHBOARD: '/landlord/dashboard',
   LANDLORD_PROPERTIES: '/landlord/properties',
   NOT_FOUND: '*',
 } as const;

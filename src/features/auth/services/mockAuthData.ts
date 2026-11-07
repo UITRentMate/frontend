@@ -1,3 +1,4 @@
+import { ROUTES } from '@/routes/paths';
 import type {
   DemoAccount,
   LoginCredentials,
@@ -17,7 +18,7 @@ export const DEMO_ACCOUNTS: DemoAccount[] = [
     email: 'admin@rentmate.edu.vn',
     password: 'Password@123',
     description: 'Toàn quyền kiểm duyệt phòng trọ, quản lý báo cáo vi phạm',
-    targetRoute: '/admin/dashboard',
+    targetRoute: ROUTES.ADMIN_DASHBOARD,
   },
   {
     role: 'landlord',
@@ -26,7 +27,7 @@ export const DEMO_ACCOUNTS: DemoAccount[] = [
     email: 'landlord@rentmate.vn',
     password: 'Password@123',
     description: 'Đăng tin phòng trọ, quản lý hợp đồng và xem lịch hẹn',
-    targetRoute: '/landlord/properties',
+    targetRoute: ROUTES.LANDLORD_DASHBOARD,
   },
   {
     role: 'tenant',
@@ -35,7 +36,7 @@ export const DEMO_ACCOUNTS: DemoAccount[] = [
     email: 'hoangminh.hcm@gmail.com',
     password: 'Password@123',
     description: 'Tìm kiếm và thuê phòng trọ, ký túc xá sinh viên',
-    targetRoute: '/rooms',
+    targetRoute: ROUTES.ROOMS,
   },
 ];
 
@@ -44,13 +45,11 @@ export function authenticateMockUser(credentials: LoginCredentials): LoginRespon
   
   // Kiểm tra danh sách demo accounts
   const matched = DEMO_ACCOUNTS.find(
-    (acc) =>
-      acc.email.toLowerCase() === normalizedEmail &&
-      acc.password === credentials.password
+    (acc) => acc.email.toLowerCase() === normalizedEmail
   );
 
   // Nếu nhập đúng 1 trong các tài khoản demo
-  if (matched) {
+  if (matched && matched.password === credentials.password) {
     return {
       user: {
         id: `user-${matched.role}-001`,
@@ -73,8 +72,9 @@ export function authenticateMockUser(credentials: LoginCredentials): LoginRespon
     };
   }
 
-  // Cho phép đăng nhập sinh viên nếu có mật khẩu >= 6 ký tự và định dạng email hợp lệ
+  // Chỉ dùng phiên sinh viên mẫu cho email nằm ngoài danh sách demo.
   if (
+    !matched &&
     normalizedEmail.includes('@') &&
     credentials.password.length >= 6 &&
     !normalizedEmail.includes('wrong')
