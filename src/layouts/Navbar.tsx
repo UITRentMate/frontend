@@ -63,24 +63,20 @@ export const Navbar: React.FC = () => {
               🛡️ Quản trị
             </Link>
           )}
-          {isAuthenticated && user?.role === 'landlord' && (
-            <Link
-              to="/landlord/properties"
-              className={`px-3 py-1.5 rounded-sm text-sm font-medium transition-colors ${
-                isActive('/landlord/properties')
-                  ? 'text-brand-700 bg-brand-50 font-semibold'
-                  : 'text-brand-600 hover:bg-brand-50/60'
-              }`}
-            >
-              🏠 Bất động sản
-            </Link>
-          )}
         </nav>
 
         {/* Actions */}
         <div className="flex items-center gap-3">
           {isAuthenticated && user ? (
             <div className="flex items-center gap-2.5">
+              {user.role === 'landlord' && (
+                <Link
+                  to={ROUTES.LANDLORD_DASHBOARD}
+                  className="rounded-sm px-2 py-1.5 text-xs font-semibold text-brand-600 hover:bg-brand-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-500"
+                >
+                  Cổng Chủ trọ
+                </Link>
+              )}
               <div className="flex items-center gap-2 px-2.5 py-1 rounded-full bg-slate-50 border border-slate-200">
                 <div className="w-6 h-6 rounded-full bg-brand-500 text-white font-bold text-xs flex items-center justify-center">
                   {user.name.charAt(0)}

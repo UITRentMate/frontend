@@ -1,4 +1,5 @@
 import type { ButtonHTMLAttributes, HTMLAttributes, InputHTMLAttributes, ReactNode } from 'react';
+import type { UserRole } from './user.types';
 
 export interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   variant?: 'primary' | 'secondary' | 'eco' | 'outline' | 'ghost';
@@ -26,6 +27,10 @@ export interface SvgIconProps {
 export interface RouteGuardProps {
   children?: ReactNode;
   redirectPath?: string;
+}
+
+export interface ProtectedRouteProps extends RouteGuardProps {
+  requiredRole?: UserRole;
 }
 
 export interface ModalProps {

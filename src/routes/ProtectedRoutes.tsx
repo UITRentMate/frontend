@@ -2,13 +2,14 @@ import React from 'react';
 import { Navigate, Outlet, useLocation } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
 import { ROUTES } from './paths';
-import type { RouteGuardProps } from '@/types';
+import type { ProtectedRouteProps } from '@/types';
 
-export const ProtectedRoutes: React.FC<RouteGuardProps> = ({
+export const ProtectedRoutes: React.FC<ProtectedRouteProps> = ({
   children,
   redirectPath = ROUTES.LOGIN,
+  requiredRole,
 }) => {
-  const { isAuthenticated, isLoading } = useAuth();
+  const { user, isAuthenticated, isLoading } = useAuth();
   const location = useLocation();
 
   if (isLoading) {
@@ -24,6 +25,10 @@ export const ProtectedRoutes: React.FC<RouteGuardProps> = ({
 
   if (!isAuthenticated) {
     return <Navigate to={redirectPath} replace state={{ from: location }} />;
+  }
+
+  if (requiredRole && user?.role !== requiredRole) {
+    return <Navigate to={ROUTES.ROOMS} replace />;
   }
 
   return children ? <>{children}</> : <Outlet />;
