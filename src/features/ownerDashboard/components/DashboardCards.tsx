@@ -1,6 +1,9 @@
 import { Link } from 'react-router-dom';
-import { HomeIcon, WalletIcon, ZapIcon } from '@/components/ui/icons';
+
 import { ROUTES } from '@/routes/paths';
+
+import { HomeIcon, WalletIcon, ZapIcon } from '@/components/ui/icons';
+
 import { roomStatuses } from '../constants';
 import { countFormatter, currencyFormatter } from '../formatters';
 import type { DashboardStats, MetricProgressProps, RoomStatus } from '../types';
@@ -14,6 +17,8 @@ function MetricProgress({ label, value, fillClassName }: MetricProgressProps) {
   return (
     <div
       aria-label={label}
+      aria-valuemin={0}
+      aria-valuemax={100}
       aria-valuenow={percent}
       role="progressbar"
       className="h-2 overflow-hidden rounded-pill bg-canvas ring-1 ring-inset ring-border-subtle"
@@ -36,9 +41,9 @@ export function DashboardCards({
   const receivedRatio = monthlyRevenue > 0 ? receivedRevenue / monthlyRevenue : 0;
   const utilityRatio = totalRooms > 0 ? utilityReadings / totalRooms : 0;
   const missingRevenue = Math.max(0, monthlyRevenue - receivedRevenue);
-  const cardClass = 'flex min-h-44 min-w-0 flex-col gap-4 rounded-lg border border-border-subtle bg-surface-card p-4 shadow-soft-xs';
-  const headingClass = 'text-sm font-semibold uppercase text-text-secondary';
-  const detailLinkClass = 'rounded-xs text-sm font-semibold text-brand-600 hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-500';
+  const cardClass = 'flex min-h-56 min-w-0 flex-col gap-4 rounded-lg border border-border-subtle bg-surface-card p-4 shadow-soft-xs transition-shadow duration-250 hover:shadow-soft-sm motion-safe:transition-[transform,box-shadow] motion-safe:hover:-translate-y-0.5';
+  const headingClass = 'font-heading text-sm font-semibold text-text-secondary';
+  const detailLinkClass = 'inline-flex min-h-9 items-center rounded-sm text-xs font-semibold text-brand-600 transition-colors hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-500';
 
   return (
     <section aria-label="Chỉ số vận hành" className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4 xl:gap-4">

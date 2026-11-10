@@ -1,10 +1,14 @@
 import { Link } from 'react-router-dom';
+
+import { ROUTES } from '@/routes/paths';
+
+import { Button } from '@/components/ui/Button';
 import EmptyState from '@/components/ui/EmptyState';
 import { ArrowRightIcon, CalendarIcon, LayoutDashboardIcon, WalletIcon } from '@/components/ui/icons';
-import { ROUTES } from '@/routes/paths';
+
 import { dashboardSections, roomStatuses } from '../constants';
 import { countFormatter, currencyFormatter } from '../formatters';
-import type { DashboardSummary } from '../types';
+import type { SummarySectionsProps } from '../types';
 
 const appointmentStatuses = {
   completed: { label: 'Hoàn thành', className: 'bg-success-soft text-secondary-700' },
@@ -12,10 +16,10 @@ const appointmentStatuses = {
   scheduled: { label: 'Đã hẹn', className: 'bg-brand-50 text-brand-700' },
 };
 
-const panelClass = 'flex min-w-0 scroll-mt-24 flex-col gap-3 rounded-lg border border-border-subtle bg-surface-card p-4 shadow-soft-xs sm:p-5';
+const panelClass = 'flex min-h-96 min-w-0 scroll-mt-24 flex-col gap-3 rounded-lg border border-border-subtle bg-surface-card p-4 shadow-soft-xs sm:p-5';
 const rowClass = 'rounded-sm border border-border-subtle bg-canvas p-3';
 
-export function SummarySections({ appointments, receipts, property }: DashboardSummary) {
+export function SummarySections({ appointments, receipts, property, isPending, confirmingAppointmentId, onConfirmAppointment, onRescheduleAppointment, onReconcileReceipt, onSelectRoom }: SummarySectionsProps) {
   return (
     <section aria-labelledby="dashboard-summary-title" className="space-y-3">
       <h2 id="dashboard-summary-title" className="text-lg font-bold">Nghiệp vụ vận hành tại chỗ</h2>
@@ -46,6 +50,12 @@ export function SummarySections({ appointments, receipts, property }: DashboardS
                       <p className={`mt-2 inline-block rounded-pill px-2 py-0.5 text-xs font-medium ${status.className}`}>
                         {status.label}
                       </p>
+                      {appointment.status !== 'completed' && (
+                        <div className="mt-2 flex flex-wrap gap-2">
+                          <Button type="button" size="sm" variant="secondary" disabled={isPending} isLoading={confirmingAppointmentId === appointment.id} onClick={() => onConfirmAppointment(appointment.id)} className="min-h-10">Xác nhận đón</Button>
+                          <Button type="button" size="sm" variant="ghost" disabled={isPending} onClick={() => onRescheduleAppointment(appointment.id)} className="min-h-10">Đổi giờ</Button>
+                        </div>
+                      )}
                     </div>
                   </li>
                 );
@@ -77,7 +87,8 @@ export function SummarySections({ appointments, receipts, property }: DashboardS
                     </div>
                     <p className="mt-1 text-xs text-text-secondary">{receipt.detail}</p>
                   </div>
-                  <span className="text-sm font-bold tabular-nums text-secondary-700">{currencyFormatter.format(receipt.amount)}</span>
+                  <span className="font-heading text-sm font-bold tabular-nums text-secondary-700">{currencyFormatter.format(receipt.amount)}</span>
+                  <Button type="button" size="sm" variant="secondary" disabled={isPending} onClick={() => onReconcileReceipt(receipt.id)} className="mt-1 min-h-10 w-full">Xác nhận đã nhận tiền</Button>
                 </li>
               ))}
             </ul>
@@ -99,10 +110,12 @@ export function SummarySections({ appointments, receipts, property }: DashboardS
           ) : (
             <ul className="grid grid-cols-2 gap-2 min-[420px]:max-sm:grid-cols-3 2xl:grid-cols-3">
               {property.rooms.map((room) => (
-                <li key={room.code} className={`min-w-0 rounded-sm border p-2.5 ${roomStatuses[room.status].className}`}>
-                  <p className="text-sm font-bold">{room.code}</p>
-                  <p className="mt-1 text-xs font-semibold">{roomStatuses[room.status].label}</p>
-                  <p className="mt-1 text-xs">{room.detail}</p>
+                <li key={room.code} className="min-w-0">
+                  <button type="button" onClick={() => onSelectRoom(room.code)} disabled={isPending} aria-label={`Xem phòng ${room.code}, ${roomStatuses[room.status].label}`} className={`h-full w-full rounded-sm border p-2.5 text-left transition-shadow hover:shadow-soft-sm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-500 disabled:opacity-50 ${roomStatuses[room.status].className}`}>
+                    <span className="block font-heading text-sm font-bold">{room.code}</span>
+                    <span className="mt-1 block text-xs font-semibold">{roomStatuses[room.status].label}</span>
+                    <span className="mt-1 block text-xs">{room.detail}</span>
+                  </button>
                 </li>
               ))}
             </ul>

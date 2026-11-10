@@ -1,3 +1,5 @@
+import type { ReactNode } from 'react';
+
 export type RoomStatus = 'vacant' | 'reserved' | 'occupied' | 'maintenance';
 
 export interface DashboardStats {
@@ -38,6 +40,7 @@ export interface DashboardRoom {
   code: string;
   status: RoomStatus;
   detail: string;
+  utilityReading?: UtilityReading;
 }
 
 export interface DashboardSummary {
@@ -61,4 +64,83 @@ export interface MetricProgressProps {
   label: string;
   value: number;
   fillClassName: string;
+}
+
+export interface UtilityReading {
+  electricity: number;
+  water: number;
+}
+
+export interface RescheduleAppointmentInput {
+  id: string;
+  time: string;
+}
+
+export interface SaveUtilitiesInput extends UtilityReading {
+  roomCode: string;
+}
+
+export interface CreateReceiptInput {
+  tenantName: string;
+  roomCode: string;
+  detail: string;
+  amount: number;
+}
+
+export type DashboardDialogSelection =
+  | { type: 'utilities' }
+  | { type: 'createReceipt' }
+  | { type: 'reschedule'; id: string }
+  | { type: 'reconcile'; id: string }
+  | { type: 'room'; code: string };
+
+export interface DashboardHeaderProps {
+  date?: string;
+  disabled?: boolean;
+  onUtilities: () => void;
+  onCreateReceipt: () => void;
+}
+
+export interface SummarySectionsProps extends DashboardSummary {
+  isPending: boolean;
+  confirmingAppointmentId?: string;
+  onConfirmAppointment: (id: string) => void;
+  onRescheduleAppointment: (id: string) => void;
+  onReconcileReceipt: (id: string) => void;
+  onSelectRoom: (code: string) => void;
+}
+
+export interface DashboardWorkspaceProps {
+  data: OwnerDashboardData;
+}
+
+export interface DashboardDialogShellProps {
+  title: string;
+  description?: string;
+  fallbackFocusId?: string;
+  isPending: boolean;
+  onClose: () => void;
+  children: ReactNode;
+}
+
+export interface DashboardDialogsProps {
+  selection: DashboardDialogSelection;
+  data: OwnerDashboardData;
+  isPending: boolean;
+  onClose: () => void;
+  onSaveUtilities: (input: SaveUtilitiesInput) => Promise<void>;
+  onCreateReceipt: (input: CreateReceiptInput) => Promise<void>;
+  onRescheduleAppointment: (input: RescheduleAppointmentInput) => Promise<void>;
+  onReconcileReceipt: (id: string) => Promise<void>;
+}
+
+export interface UtilityFormProps {
+  rooms: readonly DashboardRoom[];
+  isPending: boolean;
+  onSubmit: (input: SaveUtilitiesInput) => Promise<void>;
+}
+
+export interface DashboardFeedback {
+  message: string;
+  tone: 'success' | 'error';
 }

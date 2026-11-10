@@ -1,10 +1,15 @@
 import { useQuery } from '@tanstack/react-query';
-import { queryKeys } from '@/lib/queryKeys';
-import { mockOwnerDashboard } from '../services/mockData';
+
+import { ownerDashboardApi } from '../api/ownerDashboardApi';
+import { ownerDashboardKeys } from './ownerDashboardKeys';
 
 export function useOwnerDashboard() {
   return useQuery({
-    queryKey: queryKeys.ownerDashboard.overview(),
-    queryFn: () => Promise.resolve(mockOwnerDashboard),
+    queryKey: ownerDashboardKeys.overview(),
+    queryFn: async () => {
+      const response = await ownerDashboardApi.getOverview();
+      return response.data;
+    },
+    staleTime: 1000 * 60 * 3,
   });
 }

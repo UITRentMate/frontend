@@ -1,6 +1,8 @@
 import { Link } from 'react-router-dom';
+
 import EmptyState from '@/components/ui/EmptyState';
 import { AlertCircleIcon, CalendarIcon, CheckCircle2Icon } from '@/components/ui/icons';
+
 import { countFormatter } from '../formatters';
 import type { OwnerDashboardData } from '../types';
 
@@ -12,7 +14,7 @@ const taskStyles = {
 
 export function PriorityTasks({ tasks }: Pick<OwnerDashboardData, 'tasks'>) {
   const pendingTasks = tasks.filter((task) => task.count > 0);
-  const actionClass = 'block rounded-sm bg-brand-50 px-3 py-2.5 text-center text-sm font-semibold text-brand-700 hover:bg-brand-100 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-500';
+  const actionClass = 'flex min-h-11 items-center justify-center rounded-sm bg-brand-50 px-3 py-2.5 text-center text-sm font-semibold text-brand-700 transition-colors hover:bg-brand-100 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-500';
 
   return (
     <section aria-labelledby="dashboard-tasks-title" className="space-y-3">
@@ -31,11 +33,11 @@ export function PriorityTasks({ tasks }: Pick<OwnerDashboardData, 'tasks'>) {
             const { Icon, accent, icon } = taskStyles[task.tone];
 
             return (
-              <li key={task.id} className={`flex min-w-0 flex-col rounded-lg border border-l-4 border-border-subtle bg-surface-card p-4 shadow-soft-xs ${accent}`}>
+              <li key={task.id} className={`flex min-h-52 min-w-0 flex-col rounded-lg border border-l-4 border-border-subtle bg-surface-card p-4 shadow-soft-xs transition-shadow duration-250 hover:shadow-soft-sm motion-safe:transition-[transform,box-shadow] motion-safe:hover:-translate-y-0.5 ${accent}`}>
                 <span className={`grid size-9 place-items-center rounded-sm ${icon}`} aria-hidden="true">
                   <Icon className="size-5" />
                 </span>
-                <p className="mt-2 flex-1 font-heading font-bold">
+                <p className="mt-2 flex-1 font-heading text-sm font-semibold leading-6">
                   {countFormatter.format(task.count)} {task.label}
                 </p>
                 <div className="mt-3 border-t border-border-subtle pt-3">

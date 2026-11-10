@@ -14,10 +14,6 @@ export const queryKeys = {
     details: () => [...queryKeys.rooms.all, 'detail'] as const,
     detail: (id: string | number) => [...queryKeys.rooms.details(), id] as const,
   },
-  ownerDashboard: {
-    all: ['ownerDashboard'] as const,
-    overview: () => [...queryKeys.ownerDashboard.all, 'overview'] as const,
-  },
   barter: {
     all: ['barter'] as const,
     proposals: () => [...queryKeys.barter.all, 'proposals'] as const,

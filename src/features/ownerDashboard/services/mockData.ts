@@ -97,7 +97,7 @@ export const mockOwnerDashboard: OwnerDashboardData = {
       name: '48 Lê Văn Lương',
       roomCount: 12,
       rooms: [
-        { code: 'P.101', status: 'occupied', detail: 'Trần Thị Hà' },
+        { code: 'P.101', status: 'occupied', detail: 'Trần Thị Hà', utilityReading: { electricity: 1250, water: 84 } },
         { code: 'P.102', status: 'maintenance', detail: 'Sửa điều hòa' },
         { code: 'P.103', status: 'vacant', detail: 'Sẵn sàng cho thuê' },
         { code: 'P.104', status: 'vacant', detail: 'Đang dọn phòng' },
