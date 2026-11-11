@@ -9,6 +9,8 @@ export interface DashboardStats {
   revenuePeriod: string;
   utilityReadings: number;
   utilityPeriod: string;
+  propertyLabel: string;
+  healthyMeters: number;
 }
 
 export interface DashboardTask {
@@ -26,6 +28,9 @@ export interface DashboardAppointment {
   title: string;
   detail: string;
   status: 'completed' | 'upcoming' | 'scheduled';
+  kind: 'checkout' | 'viewing' | 'maintenance';
+  roomCode: string;
+  note?: string;
 }
 
 export interface DashboardReceipt {
@@ -34,12 +39,15 @@ export interface DashboardReceipt {
   roomCode: string;
   detail: string;
   amount: number;
+  thumbnail?: 'vcb' | 'mb' | 'techcom';
 }
 
 export interface DashboardRoom {
   code: string;
   status: RoomStatus;
   detail: string;
+  caption?: string;
+  isCleaning?: boolean;
   utilityReading?: UtilityReading;
 }
 
@@ -64,6 +72,7 @@ export interface MetricProgressProps {
   label: string;
   value: number;
   fillClassName: string;
+  remainderClassName?: string;
 }
 
 export interface UtilityReading {
@@ -87,27 +96,54 @@ export interface CreateReceiptInput {
   amount: number;
 }
 
+export interface CreateAppointmentInput {
+  time: string;
+  roomCode: string;
+  guestName: string;
+}
+
+export interface DashboardCardsProps extends DashboardStats {
+  onUtilities: () => void;
+}
+
+export interface PriorityTasksProps {
+  tasks: readonly DashboardTask[];
+  onTaskAction: (id: string) => void;
+}
+
+export interface OwnerChromeProps {
+  onMenuToggle?: () => void;
+  onNavigate?: () => void;
+}
+
 export type DashboardDialogSelection =
   | { type: 'utilities' }
   | { type: 'createReceipt' }
   | { type: 'reschedule'; id: string }
   | { type: 'reconcile'; id: string }
-  | { type: 'room'; code: string };
+  | { type: 'room'; code: string }
+  | { type: 'appointment'; id: string }
+  | { type: 'createAppointment' }
+  | { type: 'appointments' }
+  | { type: 'ledger' }
+  | { type: 'task'; id: string };
 
 export interface DashboardHeaderProps {
   date?: string;
   disabled?: boolean;
   onUtilities: () => void;
-  onCreateReceipt: () => void;
+  healthyMeters?: number;
 }
 
 export interface SummarySectionsProps extends DashboardSummary {
+  onViewAppointments: () => void;
   isPending: boolean;
-  confirmingAppointmentId?: string;
-  onConfirmAppointment: (id: string) => void;
   onRescheduleAppointment: (id: string) => void;
   onReconcileReceipt: (id: string) => void;
   onSelectRoom: (code: string) => void;
+  onCreateAppointment: () => void;
+  onOpenAppointment: (id: string) => void;
+  onCreateReceipt: () => void;
 }
 
 export interface DashboardWorkspaceProps {
@@ -132,6 +168,9 @@ export interface DashboardDialogsProps {
   onCreateReceipt: (input: CreateReceiptInput) => Promise<void>;
   onRescheduleAppointment: (input: RescheduleAppointmentInput) => Promise<void>;
   onReconcileReceipt: (id: string) => Promise<void>;
+  onCreateAppointment: (input: CreateAppointmentInput) => Promise<void>;
+  onConfirmAppointment: (id: string) => Promise<void>;
+  onSelect: (selection: DashboardDialogSelection) => void;
 }
 
 export interface UtilityFormProps {

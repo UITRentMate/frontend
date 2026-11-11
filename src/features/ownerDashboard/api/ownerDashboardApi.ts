@@ -2,6 +2,7 @@ import type { ApiResponse } from '@/types';
 
 import { mockOwnerDashboardService } from '../services/mockOwnerDashboardService';
 import type {
+  CreateAppointmentInput,
   CreateReceiptInput,
   OwnerDashboardData,
   RescheduleAppointmentInput,
@@ -12,6 +13,8 @@ import type {
 // HTTP integration belongs here and must use the shared apiClient at that point.
 export const ownerDashboardApi = {
   getOverview: (): Promise<ApiResponse<OwnerDashboardData>> => mockOwnerDashboardService.getOverview(),
+  createAppointment: (input: CreateAppointmentInput): Promise<ApiResponse<OwnerDashboardData>> =>
+    mockOwnerDashboardService.createAppointment(input),
   confirmAppointment: (id: string): Promise<ApiResponse<OwnerDashboardData>> =>
     mockOwnerDashboardService.confirmAppointment(id),
   rescheduleAppointment: (input: RescheduleAppointmentInput): Promise<ApiResponse<OwnerDashboardData>> =>

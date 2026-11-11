@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useSearchParams } from 'react-router-dom';
 
 import { Button } from '@/components/ui/Button';
 import { XIcon } from '@/components/ui/icons';
@@ -14,37 +15,46 @@ import { SummarySections } from './SummarySections';
 
 export function DashboardWorkspace({ data }: DashboardWorkspaceProps) {
   const actions = useOwnerDashboardActions();
-  const [selection, setSelection] = useState<DashboardDialogSelection | null>(null);
+  const [searchParams, setSearchParams] = useSearchParams();
+  const [localSelection, setSelection] = useState<DashboardDialogSelection | null>(null);
   const [feedback, setFeedback] = useState<DashboardFeedback | null>(null);
   const isPending = Object.values(actions).some((action) => action.isPending);
+  const action = searchParams.get('action');
+  const roomCode = searchParams.get('room');
+  const taskId = searchParams.get('task');
+  const routeSelection: DashboardDialogSelection | null = roomCode ? { type: 'room', code: roomCode } : taskId ? { type: 'task', id: taskId } : action === 'utilities' || action === 'createReceipt' || action === 'createAppointment' || action === 'appointments' || action === 'ledger' ? { type: action } : null;
+  const selection = localSelection ?? routeSelection;
+
+  const handleClose = () => {
+    setSelection(null);
+    if (routeSelection) {
+      const next = new URLSearchParams(searchParams);
+      ['action', 'room', 'task'].forEach((key) => next.delete(key));
+      setSearchParams(next, { replace: true });
+    }
+    document.querySelectorAll<HTMLDetailsElement>('.owner-topbar details[open]').forEach((element) => { element.open = false; });
+  };
 
   const handleSuccess = (message: string) => {
     setFeedback({ message, tone: 'success' });
-    setSelection(null);
+    handleClose();
   };
 
   return (
-    <div className="space-y-5">
-      <DashboardHeader date={data.date} disabled={isPending} onUtilities={() => setSelection({ type: 'utilities' })} onCreateReceipt={() => setSelection({ type: 'createReceipt' })} />
-      <PriorityTasks tasks={data.tasks} />
-      <DashboardCards {...data.stats} />
+    <div className="owner-dashboard">
+      <DashboardHeader date={data.date} healthyMeters={data.stats.healthyMeters} disabled={isPending} onUtilities={() => setSelection({ type: 'utilities' })} />
+      <PriorityTasks tasks={data.tasks} onTaskAction={(id) => setSelection({ type: 'task', id })} />
+      <DashboardCards {...data.stats} onUtilities={() => setSelection({ type: 'utilities' })} />
       <SummarySections
         {...data.summary}
         isPending={isPending}
-        confirmingAppointmentId={actions.confirmAppointment.isPending ? actions.confirmAppointment.variables : undefined}
-        onConfirmAppointment={(id) => {
-          if (isPending) return;
-          actions.confirmAppointment.mutate(id, {
-            onSuccess: (response) => {
-              handleSuccess(response.message ?? 'Đã xác nhận đón khách.');
-              requestAnimationFrame(() => document.getElementById(dashboardSections.appointments)?.focus());
-            },
-            onError: (error) => setFeedback({ tone: 'error', message: error.message }),
-          });
-        }}
         onRescheduleAppointment={(id) => setSelection({ type: 'reschedule', id })}
         onReconcileReceipt={(id) => setSelection({ type: 'reconcile', id })}
         onSelectRoom={(code) => setSelection({ type: 'room', code })}
+        onCreateAppointment={() => setSelection({ type: 'createAppointment' })}
+        onOpenAppointment={(id) => setSelection({ type: 'appointment', id })}
+        onCreateReceipt={() => setSelection({ type: 'ledger' })}
+        onViewAppointments={() => setSelection({ type: 'appointments' })}
       />
       {selection && (
         <DashboardDialogs
@@ -52,7 +62,16 @@ export function DashboardWorkspace({ data }: DashboardWorkspaceProps) {
           selection={selection}
           data={data}
           isPending={isPending}
-          onClose={() => { if (!isPending) setSelection(null); }}
+          onClose={() => { if (!isPending) handleClose(); }}
+          onSelect={setSelection}
+          onCreateAppointment={async (input) => {
+            const response = await actions.createAppointment.mutateAsync(input);
+            handleSuccess(response.message ?? 'Đã thêm lịch hẹn.');
+          }}
+          onConfirmAppointment={async (id) => {
+            const response = await actions.confirmAppointment.mutateAsync(id);
+            handleSuccess(response.message ?? 'Đã xác nhận đón khách.');
+          }}
           onSaveUtilities={async (input) => {
             const response = await actions.saveUtilities.mutateAsync(input);
             handleSuccess(response.message ?? 'Đã lưu chỉ số điện nước.');

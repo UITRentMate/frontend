@@ -1,5 +1,8 @@
 import { useEffect, useId, useRef, useState } from 'react';
 import type { FormEvent } from 'react';
+import { Link } from 'react-router-dom';
+
+import { ROUTES } from '@/routes/paths';
 
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
@@ -11,7 +14,7 @@ import type { DashboardDialogShellProps, DashboardDialogsProps, UtilityFormProps
 
 const selectClass = 'min-h-11 w-full rounded-md border border-border-subtle bg-surface-card px-3 py-2 text-sm text-text-primary focus:outline-2 focus:outline-brand-500 disabled:opacity-50';
 
-function DashboardDialogShell({ title, description, fallbackFocusId, isPending, onClose, children }: DashboardDialogShellProps) {
+export function DashboardDialogShell({ title, description, fallbackFocusId, isPending, onClose, children }: DashboardDialogShellProps) {
   const dialogRef = useRef<HTMLDialogElement>(null);
   const titleId = useId();
   const descriptionId = useId();
@@ -87,12 +90,13 @@ function UtilityForm({ rooms, isPending, onSubmit }: UtilityFormProps) {
   );
 }
 
-export function DashboardDialogs({ selection, data, isPending, onClose, onSaveUtilities, onCreateReceipt, onRescheduleAppointment, onReconcileReceipt }: DashboardDialogsProps) {
+export function DashboardDialogs({ selection, data, isPending, onClose, onSaveUtilities, onCreateReceipt, onRescheduleAppointment, onReconcileReceipt, onCreateAppointment, onConfirmAppointment, onSelect }: DashboardDialogsProps) {
   const [errorMessage, setErrorMessage] = useState('');
-  const appointment = selection.type === 'reschedule' ? data.summary.appointments.find((item) => item.id === selection.id) : undefined;
+  const appointment = selection.type === 'reschedule' || selection.type === 'appointment' ? data.summary.appointments.find((item) => item.id === selection.id) : undefined;
   const receipt = selection.type === 'reconcile' ? data.summary.receipts.find((item) => item.id === selection.id) : undefined;
   const room = selection.type === 'room' ? data.summary.property.rooms.find((item) => item.code === selection.code) : undefined;
-  const titles = { utilities: 'Ghi điện nước', createReceipt: 'Tạo phiếu thu', reschedule: 'Đổi giờ lịch hẹn', reconcile: 'Xác nhận đã nhận tiền', room: `Chi tiết phòng ${room?.code ?? ''}` };
+  const task = selection.type === 'task' ? data.tasks.find((item) => item.id === selection.id) : undefined;
+  const titles = { utilities: 'Ghi điện nước', createReceipt: 'Tạo phiếu thu', reschedule: 'Đổi giờ lịch hẹn', reconcile: 'Xác nhận đã nhận tiền', room: `Chi tiết phòng ${room?.code ?? ''}`, appointment: 'Chi tiết lịch hẹn', createAppointment: 'Thêm lịch hẹn', appointments: 'Lịch hẹn hôm nay', ledger: 'Sổ quỹ & Thu chi', task: task?.actionLabel ?? 'Tác vụ' };
 
   const handleAction = async (action: () => Promise<void>) => {
     if (isPending) return;
@@ -122,6 +126,7 @@ export function DashboardDialogs({ selection, data, isPending, onClose, onSaveUt
       onClose={onClose}
     >
       {errorMessage && <p role="alert" className="mb-4 rounded-sm border border-danger-border bg-danger-soft p-3 text-sm text-red-700">{errorMessage}</p>}
+      {selection.type === 'utilities' && <p className="mb-4 text-sm text-text-muted">Nhận diện ảnh OCR chưa được kết nối trong bản mẫu. Bạn có thể nhập và lưu chỉ số bên dưới.</p>}
       {selection.type === 'utilities' && <UtilityForm rooms={data.summary.property.rooms} isPending={isPending} onSubmit={(input) => handleAction(() => onSaveUtilities(input))} />}
       {selection.type === 'createReceipt' && (
         <form onSubmit={handleReceiptSubmit} className="space-y-4">
@@ -149,6 +154,43 @@ export function DashboardDialogs({ selection, data, isPending, onClose, onSaveUt
           <Input label="Giờ hẹn mới" name="time" type="time" defaultValue={appointment.time} required disabled={isPending} />
           <Button type="submit" isLoading={isPending} className="min-h-11 w-full">Lưu giờ hẹn</Button>
         </form>
+      )}
+      {selection.type === 'createAppointment' && (
+        <form className="space-y-4" onSubmit={(event) => {
+          event.preventDefault();
+          const values = new FormData(event.currentTarget);
+          void handleAction(() => onCreateAppointment({ guestName: String(values.get('guestName') ?? ''), time: String(values.get('time') ?? ''), roomCode: String(values.get('roomCode') ?? '') }));
+        }}>
+          <Input label="Tên khách" name="guestName" required maxLength={100} disabled={isPending} />
+          <label className="block space-y-1.5 text-sm font-semibold"><span>Phòng xem</span><select name="roomCode" required disabled={isPending} className={selectClass}>{data.summary.property.rooms.map((item) => <option key={item.code} value={item.code}>{item.code} · {roomStatuses[item.status].label}</option>)}</select></label>
+          <Input label="Giờ hẹn" name="time" type="time" required disabled={isPending} />
+          <Button type="submit" isLoading={isPending} className="w-full">Thêm lịch hẹn</Button>
+        </form>
+      )}
+      {selection.type === 'appointment' && appointment && (
+        <div className="space-y-4">
+          <p className="font-semibold">{appointment.time} · {appointment.title}</p><p className="text-sm">{appointment.detail}</p>
+          {appointment.status !== 'completed' ? <>
+            <p className="text-sm text-text-muted">Bản mẫu chưa kết nối khóa IoT và số liên hệ khách. Bạn có thể xác nhận đón khách hoặc đổi giờ hẹn.</p>
+            <div className="flex flex-wrap gap-2"><Button type="button" isLoading={isPending} onClick={() => void handleAction(() => onConfirmAppointment(appointment.id))}>Xác nhận đón</Button><Button type="button" variant="secondary" disabled={isPending} onClick={() => onSelect({ type: 'reschedule', id: appointment.id })}>Đổi giờ</Button></div>
+          </> : <p className="text-sm text-secondary-600">Lịch hẹn đã hoàn thành.</p>}
+        </div>
+      )}
+      {(selection.type === 'appointments' || (selection.type === 'task' && (selection.id === 'new-appointments' || selection.id === 'urgent-incidents'))) && (
+        <div className="space-y-3">
+          {data.summary.appointments.filter((item) => selection.type !== 'task' || (selection.id === 'urgent-incidents' ? item.kind === 'maintenance' : item.status !== 'completed')).map((item) => <button key={item.id} type="button" className="block w-full rounded-sm border border-border-subtle bg-canvas p-3 text-left text-sm hover:bg-brand-50" onClick={() => onSelect({ type: 'appointment', id: item.id })}><strong>{item.time} · {item.title}</strong><span className="mt-1 block text-text-muted">{item.detail}</span></button>)}
+          <Button type="button" onClick={() => onSelect({ type: 'createAppointment' })}>Thêm lịch hẹn</Button>
+        </div>
+      )}
+      {selection.type === 'ledger' && (
+        <div className="space-y-3">
+          <p className="text-sm text-text-muted">{data.summary.receipts.length} biên lai đang chờ đối soát.</p>
+          {data.summary.receipts.map((item) => <button key={item.id} type="button" className="flex w-full flex-wrap justify-between gap-2 rounded-sm border border-border-subtle bg-canvas p-3 text-left text-sm hover:bg-brand-50" onClick={() => onSelect({ type: 'reconcile', id: item.id })}><span>{item.tenantName} · {item.roomCode}</span><strong>{currencyFormatter.format(item.amount)}</strong></button>)}
+          <Button type="button" onClick={() => onSelect({ type: 'createReceipt' })}>Tạo phiếu thu</Button>
+        </div>
+      )}
+      {selection.type === 'task' && task && !['new-appointments', 'urgent-incidents'].includes(task.id) && (
+        <div className="space-y-4"><p className="font-semibold">{task.count} {task.label}</p><p className="text-sm text-text-muted">{task.id === 'overdue-invoices' ? 'Danh sách hóa đơn và kênh gửi nhắc nợ chưa được kết nối trong bản mẫu. Chưa có thông báo nào được gửi.' : 'Danh sách yêu cầu thuê đang được chuẩn bị. Bạn có thể kiểm tra tình trạng phòng trước khi duyệt yêu cầu.'}</p><Link to={ROUTES.LANDLORD_PROPERTIES} onClick={onClose} className="inline-flex rounded-sm bg-brand-50 px-4 py-2 text-sm text-brand-500">Quản lý khu trọ &amp; phòng</Link></div>
       )}
       {selection.type === 'reconcile' && receipt && (
         <div className="space-y-4">

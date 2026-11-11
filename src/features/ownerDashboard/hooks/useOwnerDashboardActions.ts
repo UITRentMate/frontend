@@ -18,6 +18,11 @@ export function useOwnerDashboardActions() {
     onMutate: cancelOverview,
     onSuccess: updateOverview,
   });
+  const createAppointment = useMutation({
+    mutationFn: ownerDashboardApi.createAppointment,
+    onMutate: cancelOverview,
+    onSuccess: updateOverview,
+  });
   const rescheduleAppointment = useMutation({
     mutationFn: ownerDashboardApi.rescheduleAppointment,
     onMutate: cancelOverview,
@@ -39,5 +44,5 @@ export function useOwnerDashboardActions() {
     onSuccess: updateOverview,
   });
 
-  return { confirmAppointment, rescheduleAppointment, reconcileReceipt, saveUtilities, createReceipt };
+  return { confirmAppointment, createAppointment, rescheduleAppointment, reconcileReceipt, saveUtilities, createReceipt };
 }

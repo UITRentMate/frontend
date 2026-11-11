@@ -6,8 +6,8 @@ export function LandlordDashboardPage() {
   const { data, isPending, isError, isFetching, refetch } = useOwnerDashboard();
 
   return (
-    <div className="space-y-5">
-      {!data && <DashboardHeader disabled onUtilities={() => undefined} onCreateReceipt={() => undefined} />}
+    <div className="space-y-6">
+      {!data && <DashboardHeader disabled onUtilities={() => undefined} />}
       {isPending && <DashboardSkeleton />}
       {isError && (
         <div role="alert">

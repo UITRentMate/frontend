@@ -1,6 +1,8 @@
 import type { ApiResponse } from '@/types';
 
 import type {
+  CreateAppointmentInput,
+  DashboardAppointment,
   CreateReceiptInput,
   OwnerDashboardData,
   RescheduleAppointmentInput,
@@ -25,6 +27,20 @@ export const mockOwnerDashboardService = {
   async getOverview(): Promise<ApiResponse<OwnerDashboardData>> {
     await delay();
     return snapshot('Đã tải tổng quan khu trọ.');
+  },
+
+  async createAppointment({ time, roomCode, guestName }: CreateAppointmentInput): Promise<ApiResponse<OwnerDashboardData>> {
+    await delay();
+    if (!/^([01]\d|2[0-3]):[0-5]\d$/.test(time) || !guestName.trim()) throw new Error('Vui lòng nhập tên khách và giờ hẹn hợp lệ.');
+    if (!dashboard.summary.property.rooms.some((room) => room.code === roomCode)) throw new Error('Không tìm thấy phòng.');
+    if (dashboard.summary.appointments.some((item) => item.time === time && item.roomCode === roomCode && item.status !== 'completed')) throw new Error('Phòng đã có lịch hẹn vào giờ này.');
+    const appointment: DashboardAppointment = {
+      id: crypto.randomUUID(), time, roomCode, kind: 'viewing', status: 'upcoming',
+      title: `Dẫn khách xem phòng ${roomCode}`, detail: `Khách: ${guestName.trim()}`,
+    };
+    dashboard.summary.appointments = [...dashboard.summary.appointments, appointment].sort((first, second) => first.time.localeCompare(second.time));
+    dashboard.tasks = dashboard.tasks.map((task) => task.id === 'new-appointments' ? { ...task, count: task.count + 1 } : task);
+    return snapshot('Đã thêm lịch hẹn xem phòng.');
   },
 
   async confirmAppointment(id: string): Promise<ApiResponse<OwnerDashboardData>> {
