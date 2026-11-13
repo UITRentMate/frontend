@@ -1,0 +1,142 @@
+/* FE-06: scoped to the management screen and its two dialogs. */
+.property-management { display: flex; flex-direction: column; gap: 20px; font-size: 13px; }
+.property-management :is(button, select), .management-modal :is(button, select) { cursor: pointer; }
+.property-management button, .management-modal button { gap: 7px; }
+.management-context, .management-toolbar, .management-metrics > section, .management-room { border: 1px solid var(--color-border-subtle); border-radius: 12px; background: var(--color-surface-card); box-shadow: var(--shadow-soft-sm); }
+.management-context { display: flex; justify-content: space-between; align-items: center; gap: 20px; padding: 17px; }
+.management-context > div:first-child { min-width: 0; }
+.management-property-picker { display: inline-flex; align-items: center; gap: 12px; max-width: 100%; padding: 11px 14px; border: 1px solid var(--color-border-subtle); border-radius: 8px; background: var(--color-canvas); }
+.management-property-picker > img { padding: 10px; box-sizing: content-box; border: 1px solid var(--color-brand-200); border-radius: 8px; background: var(--color-brand-50); }
+.management-property-picker > span { min-width: 0; }
+.management-property-picker select { width: 100%; max-width: 400px; color: var(--color-text-primary); font: 700 16px/24px var(--font-heading); }
+.management-property-picker small { display: block; margin-top: 3px; color: var(--color-text-muted); font-size: 12px; }
+.management-property-picker small b { color: var(--color-secondary-600); }
+.management-context-meta { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin-top: 12px; }
+.management-context-meta > span { display: inline-flex; align-items: center; gap: 7px; padding: 6px 11px; border: 1px solid var(--color-border-subtle); border-radius: 9999px; background: var(--color-canvas); font-size: 11px; }
+.management-context-actions { display: flex; align-items: center; gap: 8px; }
+.management-context-actions button { max-width: 170px; font-size: 12px; }
+.management-metrics { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 16px; }
+.management-metrics > section { display: flex; align-items: center; justify-content: space-between; gap: 8px; padding: 17px; min-height: 120px; }
+.management-metrics h2 { font: 700 10px/17px var(--font-sans); letter-spacing: .4px; text-transform: uppercase; color: var(--color-text-muted); }
+.management-metrics strong { display: block; margin: 5px 0; font: 700 clamp(20px, 1.7vw, 28px)/1.4 var(--font-heading); }
+.management-metrics small { display: block; font-size: 10px; color: var(--color-secondary-600); }
+.management-metrics strong small { display: inline; font: 400 12px var(--font-sans); color: var(--color-text-muted); }
+.management-metrics > section > span { display: grid; place-items: center; flex: none; padding: 12px; border: 1px solid var(--color-brand-100); border-radius: 8px; background: var(--color-brand-50); }
+.management-metrics > section:nth-child(2) > span { background: var(--color-success-soft); border-color: var(--color-success-border); }
+.management-metrics > section:nth-child(3) > span { background: var(--color-warning-soft); border-color: var(--color-warning-border); }
+.management-metrics > section:nth-child(4) > span { background: var(--color-info-soft); border-color: var(--color-info-border); }
+.management-demo-note, .management-results { margin-top: -10px; color: var(--color-text-muted); font-size: 11px; }
+.management-toolbar { padding: 16px; }
+.management-toolbar-main { display: flex; align-items: center; gap: 8px; }
+.management-toolbar-main > div:first-child { flex: 1; min-width: 160px; }
+.management-toolbar-main > button { flex: none; white-space: nowrap; font-size: 12px; }
+.management-toolbar-main input { background: var(--color-canvas); }
+.management-view-toggle { display: flex; flex: none; padding: 4px; border: 1px solid var(--color-border-subtle); border-radius: 8px; background: var(--color-canvas); }
+.management-view-toggle button { display: flex; align-items: center; gap: 5px; padding: 5px 7px; border-radius: 6px; color: var(--color-text-muted); font-size: 11px; }
+.management-view-toggle button[aria-pressed="true"] { background: var(--color-surface-card); color: var(--color-brand-500); box-shadow: var(--shadow-soft-xs); }
+.management-filters { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; margin-top: 14px; padding-top: 14px; border-top: 1px solid var(--color-border-subtle); }
+.management-filters > label { display: flex; align-items: center; gap: 8px; color: var(--color-text-muted); font-size: 11px; }
+.management-filters select { padding: 7px 10px; border-radius: 8px; background: var(--color-brand-500); color: white; }
+.management-filters > div { display: flex; flex-wrap: wrap; gap: 6px; }
+.management-status { display: inline-block; padding: 4px 9px; border: 1px solid var(--color-brand-200); border-radius: 9999px; background: var(--color-brand-50); color: var(--color-brand-500); font: 600 10px/15px var(--font-sans); white-space: nowrap; }
+.management-status.vacant { color: var(--color-secondary-600); background: var(--color-success-soft); border-color: var(--color-success-border); }
+.management-status.occupied { color: var(--color-info); background: var(--color-info-soft); border-color: var(--color-info-border); }
+.management-status.reserved { color: var(--color-warning); background: var(--color-warning-soft); border-color: var(--color-warning-border); }
+.management-status.maintenance { color: var(--color-danger); background: var(--color-danger-soft); border-color: var(--color-danger-border); }
+.management-status[aria-pressed="true"] { outline: 2px solid currentColor; outline-offset: 2px; }
+.management-feedback { padding: 12px 16px; border: 1px solid var(--color-brand-200); border-radius: 10px; color: var(--color-brand-600); background: var(--color-brand-50); }
+.management-room-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); align-items: stretch; gap: 16px; }
+.management-room { display: flex; flex-direction: column; min-width: 0; overflow: hidden; transition: box-shadow .2s; }
+.management-room:hover { box-shadow: var(--shadow-soft-md); }
+.management-room header { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 6px; padding: 16px 16px 12px; }
+.management-room h2 { font: 700 18px/26px var(--font-heading); }
+.management-room h2 span { color: var(--color-text-muted); font: 400 11px/18px var(--font-sans); }
+.management-room-photo { position: relative; margin: 0 16px; height: 180px; overflow: hidden; border-radius: 8px; background: var(--color-canvas); }
+.management-room-photo > img { width: 100%; height: 100%; object-fit: cover; }
+.management-photo-fallback { display: grid; place-items: center; height: 100%; color: var(--color-text-muted); }
+.management-photo-tags { position: absolute; display: flex; flex-wrap: wrap; gap: 4px; inset: auto 8px 8px; font-size: 10px; }
+.management-photo-tags span { padding: 3px 5px; border-radius: 6px; background: var(--color-surface-card); color: var(--color-text-primary); }
+.management-photo-tags span:last-child:not(:first-child) { color: var(--color-brand-500); }
+.management-guest { position: absolute; inset: auto 8px 8px; display: flex; align-items: center; gap: 8px; padding: 8px; border-radius: 8px; background: var(--color-surface-card); font-size: 11px; }
+.management-guest > span { display: grid; place-items: center; width: 28px; height: 28px; border-radius: 9999px; background: var(--color-brand-500); color: white; font-size: 9px; }
+.management-guest > div { flex: 1; }
+.management-guest small { display: block; color: var(--color-text-muted); font-size: 10px; }
+.management-room-details { flex: 1; display: flex; flex-direction: column; gap: 12px; padding: 16px; }
+.management-rent { display: flex; align-items: baseline; flex-wrap: wrap; gap: 4px; font-size: 11px; color: var(--color-text-muted); }
+.management-rent strong { margin-left: auto; color: var(--color-text-primary); font: 700 20px/28px var(--font-heading); }
+.management-room.vacant .management-rent strong { color: var(--color-brand-500); }
+.management-room.maintenance .management-rent strong { color: var(--color-text-disabled); }
+.management-rent small { font-size: 10px; }
+.management-utilities { display: flex; justify-content: space-around; gap: 4px; padding: 10px 5px; border: 1px solid var(--color-border-subtle); border-radius: 8px; background: var(--color-canvas); font-size: 10px; color: var(--color-text-muted); text-align: center; }
+.management-utilities span { flex: 1; }
+.management-utilities span + span { border-left: 1px solid var(--color-border-subtle); }
+.management-utilities b { display: block; margin-top: 4px; color: var(--color-text-primary); font-size: 11px; }
+.management-amenity-tags { display: flex; flex-wrap: wrap; gap: 5px; font-size: 10px; color: var(--color-text-muted); }
+.management-amenity-tags span { padding: 3px 5px; border: 1px solid var(--color-border-subtle); border-radius: 6px; background: var(--color-canvas); }
+.management-room-note { font-size: 11px; line-height: 18px; color: var(--color-text-muted); }
+.management-room-notice { display: flex; align-items: flex-start; gap: 7px; margin: 0 16px 12px; padding: 9px; border: 1px solid var(--color-warning-border); border-radius: 8px; background: var(--color-warning-soft); color: var(--color-warning); font-size: 10px; line-height: 16px; }
+.management-room-notice p { color: var(--color-text-secondary); }
+.management-room-notice.maintenance { background: var(--color-danger-soft); color: var(--color-danger); border-color: var(--color-danger-border); }
+.management-room footer { display: flex; align-items: center; gap: 8px; min-height: 70px; padding: 12px 16px; border-top: 1px solid var(--color-border-subtle); background: var(--color-canvas); }
+.management-room footer > button:last-child { display: grid; place-items: center; min-width: 14px; }
+.management-room footer button { font-size: 10px; }
+.management-publication { flex: 1; display: flex; align-items: center; gap: 7px; font-size: 10px; color: var(--color-text-muted); }
+.management-publication > span { position: relative; width: 28px; height: 14px; border-radius: 9999px; background: var(--color-border-subtle); }
+.management-publication > span::after { content: ''; position: absolute; top: 2px; left: 2px; width: 10px; height: 10px; border-radius: 9999px; background: var(--color-surface-card); }
+.management-publication > span.is-published { background: var(--color-brand-500); }
+.management-publication > span.is-published::after { left: 16px; }
+.management-modal > div:first-child, .management-modal > div:last-child { flex-shrink: 0; }
+.management-modal > div:nth-child(2) { max-height: none; }
+.management-modal-footer { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px; width: 100%; }
+.management-modal-footer > div { display: flex; flex-wrap: wrap; gap: 8px; margin-left: auto; }
+.management-modal-footer button { gap: 6px; font-size: 12px; }
+.management-modal-footer small { color: var(--color-text-muted); font-size: 11px; }
+.management-form { display: flex; flex-direction: column; gap: 16px; }
+.management-form section + section { padding-top: 14px; border-top: 1px solid var(--color-border-subtle); }
+.management-form h3 { display: flex; align-items: center; gap: 8px; margin-bottom: 12px; color: var(--color-text-primary); font: 700 12px/18px var(--font-heading); text-transform: uppercase; }
+.management-form h3::before { content: ''; flex: none; width: 6px; height: 15px; border-radius: 9999px; background: var(--color-brand-500); }
+.management-form small { color: var(--color-text-muted); font-size: 10px; }
+.management-form-grid { display: grid; align-items: start; gap: 10px; margin-top: 12px; }
+.management-form-grid.four { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+.management-form-grid.two { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.management-field { display: flex; flex-direction: column; gap: 4px; }
+.management-field label { color: var(--color-text-primary); font-size: 12px; font-weight: 600; }
+.management-field select { width: 100%; min-height: 38px; padding: 7px 10px; border: 1px solid var(--color-border-subtle); border-radius: 8px; background: var(--color-canvas); font-size: 12px; }
+.management-field select[aria-invalid="true"] { border-color: var(--color-danger); }
+.management-error { color: var(--color-danger); font-size: 11px; }
+.management-hint { display: flex; align-items: center; gap: 8px; margin-top: 10px; padding: 8px 10px; border: 1px solid var(--color-info-border); border-radius: 8px; background: var(--color-info-soft); color: var(--color-text-muted); font-size: 11px; }
+.management-section-title { display: flex; justify-content: space-between; align-items: baseline; flex-wrap: wrap; gap: 8px; }
+.management-section-title > span { color: var(--color-brand-500); font-size: 11px; }
+.management-photos { display: flex; gap: 10px; }
+.management-photos > * { flex: 1; min-width: 0; height: 64px; overflow: hidden; border: 1px solid var(--color-border-subtle); border-radius: 8px; }
+.management-photos figure { position: relative; }
+.management-photos figure > img { width: 100%; height: 100%; object-fit: cover; }
+.management-photos figcaption { position: absolute; bottom: 4px; left: 5px; padding: 1px 5px; border-radius: 6px; background: var(--color-surface-card); color: var(--color-text-primary); font-size: 10px; }
+.management-upload { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 5px; border-style: dashed; background: var(--color-canvas); color: var(--color-text-primary); font-size: 10px; }
+.management-upload:disabled { cursor: not-allowed; }
+.management-options { display: grid; gap: 8px; }
+.room-options { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.property-options { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.management-options label { display: flex; align-items: center; gap: 8px; padding: 9px; border: 1px solid var(--color-border-subtle); border-radius: 8px; background: var(--color-canvas); color: var(--color-text-muted); font-size: 11px; cursor: pointer; }
+.management-options label.selected { border-color: var(--color-brand-500); background: var(--color-brand-50); color: var(--color-text-primary); }
+.management-form input:is([type="checkbox"], [type="radio"]) { flex: none; accent-color: var(--color-brand-500); width: 16px; height: 16px; cursor: pointer; }
+.management-form :is(select, input):focus-visible { outline: 2px solid var(--color-brand-500); outline-offset: 2px; }
+.management-initial-status { display: flex; justify-content: space-between; flex-wrap: wrap; gap: 12px; padding: 14px; border: 1px solid var(--color-border-subtle); border-radius: 12px; background: var(--color-canvas); font-size: 10px; color: var(--color-text-muted); }
+.management-rules { padding: 12px; border: 1px solid var(--color-border-subtle); border-radius: 8px; background: var(--color-canvas); font-size: 11px; }
+.management-rules legend { display: flex; align-items: center; gap: 5px; padding: 0 5px; color: var(--color-text-primary); font-weight: 600; }
+.management-rules label { display: inline-flex; align-items: center; gap: 5px; margin: 3px 10px 3px 0; }
+@media (min-width: 1400px) { .property-options { grid-template-columns: repeat(6, minmax(0, 1fr)); } }
+@media (max-width: 1250px) { .management-room-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } .management-context { align-items: flex-start; flex-direction: column; } .management-metrics { grid-template-columns: repeat(2, minmax(0, 1fr)); } .management-toolbar-main { flex-wrap: wrap; } }
+@media (max-width: 640px) {
+  .property-management { gap: 16px; } .management-property-picker select { font-size: 13px; } .management-context-actions { flex-wrap: wrap; } .management-context { padding: 12px; } .management-context-meta > span { border-radius: 8px; }
+  .management-metrics { gap: 8px; } .management-metrics > section { padding: 12px; } .management-metrics > section > span { padding: 8px; } .management-metrics strong { font-size: 19px; }
+  .management-room-grid { grid-template-columns: minmax(0, 1fr); } .management-toolbar-main > div:first-child { flex-basis: 100%; } .management-room-photo { height: 200px; }
+  .management-form-grid.four, .management-form-grid.two { grid-template-columns: minmax(0, 1fr); } .room-options, .property-options { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .management-modal-footer { gap: 8px; } .management-modal-footer > div { margin: 0; } .management-modal-footer button { font-size: 11px; padding: 7px 10px; }
+  .management-photos { flex-wrap: wrap; } .management-photos > * { flex-basis: 28%; } .management-options label { padding: 8px; gap: 5px; } .management-property-picker > img { padding: 6px; }
+}
+@media (max-width: 480px) {
+  .management-metrics > section > span { display: none; }
+  .management-property-picker { width: 100%; padding: 10px; }
+  .management-context-actions button { max-width: none; }
+}

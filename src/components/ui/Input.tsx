@@ -28,6 +28,8 @@ export const Input: React.FC<InputProps> = ({
         )}
         <input
           id={inputId}
+          aria-invalid={error ? true : undefined}
+          aria-describedby={error && inputId ? `${inputId}-error` : undefined}
           className={`w-full py-2 text-sm bg-white rounded-sm text-text-primary placeholder:text-text-disabled border transition-all duration-150 outline-none
             ${leftIcon ? 'pl-10 pr-3.5' : 'pl-3.5 pr-3.5'}
             ${rightElement ? 'pr-11' : ''}
@@ -43,7 +45,7 @@ export const Input: React.FC<InputProps> = ({
           </div>
         )}
       </div>
-      {error && <span className="text-xs text-danger font-medium">{error}</span>}
+      {error && <span id={inputId ? `${inputId}-error` : undefined} className="text-xs text-danger font-medium">{error}</span>}
       {!error && helperText && <span className="text-xs text-text-muted">{helperText}</span>}
     </div>
   );
