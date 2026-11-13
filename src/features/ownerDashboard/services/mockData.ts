@@ -1,0 +1,121 @@
+import { ROUTES } from '@/routes/paths';
+import { dashboardSections } from '../constants';
+import type { OwnerDashboardData } from '../types';
+
+export const mockOwnerDashboard: OwnerDashboardData = {
+  date: '2023-10-27',
+  tasks: [
+    {
+      id: 'new-appointments',
+      count: 2,
+      label: 'lịch hẹn xem phòng mới',
+      tone: 'warning',
+      actionLabel: 'Xác nhận giờ',
+      href: `#${dashboardSections.appointments}`,
+    },
+    {
+      id: 'rental-requests',
+      count: 1,
+      label: 'yêu cầu thuê chờ duyệt',
+      tone: 'success',
+      actionLabel: 'Xem & Duyệt',
+      href: ROUTES.LANDLORD_PROPERTIES,
+    },
+    {
+      id: 'urgent-incidents',
+      count: 1,
+      label: 'sự cố khẩn cấp mới',
+      tone: 'danger',
+      actionLabel: 'Điều thợ',
+      href: `#${dashboardSections.roomMap}`,
+    },
+    {
+      id: 'overdue-invoices',
+      count: 3,
+      label: 'hóa đơn quá hạn',
+      tone: 'danger',
+      actionLabel: 'Gửi nhắc nợ',
+      href: `#${dashboardSections.reconciliation}`,
+    },
+  ],
+  stats: {
+    roomCounts: { vacant: 3, reserved: 1, occupied: 19, maintenance: 1 },
+    monthlyRevenue: 45_200_000,
+    receivedRevenue: 38_700_000,
+    revenuePeriod: 'Tháng 10/2023',
+    utilityReadings: 18,
+    utilityPeriod: '25/10 – 30/10',
+    propertyLabel: '48 Lê Văn Lương & 104 Cầu Giấy',
+    healthyMeters: 24,
+  },
+  summary: {
+    appointments: [
+      {
+        id: 'check-out-p104',
+        time: '09:30',
+        title: 'Khảo sát trả phòng P.104',
+        detail: 'Khách: Hoàng Văn Bình',
+        status: 'completed',
+        kind: 'checkout',
+        roomCode: 'P.104',
+        note: '+3.2M cọc',
+      },
+      {
+        id: 'viewing-p201',
+        time: '15:30',
+        title: 'Dẫn khách xem phòng P.201',
+        detail: 'Khách: Trần Văn An',
+        status: 'upcoming',
+        kind: 'viewing',
+        roomCode: 'P.201',
+      },
+      {
+        id: 'maintenance-p102',
+        time: '17:00',
+        title: 'Sửa điều hòa phòng P.102',
+        detail: 'Kỹ thuật: Anh Tuấn',
+        status: 'scheduled',
+        kind: 'maintenance',
+        roomCode: 'P.102',
+      },
+    ],
+    receipts: [
+      {
+        id: 'receipt-p301',
+        tenantName: 'Nguyễn Thùy Linh',
+        roomCode: 'P.301',
+        detail: 'VCB • 09:12',
+        amount: 3_500_000,
+        thumbnail: 'vcb',
+      },
+      {
+        id: 'receipt-p204',
+        tenantName: 'Lê Đức Trọng',
+        roomCode: 'P.204',
+        detail: 'MB · Cọc 1 tháng',
+        amount: 4_200_000,
+        thumbnail: 'mb',
+      },
+      {
+        id: 'receipt-p105',
+        tenantName: 'Phạm H. Nhung',
+        roomCode: 'P.105',
+        detail: 'TCB · Tiền điện nước',
+        amount: 850_000,
+        thumbnail: 'techcom',
+      },
+    ],
+    property: {
+      name: '48 Lê Văn Lương',
+      roomCount: 12,
+      rooms: [
+        { code: 'P.101', status: 'occupied', detail: 'Trần T. Hà', caption: 'Đã nộp', utilityReading: { electricity: 1250, water: 84 } },
+        { code: 'P.102', status: 'maintenance', detail: 'Hỏng ĐH', caption: 'Cần thợ' },
+        { code: 'P.103', status: 'vacant', detail: '3.6M/tháng', caption: 'Sẵn sàng' },
+        { code: 'P.104', status: 'vacant', detail: 'Đang dọn', caption: 'Trả phòng', isCleaning: true },
+        { code: 'P.201', status: 'reserved', detail: 'Hẹn 15:30', caption: 'Xem phòng' },
+        { code: 'P.202', status: 'occupied', detail: 'Lê Minh Tú', caption: 'Đã thu đủ' },
+      ],
+    },
+  },
+};

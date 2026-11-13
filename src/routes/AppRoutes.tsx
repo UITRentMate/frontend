@@ -1,5 +1,6 @@
 import { createBrowserRouter } from 'react-router-dom';
 import MainLayout from '@/layouts/MainLayout';
+import OwnerLayout from '@/layouts/OwnerLayout';
 import {
   LoginPage,
   RegisterPage,
@@ -7,6 +8,7 @@ import {
   RoomsPage,
   RoomDetailPage,
   AdminDashboardPage,
+  LandlordDashboardPage,
   LandlordPropertiesPage,
   NotFoundPage,
 } from '@/pages';
@@ -23,6 +25,18 @@ export const router = createBrowserRouter([
   {
     path: ROUTES.REGISTER,
     element: <RegisterPage />,
+  },
+  {
+    element: <ProtectedRoutes requiredRole="landlord" />,
+    children: [
+      {
+        element: <OwnerLayout />,
+        children: [
+          { path: ROUTES.LANDLORD_DASHBOARD, element: <LandlordDashboardPage /> },
+          { path: ROUTES.LANDLORD_PROPERTIES, element: <LandlordPropertiesPage /> },
+        ],
+      },
+    ],
   },
 
   // 2. Các tuyến đường giao diện chính sử dụng MainLayout (Navbar + Footer)
@@ -42,17 +56,6 @@ export const router = createBrowserRouter([
       {
         path: 'rooms/:id',
         element: <RoomDetailPage />,
-      },
-
-      // Tuyến bảo vệ yêu cầu đăng nhập (Protected Routes)
-      {
-        element: <ProtectedRoutes />,
-        children: [
-          {
-            path: 'landlord/properties',
-            element: <LandlordPropertiesPage />,
-          },
-        ],
       },
 
       // Tuyến bảo vệ dành riêng cho Quản trị viên (Admin Routes)

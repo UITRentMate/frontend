@@ -52,11 +52,9 @@ export const RentMateLogin: React.FC<RentMateLoginProps> = ({ onSuccess, classNa
       // Phân quyền điều hướng theo Use Case UC-02
       let targetRoute: string = ROUTES.ROOMS;
       if (response.user.role === 'admin') {
-        targetRoute = '/admin/dashboard';
+        targetRoute = ROUTES.ADMIN_DASHBOARD;
       } else if (response.user.role === 'landlord') {
-        targetRoute = '/landlord/properties';
-      } else {
-        targetRoute = ROUTES.ROOMS;
+        targetRoute = ROUTES.LANDLORD_DASHBOARD;
       }
 
       if (onSuccess) {
