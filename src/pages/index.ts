@@ -1,4 +1,5 @@
 export * from './home';
+export * from './landing';  
 export * from './auth';
 export * from './rooms';
 export * from './admin';
