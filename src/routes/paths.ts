@@ -1,5 +1,6 @@
 export const ROUTES = {
   HOME: '/',
+  LANDING: '/landing',
   ROOMS: '/rooms',
   ROOM_DETAIL: '/rooms/:id',
   CREATE_ROOM: '/rooms/new',
