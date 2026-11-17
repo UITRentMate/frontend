@@ -1,8 +1,8 @@
-import type { ManagedRoom, ManagedRoomStatus, RoomFormErrors, RoomFormValues } from '../types';
+import type { ManagedRoom, RoomStatus, RoomFormErrors, RoomFormValues } from '../types';
 
 export const normalizeRoomCode = (value: string): string => value.trim().toLocaleLowerCase('vi-VN');
 
-export function filterManagedRooms(rooms: ManagedRoom[], query: string, status: ManagedRoomStatus | 'all', floor: string): ManagedRoom[] {
+export function filterManagedRooms(rooms: ManagedRoom[], query: string, status: RoomStatus | 'all', floor: string): ManagedRoom[] {
   const search = normalizeRoomCode(query);
   return rooms.filter((room) => (status === 'all' || room.status === status)
     && (floor === 'all' || room.floor === Number(floor))

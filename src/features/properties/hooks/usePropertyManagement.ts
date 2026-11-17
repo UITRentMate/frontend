@@ -1,20 +1,21 @@
 import { useEffect, useRef, useState } from 'react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
-import type { CreateManagedRoomInput, ManagedRoomStatus, RoomFormValues } from '@/features/rooms/types';
-import { filterManagedRooms } from '@/features/rooms/utils/roomManagement';
-import { MANAGEMENT_UNSUPPORTED } from '@/features/rooms/managementConstants';
+import { MANAGEMENT_UNSUPPORTED } from '@/constants';
 
-import { mockPropertyManagementService } from '../services/mockPropertyManagementService';
+import type { CreateManagedRoomInput, RoomStatus, RoomFormValues } from '@/features/rooms/types';
+import { filterManagedRooms } from '@/features/rooms/utils/roomManagement';
+
+import { propertyApi } from '../api/propertyApi';
 import type { PropertyFormValues } from '../types';
 import { propertyKeys } from './propertyKeys';
 
 export function usePropertyManagement() {
   const queryClient = useQueryClient();
-  const query = useQuery({ queryKey: propertyKeys.overview(), queryFn: async () => (await mockPropertyManagementService.getOverview()).data, staleTime: 1000 * 60 * 5 });
+  const query = useQuery({ queryKey: propertyKeys.overview(), queryFn: async () => (await propertyApi.getOverview()).data, staleTime: 1000 * 60 * 5 });
   const [selectedId, setSelectedId] = useState('');
   const [search, setSearch] = useState('');
-  const [status, setStatus] = useState<ManagedRoomStatus | 'all'>('all');
+  const [status, setStatus] = useState<RoomStatus | 'all'>('all');
   const [floor, setFloor] = useState('all');
   const [modal, setModal] = useState<'property' | 'room' | null>(null);
   const modalTriggerRef = useRef<HTMLElement | null>(null);
@@ -31,7 +32,7 @@ export function usePropertyManagement() {
   const visibleRooms = filterManagedRooms(rooms, search, status, floor);
   const clearFilters = () => { setSearch(''); setStatus('all'); setFloor('all'); };
   const createProperty = useMutation({
-    mutationFn: (values: PropertyFormValues) => mockPropertyManagementService.createProperty(values),
+    mutationFn: (values: PropertyFormValues) => propertyApi.createProperty(values),
     onSuccess: (response) => {
       queryClient.setQueryData(propertyKeys.overview(), response.data);
       setSelectedId(response.data.properties[response.data.properties.length - 1].id);
@@ -39,7 +40,7 @@ export function usePropertyManagement() {
     },
   });
   const createRoom = useMutation({
-    mutationFn: (input: CreateManagedRoomInput) => mockPropertyManagementService.createRoom(input),
+    mutationFn: (input: CreateManagedRoomInput) => propertyApi.createRoom(input),
     onSuccess: (response) => { queryClient.setQueryData(propertyKeys.overview(), response.data); clearFilters(); setModal(null); },
   });
   const isPending = createProperty.isPending || createRoom.isPending;

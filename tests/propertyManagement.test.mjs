@@ -1,4 +1,4 @@
-// Run with Node 24: node --test scripts/test-fe06.mjs
+// Run with Node 24: npm test
 // Built-in hooks resolve the app's TS aliases and treat image imports as URLs.
 import assert from 'node:assert/strict';
 import { readFileSync, existsSync } from 'node:fs';
@@ -90,4 +90,50 @@ test('Mock submits preserve property relationship, hidden/vacant state, no inven
   assert.equal(room.monthlyRent, null);
   assert.equal(room.image, undefined);
   assert.equal(MOCK_PROPERTY_MANAGEMENT.rooms.length, 6);
+});
+
+test('Property API uses the shared Axios mock adapter and normalizes mutation failures', async () => {
+  // The browser storage interface is required by the shared auth interceptor.
+  const originalLocalStorage = Object.getOwnPropertyDescriptor(globalThis, 'localStorage');
+  const originalSessionStorage = Object.getOwnPropertyDescriptor(globalThis, 'sessionStorage');
+  Object.defineProperty(globalThis, 'localStorage', { configurable: true, value: { getItem: () => null } });
+  Object.defineProperty(globalThis, 'sessionStorage', { configurable: true, value: { getItem: () => null } });
+
+  try {
+    const { propertyApi } = await import('../src/features/properties/api/propertyApi.ts');
+    const overview = await propertyApi.getOverview();
+    assert.equal(overview.success, true);
+    assert.ok(overview.timestamp);
+    const created = await propertyApi.createProperty({ ...propertyInput, name: 'API property' });
+    const property = created.data.properties.at(-1);
+    const input = { propertyId: property.id, values: { ...roomInput, floor: '0' } };
+    const saved = await propertyApi.createRoom(input);
+    assert.equal(saved.data.rooms.at(-1).propertyId, property.id);
+    assert.equal(saved.data.rooms.at(-1).status, 'vacant');
+    assert.equal(saved.data.rooms.at(-1).monthlyRent, null);
+    await assert.rejects(propertyApi.createRoom(input), (error) => {
+      assert.equal(error.statusCode, 422);
+      assert.ok(error.message);
+      return true;
+    });
+    assert.equal((await propertyApi.getOverview()).data.rooms.length, overview.data.rooms.length + 1);
+  } finally {
+    if (originalLocalStorage) Object.defineProperty(globalThis, 'localStorage', originalLocalStorage);
+    else delete globalThis.localStorage;
+    if (originalSessionStorage) Object.defineProperty(globalThis, 'sessionStorage', originalSessionStorage);
+    else delete globalThis.sessionStorage;
+  }
+});
+
+test('FE-06 mock adapter delegates other feature requests to the HTTP adapter', async () => {
+  const { createMockAdapter } = await import('../src/api/mockAdapter.ts');
+  let delegatedConfig;
+  const adapter = createMockAdapter(async (config) => {
+    delegatedConfig = config;
+    return { data: { ok: true }, status: 200, statusText: 'OK', headers: {}, config };
+  });
+  const config = { method: 'get', url: '/auth/me', headers: {} };
+  const response = await adapter(config);
+  assert.equal(delegatedConfig, config);
+  assert.deepEqual(response.data, { ok: true });
 });

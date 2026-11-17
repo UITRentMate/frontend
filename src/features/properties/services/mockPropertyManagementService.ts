@@ -7,7 +7,7 @@ import type { PropertyFormValues, PropertyManagementData } from '../types';
 import { validatePropertyForm } from '../utils/validation';
 import { MOCK_PROPERTY_MANAGEMENT } from './mockData';
 
-// FE-06 is exclusively in memory, independent of the HTTP/mock environment flag.
+// In-memory store used by the shared client's FE-06 mock adapter.
 const store: PropertyManagementData = structuredClone(MOCK_PROPERTY_MANAGEMENT);
 const delay = (): Promise<void> => new Promise((resolve) => setTimeout(resolve, 350));
 function snapshot(): ApiResponse<PropertyManagementData> {

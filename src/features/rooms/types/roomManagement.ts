@@ -1,12 +1,12 @@
 // Owner UI model only; deliberately separate from public Room and API contracts.
-export type ManagedRoomStatus = 'vacant' | 'reserved' | 'occupied' | 'maintenance';
+import type { RoomStatus } from './roomStatus';
 
 export interface ManagedRoom {
   id: string;
   propertyId: string;
   code: string;
   floor: number;
-  status: ManagedRoomStatus;
+  status: RoomStatus;
   image?: string;
   area: number;
   capacity: number;
@@ -39,7 +39,7 @@ export interface CreateManagedRoomInput {
 }
 
 export interface RoomManagementCardProps { room: ManagedRoom; onUnsupported: () => void; }
-export interface MockPhotoStripProps { images: string[]; labels: string[]; uploadIcon: string; }
+export interface ManagementPhotoStripProps { images: string[]; labels: string[]; uploadIcon: string; }
 
 export interface AddRoomModalProps {
   propertyId: string;

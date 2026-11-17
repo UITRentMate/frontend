@@ -26,15 +26,15 @@ Ngày: 13/11/2026. Issue: [UITRentMate/backend#6](https://github.com/UITRentMate
 - `src/features/properties/`: model khu trọ, fixture, service bộ nhớ, Query Key Factory/hook, validation địa chỉ, trang quản lý và modal thêm khu.
 - `src/features/rooms/types/roomManagement.ts`, `managementConstants.ts`, `utils/roomManagement.ts`, `components/{RoomManagementCard,AddRoomModal,ManagementPhotoStrip}.tsx`: model/card quản lý riêng, lọc/validation phòng, modal phòng, ảnh mẫu. Giữ nguyên public `Room`, `RoomCard`, service và hook tìm phòng.
 - `src/assets/property-management/`: ảnh/SVG cục bộ từ Figma; không dùng URL asset tạm khi chạy ứng dụng. SVG giữ kích thước gốc, ảnh phòng dùng crop trong khung.
-- `src/styles/propertyManagement.css`: style có phạm vi riêng; grid 3/2/1 cột, bộ lọc wrap, body modal cuộn, footer truy cập được trên viewport nhỏ.
+- Các component FE-06 dùng Tailwind utilities và semantic tokens trong JSX cho grid 3/2/1 cột, bộ lọc và modal. Đã xóa `propertyManagement.css` theo review PR #4.
 - `src/pages/landlord/LandlordPropertiesPage.tsx`: thay bản sơ bộ bằng page lắp ráp mỏng.
 - `src/components/ui/Modal.tsx`, `src/types/ui.types.ts`: thêm hai size tùy chọn, ID tiêu đề riêng, giữ overflow trước đó, focus ban đầu/trap/khôi phục focus; không thay size mặc định.
 - `src/components/ui/Input.tsx`: liên kết lỗi với input bằng `aria-invalid`/`aria-describedby`.
-- `scripts/test-fe06.mjs`: kiểm thử bằng Node 24 và built-in test runner, không thêm package.
+- `tests/propertyManagement.test.mjs`: kiểm thử bằng Node 24 và built-in test runner, không thêm package.
 
 ## Giả định đã chọn
 
-1. Mock store riêng trong bộ nhớ và TanStack Query cache, luôn dùng mock cho FE-06; không HTTP/database/localStorage. Reload reset fixture. Fixtures dashboard vẫn độc lập.
+1. Mock store riêng trong bộ nhớ và TanStack Query cache. FE-06 mặc định dùng mock qua Axios adapter; `VITE_USE_MOCK=false` gửi HTTP tới các endpoint dự kiến. Reload reset fixture. Fixtures dashboard vẫn độc lập.
 2. Tỷ lệ lấp đầy = phòng đang thuê / tổng phòng trong khu. Phòng sẵn sàng = phòng trống, bao gồm phòng chưa đăng tin. Doanh thu dự tính = tổng giá tháng của phòng đang thuê, chưa tính điện/nước/cọc. Chỉ số và số đếm chip tính trên toàn khu, không đổi theo search/tầng/trạng thái. Đây là quy ước demo, không phải business rule/API contract.
 3. Diện tích hữu hạn > 0, sức chứa là số nguyên an toàn > 0. Tầng phải thuộc danh sách tầng của khu; tầng trệt dùng `0`. Mã phòng duy nhất theo trim + không phân biệt hoa thường trong cùng khu. Không áp đặt giá, ảnh hay giới hạn số phòng.
 4. Khu mới được gán một lựa chọn tầng trệt `[0]` để demo thêm phòng, không triển khai quản lý tầng. Khu mẫu Bình Thạnh không có phòng để thử empty state.
@@ -52,7 +52,7 @@ Ngày: 13/11/2026. Issue: [UITRentMate/backend#6](https://github.com/UITRentMate
 | `node .agent/skills/api-conventions/scripts/verify_query_keys.js` | Exit 0, không cảnh báo key hardcode |
 | `npm.cmd run typecheck` | Exit 0 |
 | `npm.cmd run build` | Exit 0; Vite cảnh báo chunk JS >500kB |
-| `node --test scripts/test-fe06.mjs` | 4 nhóm pass, 0 fail; Node 24 thông báo API stripTypeScriptTypes còn experimental |
+| `npm.cmd test` | 6 nhóm pass, 0 fail; Node 24 thông báo API stripTypeScriptTypes còn experimental |
 | `git diff --check` | Exit 0 |
 | `git status --short` | File task modified/untracked, không stage/commit |
 
@@ -92,3 +92,12 @@ Xem docs/issues/FE-06-handoff.md để biết giả định mock, công thức c
 ```
 
 Không đánh dấu toàn bộ issue hoàn tất trước khi nghiệm thu UI và PR được review/merge.
+
+## Điều chỉnh theo review PR #4 ngày 16/11/2026
+
+- Đã đọc ba tài liệu được review dẫn chiếu tại `.agent/rules/CODE_CONVENTIONS.md`, `.agent/rules/FOLDER_STRUCTURE.md` và `.agent/rules/API_CONVENTIONS.md` trong workspace.
+- Hook gọi `propertyApi` với typed arguments và `ApiResponse<PropertyManagementData>` qua `src/lib/apiClient.ts`. Endpoints dự kiến đặt tại `src/api/endpoints.ts`, cần xác nhận contract khi tích hợp backend.
+- Axios mock adapter xử lý riêng các endpoint FE-06, chuyển request của tính năng khác sang HTTP adapter hiện có. Mặc định FE-06 dùng mock, `VITE_USE_MOCK=false` bật HTTP cho các endpoint dự kiến.
+- Asset có tên file/export theo chức năng, formatter nằm tại `src/utils/formatCurrency.ts`, thông báo dùng chung tại `src/constants/messages.ts`. Dashboard và FE-06 dùng chung `RoomStatus` tại `src/features/rooms/types/roomStatus.ts`.
+- Kiểm thử được đưa vào `tests/propertyManagement.test.mjs` và chạy bằng `npm.cmd test` trên Node 24. Hai nhóm bổ sung kiểm tra gateway/chuẩn hóa lỗi và HTTP delegation ngoài FE-06.
+- Công cụ trình duyệt hiện lỗi khởi tạo runtime (`failed to write kernel assets`), chưa nghiệm thu trực quan sau chuyển Tailwind. Build còn cảnh báo chunk lớn hơn 500kB.

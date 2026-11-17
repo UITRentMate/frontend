@@ -1,114 +1,114 @@
 // Local assets from Figma 159:602, 161:2883 and 163:4356.
-import page0 from './page-0.png';
-import page1 from './page-1.png';
-import page2 from './page-2.png';
-import page3 from './page-3.png';
-import page4 from './page-4.png';
-import page5 from './page-5.png';
-import page6 from './page-6.svg';
-import page7 from './page-7.svg';
-import page9 from './page-9.svg';
-import page10 from './page-10.svg';
-import page11 from './page-11.svg';
-import page12 from './page-12.svg';
-import page13 from './page-13.svg';
-import page14 from './page-14.svg';
-import page15 from './page-15.svg';
-import page16 from './page-16.svg';
-import page17 from './page-17.svg';
-import page18 from './page-18.svg';
-import page19 from './page-19.svg';
-import page20 from './page-20.svg';
-import page21 from './page-21.svg';
-import page22 from './page-22.svg';
-import page24 from './page-24.svg';
-import page25 from './page-25.svg';
-import page26 from './page-26.svg';
-import page27 from './page-27.svg';
-import page28 from './page-28.svg';
-import room0 from './room-0.png';
-import room1 from './room-1.png';
-import room2 from './room-2.png';
-import room6 from './room-6.svg';
-import room9 from './room-9.svg';
-import room10 from './room-10.svg';
-import room11 from './room-11.svg';
-import room12 from './room-12.svg';
-import room13 from './room-13.svg';
-import room14 from './room-14.svg';
-import room15 from './room-15.svg';
-import room16 from './room-16.svg';
-import room17 from './room-17.svg';
-import room18 from './room-18.svg';
-import room19 from './room-19.svg';
-import property0 from './property-0.png';
-import property1 from './property-1.png';
-import property2 from './property-2.png';
-import property3 from './property-3.png';
-import property6 from './property-6.svg';
-import property7 from './property-7.svg';
-import property10 from './property-10.svg';
-import property11 from './property-11.svg';
-import property12 from './property-12.svg';
-import property13 from './property-13.svg';
-import property14 from './property-14.svg';
-import property15 from './property-15.svg';
-import property16 from './property-16.svg';
-import property18 from './property-18.svg';
-import property20 from './property-20.svg';
+import pageLocationIcon from './page-location.svg';
+import pagePropertyIcon from './page-property.svg';
+import pageSettingsIcon from './page-settings.svg';
+import pageAddPropertyIcon from './page-addProperty.svg';
+import pageOccupancyIcon from './page-occupancy.svg';
+import pageVacantRoomIcon from './page-vacantRoom.svg';
+import pageReservationIcon from './page-reservation.svg';
+import pageRevenueIcon from './page-revenue.svg';
+import pageSearchIcon from './page-search.svg';
+import pageGridViewIcon from './page-gridView.svg';
+import pageListViewIcon from './page-listView.svg';
+import pageExportExcelIcon from './page-exportExcel.svg';
+import pageAddRoomIcon from './page-addRoom.svg';
+import pageConfigurePriceIcon from './page-configurePrice.svg';
+import pageMoreActionsIcon from './page-moreActions.svg';
+import pageTenantVerifiedIcon from './page-tenantVerified.svg';
+import pageContractIcon from './page-contract.svg';
+import pageDepositNoticeIcon from './page-depositNotice.svg';
+import pageApproveDepositIcon from './page-approveDeposit.svg';
+import pageMaintenanceNoticeIcon from './page-maintenanceNotice.svg';
+import pageMaintenanceProgressIcon from './page-maintenanceProgress.svg';
+import roomUploadIcon from './room-upload.svg';
+import roomAirConditionerIcon from './room-airConditioner.svg';
+import roomMezzanineIcon from './room-mezzanine.svg';
+import roomPrivateBathroomIcon from './room-privateBathroom.svg';
+import roomMiniFridgeIcon from './room-miniFridge.svg';
+import roomKitchenSinkIcon from './room-kitchenSink.svg';
+import roomDeskIcon from './room-desk.svg';
+import roomBedIcon from './room-bed.svg';
+import roomBalconyIcon from './room-balcony.svg';
+import roomWashingMachineIcon from './room-washingMachine.svg';
+import roomCopyAmenitiesIcon from './room-copyAmenities.svg';
+import roomConfigurePriceIcon from './room-configurePrice.svg';
+import propertyAddressInfoIcon from './property-addressInfo.svg';
+import propertyUploadIcon from './property-upload.svg';
+import propertyElevatorIcon from './property-elevator.svg';
+import propertyCctvIcon from './property-cctv.svg';
+import propertyFingerprintIcon from './property-fingerprint.svg';
+import propertyGuardedParkingIcon from './property-guardedParking.svg';
+import propertyDryingYardIcon from './property-dryingYard.svg';
+import propertySharedLaundryIcon from './property-sharedLaundry.svg';
+import propertyGateScheduleIcon from './property-gateSchedule.svg';
+import propertyFireSafetyIcon from './property-fireSafety.svg';
+import propertyCreatePropertyIcon from './property-createProperty.svg';
+import vacantRoom201 from './vacant-room-201.png';
+import occupiedRoom102 from './occupied-room-102.png';
+import reservedRoom304 from './reserved-room-304.png';
+import maintenanceRoom105 from './maintenance-room-105.png';
+import occupiedRoom202 from './occupied-room-202.png';
+import vacantRoom301 from './vacant-room-301.png';
+import roomInterior from './room-interior.png';
+import roomBathroom from './room-bathroom.png';
+import roomBalcony from './room-balcony.png';
+import propertyFacade from './property-facade.png';
+import propertyGate from './property-gate.png';
+import propertyParking from './property-parking.png';
+import propertyCorridor from './property-corridor.png';
 
 export const managementAssets = {
   page: {
-    container: page6,
-    container1: page7,
-    container3: page9,
-    container4: page10,
-    container5: page11,
-    container6: page12,
-    container7: page13,
-    container8: page14,
-    icon: page15,
-    container9: page16,
-    container10: page17,
-    container11: page18,
-    container12: page19,
-    container13: page20,
-    container14: page21,
-    container15: page22,
-    container17: page24,
-    margin: page25,
-    container18: page26,
-    margin1: page27,
-    container19: page28,
+    locationIcon: pageLocationIcon,
+    propertyIcon: pagePropertyIcon,
+    settingsIcon: pageSettingsIcon,
+    addPropertyIcon: pageAddPropertyIcon,
+    occupancyIcon: pageOccupancyIcon,
+    vacantRoomIcon: pageVacantRoomIcon,
+    reservationIcon: pageReservationIcon,
+    revenueIcon: pageRevenueIcon,
+    searchIcon: pageSearchIcon,
+    gridViewIcon: pageGridViewIcon,
+    listViewIcon: pageListViewIcon,
+    exportExcelIcon: pageExportExcelIcon,
+    addRoomIcon: pageAddRoomIcon,
+    configurePriceIcon: pageConfigurePriceIcon,
+    moreActionsIcon: pageMoreActionsIcon,
+    tenantVerifiedIcon: pageTenantVerifiedIcon,
+    contractIcon: pageContractIcon,
+    depositNoticeIcon: pageDepositNoticeIcon,
+    approveDepositIcon: pageApproveDepositIcon,
+    maintenanceNoticeIcon: pageMaintenanceNoticeIcon,
+    maintenanceProgressIcon: pageMaintenanceProgressIcon,
   },
   room: {
-    container2: room6,
-    container4: room9,
-    container5: room10,
-    container6: room11,
-    container7: room12,
-    container8: room13,
-    container9: room14,
-    container10: room15,
-    container11: room16,
-    container12: room17,
-    container13: room18,
-    container14: room19,
+    uploadIcon: roomUploadIcon,
+    airConditionerIcon: roomAirConditionerIcon,
+    mezzanineIcon: roomMezzanineIcon,
+    privateBathroomIcon: roomPrivateBathroomIcon,
+    miniFridgeIcon: roomMiniFridgeIcon,
+    kitchenSinkIcon: roomKitchenSinkIcon,
+    deskIcon: roomDeskIcon,
+    bedIcon: roomBedIcon,
+    balconyIcon: roomBalconyIcon,
+    washingMachineIcon: roomWashingMachineIcon,
+    copyAmenitiesIcon: roomCopyAmenitiesIcon,
+    configurePriceIcon: roomConfigurePriceIcon,
   },
   property: {
-    container1: property6,
-    container2: property7,
-    container4: property10,
-    container5: property11,
-    container6: property12,
-    container7: property13,
-    container8: property14,
-    container9: property15,
-    container10: property16,
-    container11: property18,
-    container13: property20,
+    addressInfoIcon: propertyAddressInfoIcon,
+    uploadIcon: propertyUploadIcon,
+    elevatorIcon: propertyElevatorIcon,
+    cctvIcon: propertyCctvIcon,
+    fingerprintIcon: propertyFingerprintIcon,
+    guardedParkingIcon: propertyGuardedParkingIcon,
+    dryingYardIcon: propertyDryingYardIcon,
+    sharedLaundryIcon: propertySharedLaundryIcon,
+    gateScheduleIcon: propertyGateScheduleIcon,
+    fireSafetyIcon: propertyFireSafetyIcon,
+    createPropertyIcon: propertyCreatePropertyIcon,
   },
-  photos: [page0, page1, page2, page3, page4, page5],
-  roomPhotos: [room0, room1, room2],
-  propertyPhotos: [property0, property1, property2, property3],
+  photos: [vacantRoom201, occupiedRoom102, reservedRoom304, maintenanceRoom105, occupiedRoom202, vacantRoom301],
+  roomPhotos: [roomInterior, roomBathroom, roomBalcony],
+  propertyPhotos: [propertyFacade, propertyGate, propertyParking, propertyCorridor],
 };
