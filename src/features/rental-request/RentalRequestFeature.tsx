@@ -73,7 +73,7 @@ export const RentalRequestFeature: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-slate-50 flex flex-col font-sans">
+    <div className="flex-1 flex flex-col">
       {/* Top Banner / Breadcrumb & Header */}
       <BreadcrumbHeader
         buildingName={MOCK_ROOM.buildingName}
