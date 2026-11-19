@@ -169,3 +169,4 @@ export const RoomTourSidebar: React.FC<RoomTourSidebarProps> = ({ room }) => {
     </aside>
   );
 };
+

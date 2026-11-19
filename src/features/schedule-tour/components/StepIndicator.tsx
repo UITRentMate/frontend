@@ -37,3 +37,4 @@ export const StepIndicator: React.FC = () => {
     </div>
   );
 };
+

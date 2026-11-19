@@ -20,3 +20,4 @@ export const IdentityNotice: React.FC<IdentityNoticeProps> = ({ userName }) => {
     </div>
   );
 };
+
