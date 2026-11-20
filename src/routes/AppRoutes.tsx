@@ -4,6 +4,8 @@ import OwnerLayout from '@/layouts/OwnerLayout';
 import {
   LoginPage,
   RegisterPage,
+  ForgotPasswordPage,
+  ResetPasswordPage,
   HomePage,
   RoomsPage,
   RoomDetailPage,
@@ -25,6 +27,14 @@ export const router = createBrowserRouter([
   {
     path: ROUTES.REGISTER,
     element: <RegisterPage />,
+  },
+  {
+    path: ROUTES.FORGOT_PASSWORD,
+    element: <ForgotPasswordPage />,
+  },
+  {
+    path: ROUTES.RESET_PASSWORD,
+    element: <ResetPasswordPage />,
   },
   {
     element: <ProtectedRoutes requiredRole="landlord" />,

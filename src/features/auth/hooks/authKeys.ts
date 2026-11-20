@@ -7,6 +7,8 @@ export const authKeys = {
   currentUser: () => [...authKeys.all, 'currentUser'] as const,
   session: () => [...authKeys.all, 'session'] as const,
   register: () => [...authKeys.all, 'register'] as const,
+  forgotPassword: () => [...authKeys.all, 'forgotPassword'] as const,
+  resetPassword: () => [...authKeys.all, 'resetPassword'] as const,
 } as const;
 
 export default authKeys;

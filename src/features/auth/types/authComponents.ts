@@ -1,11 +1,19 @@
-import type { ReactNode } from 'react';
-
 export interface RentMateLoginProps {
   onSuccess?: (targetRoute: string) => void;
   className?: string;
 }
 
 export interface RentMateRegisterProps {
+  onSuccess?: () => void;
+  className?: string;
+}
+
+export interface RentMateForgotPasswordProps {
+  onSuccess?: () => void;
+  className?: string;
+}
+
+export interface RentMateResetPasswordProps {
   onSuccess?: () => void;
   className?: string;
 }
@@ -51,10 +59,4 @@ export interface AuthFooterProps {
 export interface SecurityAlertProps {
   message: string;
   onDismiss?: () => void;
-}
-
-export interface SvgIconProps {
-  className?: string;
-  size?: number;
-  children?: ReactNode;
 }
