@@ -1,6 +1,8 @@
 import type { ReactNode } from 'react';
 
-export type RoomStatus = 'vacant' | 'reserved' | 'occupied' | 'maintenance';
+import type { RoomStatus } from '@/features/rooms/types';
+
+export type { RoomStatus } from '@/features/rooms/types';
 
 export interface DashboardStats {
   roomCounts: Record<RoomStatus, number>;
