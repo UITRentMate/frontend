@@ -1,8 +1,10 @@
 import axios, { type AxiosError, type InternalAxiosRequestConfig } from 'axios';
+
+import { createMockAdapter } from '@/api/mockAdapter';
 import type { ApiError } from '../types/api.types';
 import { tokenStorage } from '../utils/tokenStorage';
 
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000/api/v1';
+const API_BASE_URL = import.meta.env?.VITE_API_BASE_URL || 'http://localhost:5000/api/v1';
 
 export const apiClient = axios.create({
   baseURL: API_BASE_URL,
@@ -11,6 +13,12 @@ export const apiClient = axios.create({
     'Content-Type': 'application/json',
   },
 });
+
+// FE-06 remains a mock-first workflow until its proposed backend contract is ready.
+// Set VITE_USE_MOCK=false to send these requests through the existing HTTP adapter.
+if (import.meta.env?.VITE_USE_MOCK !== 'false') {
+  apiClient.defaults.adapter = createMockAdapter(axios.getAdapter(apiClient.defaults.adapter));
+}
 
 // Request Interceptor: Attach Auth Token từ tokenStorage
 apiClient.interceptors.request.use(
