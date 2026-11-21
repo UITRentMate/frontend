@@ -3,6 +3,7 @@ import { Link, useLocation } from 'react-router-dom';
 import { ROUTES } from '@/routes/paths';
 import { useAuth } from '@/hooks/useAuth';
 import Button from '@/components/ui/Button';
+import { isSafeAvatarUrl } from '@/features/profile/utils/avatarValidation';
 
 export const Navbar: React.FC = () => {
   const location = useLocation();
@@ -77,9 +78,25 @@ export const Navbar: React.FC = () => {
                   Cổng Chủ trọ
                 </Link>
               )}
-              <div className="flex items-center gap-2 px-2.5 py-1 rounded-full bg-slate-50 border border-slate-200">
-                <div className="w-6 h-6 rounded-full bg-brand-500 text-white font-bold text-xs flex items-center justify-center">
-                  {user.name.charAt(0)}
+              <Link
+                to={ROUTES.PROFILE}
+                title="Cài đặt tài khoản"
+                className={`flex items-center gap-2 px-2.5 py-1 rounded-full border transition-colors ${
+                  isActive(ROUTES.PROFILE)
+                    ? 'bg-brand-50 border-brand-200'
+                    : 'bg-slate-50 border-slate-200 hover:border-brand-300 hover:bg-brand-50/40'
+                }`}
+              >
+                <div className="w-6 h-6 rounded-full bg-brand-500 text-white font-bold text-xs flex items-center justify-center overflow-hidden shrink-0">
+                  {isSafeAvatarUrl(user.avatarUrl) ? (
+                    <img
+                      src={user.avatarUrl}
+                      alt={user.name}
+                      className="w-full h-full object-cover"
+                    />
+                  ) : (
+                    user.name.trim().charAt(0).toUpperCase()
+                  )}
                 </div>
                 <div className="flex flex-col text-left hidden sm:flex">
                   <span className="text-xs font-semibold text-text-primary truncate max-w-[120px]">
@@ -89,7 +106,7 @@ export const Navbar: React.FC = () => {
                     {user.role}
                   </span>
                 </div>
-              </div>
+              </Link>
 
               <Button
                 variant="ghost"
