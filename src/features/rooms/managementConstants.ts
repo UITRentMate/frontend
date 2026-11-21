@@ -1,5 +1,5 @@
 import { managementAssets } from '@/assets/property-management';
-import type { RoomStatus, RoomFormValues } from './types';
+import type { RoomFormValues, RoomServiceFee, RoomStatus } from './types';
 
 export const MANAGED_ROOM_STATUSES: { value: RoomStatus; label: string }[] = [
   { value: 'vacant', label: 'Trống' },
@@ -7,6 +7,7 @@ export const MANAGED_ROOM_STATUSES: { value: RoomStatus; label: string }[] = [
   { value: 'occupied', label: 'Đang thuê' },
   { value: 'maintenance', label: 'Bảo trì' },
 ];
+
 export const ROOM_AMENITIES = [
   { label: 'Máy điều hòa', icon: managementAssets.room.airConditionerIcon },
   { label: 'Gác lửng đúc', icon: managementAssets.room.mezzanineIcon },
@@ -18,8 +19,22 @@ export const ROOM_AMENITIES = [
   { label: 'Ban công thoáng', icon: managementAssets.room.balconyIcon },
   { label: 'Máy giặt riêng', icon: managementAssets.room.washingMachineIcon },
 ];
-export const EMPTY_ROOM_FORM: RoomFormValues = { code: '', floor: '', area: '', capacity: '', amenities: [] };
+
+export const EMPTY_ROOM_FORM: RoomFormValues = {
+  code: '',
+  floor: '',
+  area: '',
+  capacity: '',
+  amenities: [],
+};
+
 export const ROOM_PHOTO_LABELS = ['Phòng', 'WC', 'Ban công'];
+
+export const DEFAULT_ROOM_SERVICE_FEES: RoomServiceFee[] = [
+  { id: 'trash', name: 'Rác sinh hoạt', amount: 30000, unit: '/phòng', enabled: true },
+  { id: 'wifi', name: 'Internet / Wifi', amount: 50000, unit: '/phòng', enabled: true },
+  { id: 'parking', name: 'Phí giữ xe máy', amount: 100000, unit: '/chiếc', enabled: true },
+];
 
 export const ROOM_STATUS_CLASSES: Record<RoomStatus, string> = {
   vacant: 'border-success-border bg-success-soft text-secondary-600',

@@ -13,14 +13,29 @@ export function AddRoomModal({ propertyId, propertyName, floors, rooms, isPendin
   const [values, setValues] = useState<RoomFormValues>({ ...EMPTY_ROOM_FORM, amenities: [] });
   const [errors, setErrors] = useState<RoomFormErrors>({});
   const template = rooms.find((room) => room.propertyId === propertyId && room.code === 'P.201');
-  const update = (field: keyof RoomFormValues, value: string) => setValues((previous) => ({ ...previous, [field]: value }));
-  const toggleAmenity = (label: string) => setValues((previous) => ({ ...previous, amenities: previous.amenities.includes(label) ? previous.amenities.filter((item) => item !== label) : [...previous.amenities, label] }));
+  const update = (field: keyof RoomFormValues, value: string) => {
+    setValues((previous) => ({ ...previous, [field]: value }));
+  };
+
+  const toggleAmenity = (label: string) => {
+    setValues((previous) => ({
+      ...previous,
+      amenities: previous.amenities.includes(label)
+        ? previous.amenities.filter((item) => item !== label)
+        : [...previous.amenities, label],
+    }));
+  };
+
   const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     if (isPending) return;
     const nextErrors = validateRoomForm(values, rooms, propertyId, floors);
     setErrors(nextErrors);
-    if (Object.keys(nextErrors).length) { event.currentTarget.querySelector<HTMLElement>(`[name="${Object.keys(nextErrors)[0]}"]`)?.focus(); return; }
+    const firstErrorField = Object.keys(nextErrors)[0];
+    if (firstErrorField) {
+      event.currentTarget.querySelector<HTMLElement>(`[name="${firstErrorField}"]`)?.focus();
+      return;
+    }
     const submitter = (event.nativeEvent as SubmitEvent).submitter;
     onSubmit(values, submitter instanceof HTMLButtonElement && submitter.value === 'price');
   };

@@ -5,25 +5,52 @@ import { Button, EmptyState, Input, Loading } from '@/components/ui';
 
 import { AddRoomModal } from '@/features/rooms/components/AddRoomModal';
 import { RoomManagementCard } from '@/features/rooms/components/RoomManagementCard';
+import { RoomPricingModal } from '@/features/rooms/components/RoomPricingModal';
 import { MANAGED_ROOM_STATUSES, ROOM_STATUS_CLASSES } from '@/features/rooms/managementConstants';
 
 import { usePropertyManagement } from '../hooks/usePropertyManagement';
 import { AddPropertyModal } from './AddPropertyModal';
+import { PropertySettingsModal } from './PropertySettingsModal';
 
 export function PropertyManagement() {
   const management = usePropertyManagement();
-  const { query, property, properties, rooms, visibleRooms, modal, notice, isPending } = management;
+  const {
+    query,
+    property,
+    properties,
+    rooms,
+    visibleRooms,
+    pricingRoom,
+    modal,
+    notice,
+    isPending,
+  } = management;
   const vacant = rooms.filter((room) => room.status === 'vacant').length;
   const occupied = rooms.filter((room) => room.status === 'occupied').length;
   const reserved = rooms.filter((room) => room.status === 'reserved').length;
-  const expectedRevenue = rooms.reduce((total, room) => total + (room.status === 'occupied' ? room.monthlyRent ?? 0 : 0), 0);
-  if (query.isPending) return <Loading message="Đang tải khu trọ và phòng trọ..." />;
-  if (query.isError) return <EmptyState
-    title="Không thể tải dữ liệu khu trọ"
-    description={query.error.message}
-    actionLabel="Thử lại"
-    onAction={() => { void query.refetch(); }}
-  />;
+  const expectedRevenue = rooms.reduce(
+    (total, room) => total + (room.status === 'occupied' ? (room.monthlyRent ?? 0) : 0),
+    0,
+  );
+  const otherVacantCount = pricingRoom
+    ? rooms.filter((room) => room.status === 'vacant' && room.id !== pricingRoom.id).length
+    : 0;
+
+  if (query.isPending) {
+    return <Loading message="Đang tải khu trọ và phòng trọ..." />;
+  }
+  if (query.isError) {
+    return (
+      <EmptyState
+        title="Không thể tải dữ liệu khu trọ"
+        description={query.error.message}
+        actionLabel="Thử lại"
+        onAction={() => {
+          void query.refetch();
+        }}
+      />
+    );
+  }
 
   return <div
     className="flex flex-col gap-5 text-[13px] max-[640px]:gap-4 [&_button]:cursor-pointer [&_button]:gap-[7px]
@@ -115,7 +142,8 @@ export function PropertyManagement() {
         <Button
           type="button"
           variant="outline"
-          onClick={management.unsupported}
+          disabled={!property}
+          onClick={() => management.openModal('settings')}
         >
           <img
             src={managementAssets.page.settingsIcon}
@@ -406,37 +434,84 @@ export function PropertyManagement() {
       {' '}phòng
     </p>
 
-    {visibleRooms.length ? <div className="grid grid-cols-3 items-stretch gap-4 max-[1250px]:grid-cols-2 max-[640px]:grid-cols-1">
-      {visibleRooms.map((room) => <RoomManagementCard
-        key={room.id}
-        room={room}
-        onUnsupported={management.unsupported}
-      />)}
-    </div> : <EmptyState
-      title={rooms.length ? 'Không tìm thấy phòng phù hợp' : 'Khu trọ chưa có phòng'}
-      description={rooms.length ? 'Thử đổi từ khóa hoặc xóa bộ lọc để xem tất cả phòng.' : 'Thêm phòng đầu tiên cho khu trọ này.'}
-      actionLabel={rooms.length ? 'Xóa bộ lọc' : 'Thêm phòng mới'}
-      onAction={rooms.length ? management.clearFilters : () => management.openModal(property ? 'room' : 'property')}
-    />}
+    {visibleRooms.length ? (
+      <div className="grid grid-cols-3 items-stretch gap-4 max-[1250px]:grid-cols-2 max-[640px]:grid-cols-1">
+        {visibleRooms.map((room) => (
+          <RoomManagementCard
+            key={room.id}
+            room={room}
+            onConfigurePrice={management.openPricingModal}
+            onUnsupported={management.unsupported}
+          />
+        ))}
+      </div>
+    ) : (
+      <EmptyState
+        title={rooms.length ? 'Không tìm thấy phòng phù hợp' : 'Khu trọ chưa có phòng'}
+        description={
+          rooms.length
+            ? 'Thử đổi từ khóa hoặc xóa bộ lọc để xem tất cả phòng.'
+            : 'Thêm phòng đầu tiên cho khu trọ này.'
+        }
+        actionLabel={rooms.length ? 'Xóa bộ lọc' : 'Thêm phòng mới'}
+        onAction={
+          rooms.length
+            ? management.clearFilters
+            : () => management.openModal(property ? 'room' : 'property')
+        }
+      />
+    )}
 
-    {modal === 'property' && <AddPropertyModal
-      isPending={isPending}
-      error={management.createProperty.error?.message ?? ''}
-      onClose={management.closeModal}
-      onSubmit={(values) => { if (!isPending) management.createProperty.mutate(values); }}
-    />}
+    {modal === 'property' && (
+      <AddPropertyModal
+        isPending={isPending}
+        error={management.createProperty.error?.message ?? ''}
+        onClose={management.closeModal}
+        onSubmit={(values) => {
+          if (!isPending) {
+            management.createProperty.mutate(values);
+          }
+        }}
+      />
+    )}
 
-    {modal === 'room' && property && <AddRoomModal
-      key={property.id}
-      propertyId={property.id}
-      propertyName={property.name}
-      floors={property.floors}
-      rooms={rooms}
-      isPending={isPending}
-      error={management.createRoom.error?.message ?? ''}
-      onClose={management.closeModal}
-      onSubmit={management.saveRoom}
-    />}
+    {modal === 'settings' && property && (
+      <PropertySettingsModal
+        key={property.id}
+        property={property}
+        rooms={rooms}
+        isPending={isPending}
+        error={management.updateSettings.error?.message ?? ''}
+        onClose={management.closeModal}
+        onSubmit={management.savePropertySettings}
+      />
+    )}
+
+    {modal === 'room' && property && (
+      <AddRoomModal
+        key={property.id}
+        propertyId={property.id}
+        propertyName={property.name}
+        floors={property.floors}
+        rooms={rooms}
+        isPending={isPending}
+        error={management.createRoom.error?.message ?? ''}
+        onClose={management.closeModal}
+        onSubmit={management.saveRoom}
+      />
+    )}
+
+    {modal === 'pricing' && pricingRoom && (
+      <RoomPricingModal
+        key={pricingRoom.id}
+        room={pricingRoom}
+        otherVacantCount={otherVacantCount}
+        isPending={isPending}
+        error={management.updateRoomPricing.error?.message ?? ''}
+        onClose={management.closeModal}
+        onSubmit={management.saveRoomPricing}
+      />
+    )}
 
   </div>;
 }

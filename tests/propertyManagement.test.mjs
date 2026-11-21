@@ -27,8 +27,8 @@ registerHooks({
 });
 
 const { MOCK_PROPERTY_MANAGEMENT } = await import('../src/features/properties/services/mockData.ts');
-const { filterManagedRooms, validateRoomForm } = await import('../src/features/rooms/utils/roomManagement.ts');
-const { validatePropertyForm } = await import('../src/features/properties/utils/validation.ts');
+const { filterManagedRooms, validateRoomForm, validateRoomPricingForm } = await import('../src/features/rooms/utils/roomManagement.ts');
+const { validatePropertyForm, validatePropertySettings } = await import('../src/features/properties/utils/validation.ts');
 const { mockPropertyManagementService: service } = await import('../src/features/properties/services/mockPropertyManagementService.ts');
 const rooms = MOCK_PROPERTY_MANAGEMENT.rooms;
 const roomInput = { code: 'P.203', floor: '2', area: '25.5', capacity: '2', amenities: ['WC khép kín'] };
@@ -136,4 +136,103 @@ test('FE-06 mock adapter delegates other feature requests to the HTTP adapter', 
   const response = await adapter(config);
   assert.equal(delegatedConfig, config);
   assert.deepEqual(response.data, { ok: true });
+});
+
+test('Property settings validation and API gateway update rules & block archive with active rooms', async () => {
+  const validSettings = {
+    name: 'Nhà trọ Xanh - Cập nhật',
+    city: 'TP. Hồ Chí Minh',
+    district: 'TP. Thủ Đức',
+    ward: 'Phường Linh Trung',
+    street: 'KP6, Đường số 8',
+    amenities: ['Thang máy', 'Camera 24/7'],
+    gateMode: 'scheduled',
+    visitorRules: ['Rời đi trước 22:30'],
+    safetyRules: ['Cấm bếp than/gas mini'],
+    quietPetRules: ['Yên tĩnh 22:00 - 06:30'],
+    isArchived: false,
+  };
+  assert.deepEqual(validatePropertySettings(validSettings), {});
+  assert.ok(validatePropertySettings({ ...validSettings, name: '   ' }).name);
+
+  const originalLocalStorage = Object.getOwnPropertyDescriptor(globalThis, 'localStorage');
+  const originalSessionStorage = Object.getOwnPropertyDescriptor(globalThis, 'sessionStorage');
+  Object.defineProperty(globalThis, 'localStorage', { configurable: true, value: { getItem: () => null } });
+  Object.defineProperty(globalThis, 'sessionStorage', { configurable: true, value: { getItem: () => null } });
+
+  try {
+    const { propertyApi } = await import('../src/features/properties/api/propertyApi.ts');
+    const updated = await propertyApi.updatePropertySettings({
+      propertyId: 'green-campus',
+      values: validSettings,
+    });
+    const campus = updated.data.properties.find((item) => item.id === 'green-campus');
+    assert.equal(campus.name, 'Nhà trọ Xanh - Cập nhật');
+    assert.equal(campus.gateMode, 'scheduled');
+    assert.deepEqual(campus.visitorRules, ['Rời đi trước 22:30']);
+
+    await assert.rejects(
+      propertyApi.updatePropertySettings({
+        propertyId: 'green-campus',
+        values: { ...validSettings, isArchived: true },
+      }),
+      (error) => {
+        assert.equal(error.statusCode, 422);
+        return true;
+      },
+    );
+  } finally {
+    if (originalLocalStorage) Object.defineProperty(globalThis, 'localStorage', originalLocalStorage);
+    else delete globalThis.localStorage;
+    if (originalSessionStorage) Object.defineProperty(globalThis, 'sessionStorage', originalSessionStorage);
+    else delete globalThis.sessionStorage;
+  }
+});
+
+test('Room pricing validation and API gateway update pricing & copy to other vacant rooms', async () => {
+  const pricingValues = {
+    monthlyRent: '3700000',
+    depositAmount: '3700000',
+    electricityRate: '3800',
+    waterBillingMode: 'meter',
+    waterRate: '22000',
+    waterPerPersonRate: '100000',
+    serviceFees: [
+      { id: 'trash', name: 'Rác sinh hoạt', amount: 30000, unit: '/phòng', enabled: true },
+      { id: 'wifi', name: 'Internet / Wifi', amount: 50000, unit: '/phòng', enabled: true },
+    ],
+    isPublished: true,
+  };
+  assert.deepEqual(validateRoomPricingForm(pricingValues), {});
+  assert.ok(validateRoomPricingForm({ ...pricingValues, monthlyRent: '0' }).monthlyRent);
+  assert.ok(validateRoomPricingForm({ ...pricingValues, waterBillingMode: 'person', waterPerPersonRate: '-5' }).waterPerPersonRate);
+
+  const originalLocalStorage = Object.getOwnPropertyDescriptor(globalThis, 'localStorage');
+  const originalSessionStorage = Object.getOwnPropertyDescriptor(globalThis, 'sessionStorage');
+  Object.defineProperty(globalThis, 'localStorage', { configurable: true, value: { getItem: () => null } });
+  Object.defineProperty(globalThis, 'sessionStorage', { configurable: true, value: { getItem: () => null } });
+
+  try {
+    const { propertyApi } = await import('../src/features/properties/api/propertyApi.ts');
+    const saved = await propertyApi.updateRoomPricing({
+      propertyId: 'green-campus',
+      roomId: 'room-201',
+      values: pricingValues,
+      copyToOtherRooms: true,
+    });
+    const room201 = saved.data.rooms.find((item) => item.id === 'room-201');
+    const room301 = saved.data.rooms.find((item) => item.id === 'room-301');
+    const room102 = saved.data.rooms.find((item) => item.id === 'room-102');
+    assert.equal(room201.monthlyRent, 3700000);
+    assert.equal(room201.electricityRate, 3800);
+    assert.equal(room201.waterRate, 22000);
+    assert.equal(room301.monthlyRent, 3700000);
+    assert.equal(room301.electricityRate, 3800);
+    assert.equal(room102.monthlyRent, 3200000);
+  } finally {
+    if (originalLocalStorage) Object.defineProperty(globalThis, 'localStorage', originalLocalStorage);
+    else delete globalThis.localStorage;
+    if (originalSessionStorage) Object.defineProperty(globalThis, 'sessionStorage', originalSessionStorage);
+    else delete globalThis.sessionStorage;
+  }
 });

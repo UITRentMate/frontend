@@ -15,12 +15,25 @@ export function AddPropertyModal({ isPending, error, onClose, onSubmit }: AddPro
   const [errors, setErrors] = useState<PropertyFormErrors>({});
   const city = MOCK_ADDRESS_OPTIONS.find((option) => option.city === values.city);
   const district = city?.districts.find((option) => option.name === values.district);
-  const toggle = (field: 'amenities' | 'safetyRules', label: string) => setValues((previous) => ({ ...previous, [field]: previous[field].includes(label) ? previous[field].filter((item) => item !== label) : [...previous[field], label] }));
+  const toggle = (field: 'amenities' | 'safetyRules', label: string) => {
+    setValues((previous) => ({
+      ...previous,
+      [field]: previous[field].includes(label)
+        ? previous[field].filter((item) => item !== label)
+        : [...previous[field], label],
+    }));
+  };
+
   const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     if (isPending) return;
-    const nextErrors = validatePropertyForm(values); setErrors(nextErrors);
-    if (Object.keys(nextErrors).length) { event.currentTarget.querySelector<HTMLElement>(`[name="${Object.keys(nextErrors)[0]}"]`)?.focus(); return; }
+    const nextErrors = validatePropertyForm(values);
+    setErrors(nextErrors);
+    const firstErrorField = Object.keys(nextErrors)[0];
+    if (firstErrorField) {
+      event.currentTarget.querySelector<HTMLElement>(`[name="${firstErrorField}"]`)?.focus();
+      return;
+    }
     onSubmit(values);
   };
   return <Modal

@@ -8,10 +8,57 @@ import { Button } from '@/components/ui';
 import { MANAGED_ROOM_STATUSES, ROOM_STATUS_CLASSES } from '../managementConstants';
 import type { RoomManagementCardProps } from '../types';
 
-export function RoomManagementCard({ room, onUnsupported }: RoomManagementCardProps) {
+export function RoomManagementCard({
+  room,
+  onConfigurePrice,
+  onUnsupported,
+}: RoomManagementCardProps) {
   const [failedImage, setFailedImage] = useState(false);
   const statusLabel = MANAGED_ROOM_STATUSES.find((status) => status.value === room.status)?.label;
-  const action = room.status === 'vacant' ? 'Cấu hình giá' : room.status === 'reserved' ? 'Duyệt cọc ngay' : room.status === 'maintenance' ? 'Cập nhật tiến độ' : 'Xem hợp đồng';
+
+  const actionLabel =
+    room.status === 'vacant'
+      ? 'Cấu hình giá'
+      : room.status === 'reserved'
+        ? 'Duyệt cọc ngay'
+        : room.status === 'maintenance'
+          ? 'Cập nhật tiến độ'
+          : 'Xem hợp đồng';
+
+  const actionIcon =
+    room.status === 'vacant'
+      ? managementAssets.page.configurePriceIcon
+      : room.status === 'reserved'
+        ? managementAssets.page.approveDepositIcon
+        : room.status === 'maintenance'
+          ? managementAssets.page.maintenanceProgressIcon
+          : managementAssets.page.contractIcon;
+
+  const priceLabel =
+    room.status === 'occupied'
+      ? 'Giá thuê thực tế:'
+      : room.status === 'reserved'
+        ? 'Giá giữ chỗ:'
+        : room.status === 'maintenance'
+          ? 'Giá niêm yết cũ:'
+          : 'Giá thuê niêm yết:';
+
+  const visibilityLabel =
+    room.status === 'occupied'
+      ? 'Đang có khách'
+      : room.status === 'reserved'
+        ? 'Khóa giữ chỗ'
+        : room.isPublished
+          ? 'Đang hiển thị'
+          : 'Đã ẩn tin';
+
+  const handlePrimaryAction = () => {
+    if (room.status === 'vacant') {
+      onConfigurePrice(room);
+      return;
+    }
+    onUnsupported();
+  };
   return <article
     data-status={room.status}
     className="group/room flex min-w-0 flex-col overflow-hidden border border-border-subtle rounded-[12px]
@@ -147,7 +194,7 @@ export function RoomManagementCard({ room, onUnsupported }: RoomManagementCardPr
           group-data-[status=maintenance]/room:[&_strong]:text-text-disabled [&_small]:text-[10px]"
       >
         <span>
-          {room.status === 'occupied' ? 'Giá thuê thực tế:' : room.status === 'reserved' ? 'Giá giữ chỗ:' : room.status === 'maintenance' ? 'Giá niêm yết cũ:' : 'Giá thuê niêm yết:'}
+          {priceLabel}
         </span>
         <strong>
           {room.monthlyRent === null ? 'Chưa cấu hình' : rentFormatter.format(room.monthlyRent)}
@@ -235,20 +282,20 @@ export function RoomManagementCard({ room, onUnsupported }: RoomManagementCardPr
         <span
           className={`relative h-3.5 w-7 rounded-pill after:absolute after:top-0.5 after:size-2.5 after:rounded-pill after:bg-surface-card after:content-[''] ${room.isPublished ? 'bg-brand-500 after:left-4' : 'bg-border-subtle after:left-0.5'}`}
         />
-        {room.status === 'occupied' ? 'Đang có khách' : room.status === 'reserved' ? 'Khóa giữ chỗ' : room.isPublished ? 'Đang hiển thị' : 'Đã ẩn tin'}
+        {visibilityLabel}
       </span>
       <Button
         type="button"
         size="sm"
         variant={room.status === 'vacant' ? 'primary' : 'outline'}
-        onClick={onUnsupported}
-        title="Chưa hỗ trợ ở giai đoạn này"
+        onClick={handlePrimaryAction}
+        title={room.status === 'vacant' ? undefined : 'Chưa hỗ trợ ở giai đoạn này'}
       >
         <img
-          src={room.status === 'vacant' ? managementAssets.page.configurePriceIcon : room.status === 'reserved' ? managementAssets.page.approveDepositIcon : room.status === 'maintenance' ? managementAssets.page.maintenanceProgressIcon : managementAssets.page.contractIcon}
+          src={actionIcon}
           alt=""
         />
-        {action}
+        {actionLabel}
       </Button>
       <button
         type="button"
