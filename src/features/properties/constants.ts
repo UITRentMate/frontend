@@ -32,6 +32,11 @@ export const PROPERTY_AMENITIES = [
   { label: 'Máy giặt sấy', icon: managementAssets.property.sharedLaundryIcon },
 ];
 
+export const GATE_MODE_LABELS = {
+  free: 'Tự do 24/7 (vân tay)',
+  scheduled: 'Khóa cổng 23:30 - 05:00',
+} as const;
+
 export const SAFETY_RULES = ['Cấm bếp than/gas mini', 'Tắt CB khi ra ngoài'];
 export const VISITOR_RULES = ['Rời đi trước 22:30', 'Đăng ký ở qua đêm App'];
 export const QUIET_PET_RULES = ['Yên tĩnh 22:00 - 06:30', 'Thú cưng nhỏ (<5kg)'];

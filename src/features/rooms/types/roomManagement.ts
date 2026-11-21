@@ -110,3 +110,13 @@ export interface RoomPricingModalProps {
   onClose: () => void;
   onSubmit: (values: RoomPricingFormValues, copyToOtherRooms: boolean) => void;
 }
+
+export interface RoomServiceFeesSectionProps {
+  serviceFees: RoomServiceFee[];
+  feeAmountInputs: Record<string, string>;
+  error?: string;
+  onToggleFee: (feeId: string) => void;
+  onFeeAmountChange: (feeId: string, rawValue: string) => void;
+  onAddFee: (name: string, amount: number, unit: string) => void;
+  onValidationError: (message?: string) => void;
+}

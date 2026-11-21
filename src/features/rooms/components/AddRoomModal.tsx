@@ -2,6 +2,7 @@ import { useState } from 'react';
 import type { FormEvent } from 'react';
 
 import { managementAssets } from '@/assets/property-management';
+
 import { Button, Input, Modal } from '@/components/ui';
 
 import { EMPTY_ROOM_FORM, ROOM_AMENITIES, ROOM_PHOTO_LABELS } from '../managementConstants';

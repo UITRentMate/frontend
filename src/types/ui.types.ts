@@ -37,6 +37,7 @@ export interface ModalProps {
   isOpen: boolean;
   onClose: () => void;
   title?: string;
+  ariaLabel?: string;
   description?: string;
   children: ReactNode;
   footer?: ReactNode;

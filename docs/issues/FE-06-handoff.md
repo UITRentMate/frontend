@@ -41,7 +41,7 @@ Ngày: 13/11/2026. Issue: [UITRentMate/backend#6](https://github.com/UITRentMate
 5. Địa chỉ dùng danh mục mock theo cách chia trong Figma, không đại diện danh mục hành chính cập nhật; đổi thành phố/quận sẽ xóa lựa chọn con.
 6. Các ảnh trong modal chỉ minh họa thiết kế, không tự gắn vào đối tượng mới. Nút thêm ảnh disabled kèm giải thích. Không upload/preview file; không cần object URL. Chú thích 10MB theo Figma chưa được coi là validation file chính thức.
 7. Tạo khu chọn khu mới và mở modal thêm phòng. Tạo phòng đặt Trống + Đã ẩn, giá `null` và hiển thị “Chưa cấu hình”. Áp dụng mẫu P.201 chỉ copy tiện ích của P.201 trong cùng khu; nếu không có thì disabled.
-8. Lưu & Cấu hình giá ngay lưu phòng mock rồi thông báo cấu hình giá sẽ tích hợp sau. Excel, danh sách, cài đặt/nội quy, cấu hình giá, hợp đồng, duyệt cọc và cập nhật bảo trì chỉ phản hồi “chưa hỗ trợ”, không báo lưu nghiệp vụ thành công.
+8. Lưu & Cấu hình giá ngay mở tiếp Modal Cấu hình Giá & Dịch vụ cho phòng vừa tạo. Modal Cài đặt & Nội quy khu trọ (`PropertySettingsModal`) và Modal Cấu hình Giá & Dịch vụ (`RoomPricingModal`) đã được triển khai đầy đủ trên mock gateway. Excel, danh sách, hợp đồng, duyệt cọc và cập nhật bảo trì vẫn phản hồi “chưa hỗ trợ” ở giai đoạn này.
 9. Form reset khi unmount/đóng; không cho đóng trong lúc mutation pending để tránh kết quả xuất hiện sau khi hủy. Thông báo kết quả hiển thị tại live region trên trang, lỗi service trong modal.
 
 ## Kiểm tra đã thực hiện
@@ -101,3 +101,11 @@ Không đánh dấu toàn bộ issue hoàn tất trước khi nghiệm thu UI v�
 - Asset có tên file/export theo chức năng, formatter nằm tại `src/utils/formatCurrency.ts`, thông báo dùng chung tại `src/constants/messages.ts`. Dashboard và FE-06 dùng chung `RoomStatus` tại `src/features/rooms/types/roomStatus.ts`.
 - Kiểm thử được đưa vào `tests/propertyManagement.test.mjs` và chạy bằng `npm.cmd test` trên Node 24. Hai nhóm bổ sung kiểm tra gateway/chuẩn hóa lỗi và HTTP delegation ngoài FE-06.
 - Công cụ trình duyệt hiện lỗi khởi tạo runtime (`failed to write kernel assets`), chưa nghiệm thu trực quan sau chuyển Tailwind. Build còn cảnh báo chunk lớn hơn 500kB.
+
+## Điều chỉnh theo review PR #4 ngày 21/11/2026
+
+- Bổ sung 2 màn hình mới theo góp ý review: `PropertySettingsModal` (chia nhỏ thành `PropertyAddressSection`, `PropertyRulesSection`, `PropertyArchiveSection`) và `RoomPricingModal` (chia nhỏ `RoomServiceFeesSection`).
+- Chuyển loader kiểm thử `tests/propertyManagement.test.mjs` sang `register('./ts-loader.mjs', import.meta.url)` dùng `typescript.transpileModule` tương thích Node.js 20.19+ / 22 LTS / 24+, bổ sung `engines.node` trong `package.json`.
+- Chỉ bật FE-06 mock adapter khi chạy `DEV` (và `VITE_USE_MOCK !== 'false'`) hoặc opt-in `VITE_USE_MOCK=true`, không bật mặc định ở production build.
+- Đồng bộ hiển thị giá nước theo `waterBillingMode` (`đ/m³` vs `đ/người`) trên `RoomManagementCard`, đồng bộ badge `isArchived` trên header `PropertyManagement`, làm rõ cảnh báo lưu trữ khi còn phòng giữ chỗ, và sửa focus trường lỗi địa chỉ bằng `formRef` + `requestAnimationFrame`.
+- Chuẩn hóa `mutationKey` trong `propertyKeys`, gom thông báo về `src/constants/messages.ts`, thêm `ariaLabel` + `bg-brand-900/40` + keyframes animation cho `Modal`, và áp dụng `React.lazy()` + `Suspense` trong `src/routes/AppRoutes.tsx` để giảm kích thước chunk JS chính.

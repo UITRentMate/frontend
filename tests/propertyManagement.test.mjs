@@ -1,38 +1,58 @@
-// Run with Node 24: npm test
-// Built-in hooks resolve the app's TS aliases and treat image imports as URLs.
+// Compatible with Node.js 20.19+ / 22 LTS / 24+: npm test
+// Uses node:module register() with tests/ts-loader.mjs to resolve @/ aliases, TS files, and assets.
 import assert from 'node:assert/strict';
-import { readFileSync, existsSync } from 'node:fs';
-import { registerHooks, stripTypeScriptTypes } from 'node:module';
-import path from 'node:path';
-import { fileURLToPath, pathToFileURL } from 'node:url';
+import { register } from 'node:module';
 import { test } from 'node:test';
 
-const root = fileURLToPath(new URL('../', import.meta.url));
-registerHooks({
-  resolve(specifier, context, nextResolve) {
-    if (specifier.startsWith('@/') || specifier.startsWith('.')) {
-      const candidate = specifier.startsWith('@/')
-        ? path.join(root, 'src', specifier.slice(2))
-        : fileURLToPath(new URL(specifier, context.parentURL));
-      const resolved = [candidate, `${candidate}.ts`, path.join(candidate, 'index.ts')].find((entry) => existsSync(entry) && /\.(ts|svg|png)$/.test(entry));
-      if (resolved) return { url: pathToFileURL(resolved).href, shortCircuit: true };
-    }
-    return nextResolve(specifier, context);
-  },
-  load(url, context, nextLoad) {
-    if (/\.(svg|png)$/.test(url)) return { format: 'module', source: `export default ${JSON.stringify(url)};`, shortCircuit: true };
-    if (url.endsWith('.ts')) return { format: 'module', source: stripTypeScriptTypes(readFileSync(fileURLToPath(url), 'utf8')), shortCircuit: true };
-    return nextLoad(url, context);
-  },
-});
+register('./ts-loader.mjs', import.meta.url);
 
 const { MOCK_PROPERTY_MANAGEMENT } = await import('../src/features/properties/services/mockData.ts');
-const { filterManagedRooms, validateRoomForm, validateRoomPricingForm } = await import('../src/features/rooms/utils/roomManagement.ts');
-const { validatePropertyForm, validatePropertySettings } = await import('../src/features/properties/utils/validation.ts');
-const { mockPropertyManagementService: service } = await import('../src/features/properties/services/mockPropertyManagementService.ts');
+const { filterManagedRooms, validateRoomForm, validateRoomPricingForm } = await import(
+  '../src/features/rooms/utils/roomManagement.ts'
+);
+const { validatePropertyForm, validatePropertySettings } = await import(
+  '../src/features/properties/utils/validation.ts'
+);
+const { mockPropertyManagementService: service } = await import(
+  '../src/features/properties/services/mockPropertyManagementService.ts'
+);
+
 const rooms = MOCK_PROPERTY_MANAGEMENT.rooms;
 const roomInput = { code: 'P.203', floor: '2', area: '25.5', capacity: '2', amenities: ['WC khép kín'] };
-const propertyInput = { name: '  Khu mới  ', city: 'TP. Hồ Chí Minh', district: 'TP. Thủ Đức', ward: 'Phường Linh Trung', street: '  12 Đường số 8  ', amenities: ['Camera 24/7'], gateMode: 'free', safetyRules: ['Trật tự sau 22:00'] };
+const propertyInput = {
+  name: '  Khu mới  ',
+  city: 'TP. Hồ Chí Minh',
+  district: 'TP. Thủ Đức',
+  ward: 'Phường Linh Trung',
+  street: '  12 Đường số 8  ',
+  amenities: ['Camera 24/7'],
+  gateMode: 'free',
+  safetyRules: ['Trật tự sau 22:00'],
+};
+
+async function withMockedApiClient(run) {
+  const originalLocalStorage = Object.getOwnPropertyDescriptor(globalThis, 'localStorage');
+  const originalSessionStorage = Object.getOwnPropertyDescriptor(globalThis, 'sessionStorage');
+  Object.defineProperty(globalThis, 'localStorage', { configurable: true, value: { getItem: () => null } });
+  Object.defineProperty(globalThis, 'sessionStorage', { configurable: true, value: { getItem: () => null } });
+
+  const { default: axios } = await import('axios');
+  const { apiClient } = await import('../src/lib/apiClient.ts');
+  const { createMockAdapter } = await import('../src/api/mockAdapter.ts');
+  const previousAdapter = apiClient.defaults.adapter;
+  apiClient.defaults.adapter = createMockAdapter(axios.getAdapter(previousAdapter));
+
+  try {
+    const { propertyApi } = await import('../src/features/properties/api/propertyApi.ts');
+    await run(propertyApi);
+  } finally {
+    apiClient.defaults.adapter = previousAdapter;
+    if (originalLocalStorage) Object.defineProperty(globalThis, 'localStorage', originalLocalStorage);
+    else delete globalThis.localStorage;
+    if (originalSessionStorage) Object.defineProperty(globalThis, 'sessionStorage', originalSessionStorage);
+    else delete globalThis.sessionStorage;
+  }
+}
 
 test('Search normalizes case/whitespace and combines status/floor with AND', () => {
   assert.equal(filterManagedRooms(rooms, ' P.201 ', 'all', 'all')[0].code, 'P.201');
@@ -51,8 +71,12 @@ test('Search normalizes case/whitespace and combines status/floor with AND', () 
 
 test('Room validation: required, positive numbers, integer capacity, floor and scoped duplicates', () => {
   assert.deepEqual(validateRoomForm(roomInput, rooms, 'green-campus', [1, 2, 3]), {});
-  for (const area of ['', '0', '-1', 'NaN', 'Infinity']) assert.ok(validateRoomForm({ ...roomInput, area }, rooms, 'green-campus', [1, 2, 3]).area);
-  for (const capacity of ['', '0', '-1', '1.5', 'NaN', 'Infinity']) assert.ok(validateRoomForm({ ...roomInput, capacity }, rooms, 'green-campus', [1, 2, 3]).capacity);
+  for (const area of ['', '0', '-1', 'NaN', 'Infinity']) {
+    assert.ok(validateRoomForm({ ...roomInput, area }, rooms, 'green-campus', [1, 2, 3]).area);
+  }
+  for (const capacity of ['', '0', '-1', '1.5', 'NaN', 'Infinity']) {
+    assert.ok(validateRoomForm({ ...roomInput, capacity }, rooms, 'green-campus', [1, 2, 3]).capacity);
+  }
   assert.ok(validateRoomForm({ ...roomInput, code: '  ' }, rooms, 'green-campus', [1, 2, 3]).code);
   assert.ok(validateRoomForm({ ...roomInput, code: '  p.201  ' }, rooms, 'green-campus', [1, 2, 3]).code);
   assert.equal(validateRoomForm({ ...roomInput, code: 'P.201' }, rooms, 'green-garden', [1, 2, 3]).code, undefined);
@@ -62,7 +86,9 @@ test('Room validation: required, positive numbers, integer capacity, floor and s
 
 test('Property validation: required address and consistent mock address hierarchy', () => {
   assert.deepEqual(validatePropertyForm(propertyInput), {});
-  for (const field of ['name', 'city', 'district', 'ward', 'street']) assert.ok(validatePropertyForm({ ...propertyInput, [field]: ' ' })[field]);
+  for (const field of ['name', 'city', 'district', 'ward', 'street']) {
+    assert.ok(validatePropertyForm({ ...propertyInput, [field]: ' ' })[field]);
+  }
   assert.ok(validatePropertyForm({ ...propertyInput, district: 'Quận Bình Thạnh' }).ward);
 });
 
@@ -79,7 +105,10 @@ test('Mock submits preserve property relationship, hidden/vacant state, no inven
   await assert.rejects(service.createRoom({ propertyId: 'missing', values: roomInput }));
   await assert.rejects(service.createRoom({ propertyId: property.id, values: roomInput }));
   const values = { ...roomInput, floor: '0', code: '  P.201  ' };
-  const results = await Promise.allSettled([service.createRoom({ propertyId: property.id, values }), service.createRoom({ propertyId: property.id, values })]);
+  const results = await Promise.allSettled([
+    service.createRoom({ propertyId: property.id, values }),
+    service.createRoom({ propertyId: property.id, values }),
+  ]);
   assert.equal(results.filter((result) => result.status === 'fulfilled').length, 1);
   const state = (await service.getOverview()).data;
   const room = state.rooms.at(-1);
@@ -93,14 +122,7 @@ test('Mock submits preserve property relationship, hidden/vacant state, no inven
 });
 
 test('Property API uses the shared Axios mock adapter and normalizes mutation failures', async () => {
-  // The browser storage interface is required by the shared auth interceptor.
-  const originalLocalStorage = Object.getOwnPropertyDescriptor(globalThis, 'localStorage');
-  const originalSessionStorage = Object.getOwnPropertyDescriptor(globalThis, 'sessionStorage');
-  Object.defineProperty(globalThis, 'localStorage', { configurable: true, value: { getItem: () => null } });
-  Object.defineProperty(globalThis, 'sessionStorage', { configurable: true, value: { getItem: () => null } });
-
-  try {
-    const { propertyApi } = await import('../src/features/properties/api/propertyApi.ts');
+  await withMockedApiClient(async (propertyApi) => {
     const overview = await propertyApi.getOverview();
     assert.equal(overview.success, true);
     assert.ok(overview.timestamp);
@@ -117,12 +139,7 @@ test('Property API uses the shared Axios mock adapter and normalizes mutation fa
       return true;
     });
     assert.equal((await propertyApi.getOverview()).data.rooms.length, overview.data.rooms.length + 1);
-  } finally {
-    if (originalLocalStorage) Object.defineProperty(globalThis, 'localStorage', originalLocalStorage);
-    else delete globalThis.localStorage;
-    if (originalSessionStorage) Object.defineProperty(globalThis, 'sessionStorage', originalSessionStorage);
-    else delete globalThis.sessionStorage;
-  }
+  });
 });
 
 test('FE-06 mock adapter delegates other feature requests to the HTTP adapter', async () => {
@@ -155,13 +172,7 @@ test('Property settings validation and API gateway update rules & block archive 
   assert.deepEqual(validatePropertySettings(validSettings), {});
   assert.ok(validatePropertySettings({ ...validSettings, name: '   ' }).name);
 
-  const originalLocalStorage = Object.getOwnPropertyDescriptor(globalThis, 'localStorage');
-  const originalSessionStorage = Object.getOwnPropertyDescriptor(globalThis, 'sessionStorage');
-  Object.defineProperty(globalThis, 'localStorage', { configurable: true, value: { getItem: () => null } });
-  Object.defineProperty(globalThis, 'sessionStorage', { configurable: true, value: { getItem: () => null } });
-
-  try {
-    const { propertyApi } = await import('../src/features/properties/api/propertyApi.ts');
+  await withMockedApiClient(async (propertyApi) => {
     const updated = await propertyApi.updatePropertySettings({
       propertyId: 'green-campus',
       values: validSettings,
@@ -181,22 +192,17 @@ test('Property settings validation and API gateway update rules & block archive 
         return true;
       },
     );
-  } finally {
-    if (originalLocalStorage) Object.defineProperty(globalThis, 'localStorage', originalLocalStorage);
-    else delete globalThis.localStorage;
-    if (originalSessionStorage) Object.defineProperty(globalThis, 'sessionStorage', originalSessionStorage);
-    else delete globalThis.sessionStorage;
-  }
+  });
 });
 
-test('Room pricing validation and API gateway update pricing & copy to other vacant rooms', async () => {
+test('Room pricing validation and API gateway update pricing, water per-person mode & copy to other vacant rooms', async () => {
   const pricingValues = {
     monthlyRent: '3700000',
     depositAmount: '3700000',
     electricityRate: '3800',
-    waterBillingMode: 'meter',
+    waterBillingMode: 'person',
     waterRate: '22000',
-    waterPerPersonRate: '100000',
+    waterPerPersonRate: '120000',
     serviceFees: [
       { id: 'trash', name: 'Rác sinh hoạt', amount: 30000, unit: '/phòng', enabled: true },
       { id: 'wifi', name: 'Internet / Wifi', amount: 50000, unit: '/phòng', enabled: true },
@@ -205,15 +211,12 @@ test('Room pricing validation and API gateway update pricing & copy to other vac
   };
   assert.deepEqual(validateRoomPricingForm(pricingValues), {});
   assert.ok(validateRoomPricingForm({ ...pricingValues, monthlyRent: '0' }).monthlyRent);
-  assert.ok(validateRoomPricingForm({ ...pricingValues, waterBillingMode: 'person', waterPerPersonRate: '-5' }).waterPerPersonRate);
+  assert.ok(
+    validateRoomPricingForm({ ...pricingValues, waterBillingMode: 'person', waterPerPersonRate: '-5' })
+      .waterPerPersonRate,
+  );
 
-  const originalLocalStorage = Object.getOwnPropertyDescriptor(globalThis, 'localStorage');
-  const originalSessionStorage = Object.getOwnPropertyDescriptor(globalThis, 'sessionStorage');
-  Object.defineProperty(globalThis, 'localStorage', { configurable: true, value: { getItem: () => null } });
-  Object.defineProperty(globalThis, 'sessionStorage', { configurable: true, value: { getItem: () => null } });
-
-  try {
-    const { propertyApi } = await import('../src/features/properties/api/propertyApi.ts');
+  await withMockedApiClient(async (propertyApi) => {
     const saved = await propertyApi.updateRoomPricing({
       propertyId: 'green-campus',
       roomId: 'room-201',
@@ -225,14 +228,11 @@ test('Room pricing validation and API gateway update pricing & copy to other vac
     const room102 = saved.data.rooms.find((item) => item.id === 'room-102');
     assert.equal(room201.monthlyRent, 3700000);
     assert.equal(room201.electricityRate, 3800);
-    assert.equal(room201.waterRate, 22000);
+    assert.equal(room201.waterBillingMode, 'person');
+    assert.equal(room201.waterPerPersonRate, 120000);
     assert.equal(room301.monthlyRent, 3700000);
-    assert.equal(room301.electricityRate, 3800);
+    assert.equal(room301.waterBillingMode, 'person');
+    assert.equal(room301.waterPerPersonRate, 120000);
     assert.equal(room102.monthlyRent, 3200000);
-  } finally {
-    if (originalLocalStorage) Object.defineProperty(globalThis, 'localStorage', originalLocalStorage);
-    else delete globalThis.localStorage;
-    if (originalSessionStorage) Object.defineProperty(globalThis, 'sessionStorage', originalSessionStorage);
-    else delete globalThis.sessionStorage;
-  }
+  });
 });

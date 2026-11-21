@@ -219,7 +219,13 @@ export function RoomManagementCard({
           <span>
             Nước
             <b>
-              {room.waterRate ? `${rentFormatter.format(room.waterRate)}đ` : 'Chưa cấu hình'}
+              {room.waterBillingMode === 'person'
+                ? room.waterPerPersonRate
+                  ? `${rentFormatter.format(room.waterPerPersonRate)}đ/người`
+                  : 'Chưa cấu hình'
+                : room.waterRate
+                  ? `${rentFormatter.format(room.waterRate)}đ/m³`
+                  : 'Chưa cấu hình'}
             </b>
           </span>
           <span>

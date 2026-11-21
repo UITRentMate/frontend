@@ -2,11 +2,19 @@ import { useState } from 'react';
 import type { FormEvent } from 'react';
 
 import { managementAssets } from '@/assets/property-management';
+
 import { Button, Input, Modal } from '@/components/ui';
 
 import { ManagementPhotoStrip } from '@/features/rooms/components/ManagementPhotoStrip';
 
-import { EMPTY_PROPERTY_FORM, MOCK_ADDRESS_OPTIONS, PROPERTY_AMENITIES, PROPERTY_PHOTO_LABELS, SAFETY_RULES } from '../constants';
+import {
+  EMPTY_PROPERTY_FORM,
+  GATE_MODE_LABELS,
+  MOCK_ADDRESS_OPTIONS,
+  PROPERTY_AMENITIES,
+  PROPERTY_PHOTO_LABELS,
+  SAFETY_RULES,
+} from '../constants';
 import type { AddPropertyModalProps, PropertyFormErrors, PropertyFormValues } from '../types';
 import { validatePropertyForm } from '../utils/validation';
 
@@ -294,7 +302,7 @@ export function AddPropertyModal({ isPending, error, onClose, onSubmit }: AddPro
                 checked={values.gateMode === 'free'}
                 onChange={() => setValues({ ...values, gateMode: 'free' })}
               />
-              Tự do 24/7 (Vân tay)
+              {GATE_MODE_LABELS.free}
             </label>
             <label>
               <input
@@ -303,7 +311,7 @@ export function AddPropertyModal({ isPending, error, onClose, onSubmit }: AddPro
                 checked={values.gateMode === 'scheduled'}
                 onChange={() => setValues({ ...values, gateMode: 'scheduled' })}
               />
-              Khóa (23:00 - 05:00)
+              {GATE_MODE_LABELS.scheduled}
             </label>
           </fieldset>
           <fieldset

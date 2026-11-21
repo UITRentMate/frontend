@@ -1,30 +1,47 @@
+import { lazy, Suspense } from 'react';
 import { createBrowserRouter } from 'react-router-dom';
+
+import { Loading } from '@/components/ui';
 import MainLayout from '@/layouts/MainLayout';
 import OwnerLayout from '@/layouts/OwnerLayout';
-import {
-  LoginPage,
-  RegisterPage,
-  HomePage,
-  RoomsPage,
-  RoomDetailPage,
-  AdminDashboardPage,
-  LandlordDashboardPage,
-  LandlordPropertiesPage,
-  NotFoundPage,
-} from '@/pages';
-import ProtectedRoutes from './ProtectedRoutes';
+
 import AdminRoutes from './AdminRoutes';
+import ProtectedRoutes from './ProtectedRoutes';
 import { ROUTES } from './paths';
+
+const LoginPage = lazy(() => import('@/pages/auth/LoginPage'));
+const RegisterPage = lazy(() => import('@/pages/auth/RegisterPage'));
+const HomePage = lazy(() => import('@/pages/home/HomePage'));
+const RoomsPage = lazy(() => import('@/pages/rooms/RoomsPage'));
+const RoomDetailPage = lazy(() => import('@/pages/rooms/RoomDetailPage'));
+const AdminDashboardPage = lazy(() => import('@/pages/admin/AdminDashboardPage'));
+const LandlordDashboardPage = lazy(() =>
+  import('@/pages/landlord/LandlordDashboardPage').then((module) => ({
+    default: module.LandlordDashboardPage,
+  })),
+);
+const LandlordPropertiesPage = lazy(() => import('@/pages/landlord/LandlordPropertiesPage'));
+const NotFoundPage = lazy(() => import('@/pages/errors/NotFoundPage'));
+
+const routeFallback = <Loading message="Đang tải trang..." fullScreen />;
 
 export const router = createBrowserRouter([
   // 1. Tuyến đường Đăng nhập & Đăng ký (Toàn màn hình, độc lập với MainLayout)
   {
     path: ROUTES.LOGIN,
-    element: <LoginPage />,
+    element: (
+      <Suspense fallback={routeFallback}>
+        <LoginPage />
+      </Suspense>
+    ),
   },
   {
     path: ROUTES.REGISTER,
-    element: <RegisterPage />,
+    element: (
+      <Suspense fallback={routeFallback}>
+        <RegisterPage />
+      </Suspense>
+    ),
   },
   {
     element: <ProtectedRoutes requiredRole="landlord" />,
@@ -32,8 +49,22 @@ export const router = createBrowserRouter([
       {
         element: <OwnerLayout />,
         children: [
-          { path: ROUTES.LANDLORD_DASHBOARD, element: <LandlordDashboardPage /> },
-          { path: ROUTES.LANDLORD_PROPERTIES, element: <LandlordPropertiesPage /> },
+          {
+            path: ROUTES.LANDLORD_DASHBOARD,
+            element: (
+              <Suspense fallback={routeFallback}>
+                <LandlordDashboardPage />
+              </Suspense>
+            ),
+          },
+          {
+            path: ROUTES.LANDLORD_PROPERTIES,
+            element: (
+              <Suspense fallback={routeFallback}>
+                <LandlordPropertiesPage />
+              </Suspense>
+            ),
+          },
         ],
       },
     ],
@@ -47,15 +78,27 @@ export const router = createBrowserRouter([
       // Tuyến công khai (Public Routes)
       {
         index: true,
-        element: <HomePage />,
+        element: (
+          <Suspense fallback={routeFallback}>
+            <HomePage />
+          </Suspense>
+        ),
       },
       {
         path: 'rooms',
-        element: <RoomsPage />,
+        element: (
+          <Suspense fallback={routeFallback}>
+            <RoomsPage />
+          </Suspense>
+        ),
       },
       {
         path: 'rooms/:id',
-        element: <RoomDetailPage />,
+        element: (
+          <Suspense fallback={routeFallback}>
+            <RoomDetailPage />
+          </Suspense>
+        ),
       },
 
       // Tuyến bảo vệ dành riêng cho Quản trị viên (Admin Routes)
@@ -64,7 +107,11 @@ export const router = createBrowserRouter([
         children: [
           {
             path: 'admin/dashboard',
-            element: <AdminDashboardPage />,
+            element: (
+              <Suspense fallback={routeFallback}>
+                <AdminDashboardPage />
+              </Suspense>
+            ),
           },
         ],
       },
@@ -72,7 +119,11 @@ export const router = createBrowserRouter([
       // Tuyến 404 Not Found
       {
         path: '*',
-        element: <NotFoundPage />,
+        element: (
+          <Suspense fallback={routeFallback}>
+            <NotFoundPage />
+          </Suspense>
+        ),
       },
     ],
   },

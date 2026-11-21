@@ -2,7 +2,8 @@ import { useState } from 'react';
 import type { FormEvent } from 'react';
 
 import { rentFormatter } from '@/utils/formatCurrency';
-import { Button, Modal } from '@/components/ui';
+
+import { Button, CopyIcon, Modal, SearchPlusIcon } from '@/components/ui';
 
 import { DEFAULT_ROOM_SERVICE_FEES } from '../managementConstants';
 import type {
@@ -11,6 +12,7 @@ import type {
   RoomPricingModalProps,
 } from '../types';
 import { validateRoomPricingForm } from '../utils/roomManagement';
+import { RoomServiceFeesSection } from './RoomServiceFeesSection';
 
 export function RoomPricingModal({
   room,
@@ -20,35 +22,46 @@ export function RoomPricingModal({
   onClose,
   onSubmit,
 }: RoomPricingModalProps) {
-  const initialRent = room.monthlyRent ?? 3500000;
+  const initialFees =
+    room.serviceFees && room.serviceFees.length > 0
+      ? structuredClone(room.serviceFees)
+      : structuredClone(DEFAULT_ROOM_SERVICE_FEES);
+
+  const initialRent = room.monthlyRent !== null ? String(room.monthlyRent) : '';
   const initialDeposit =
-    room.depositAmount ?? (room.depositMonths ? initialRent * room.depositMonths : initialRent);
+    room.depositAmount !== undefined && room.depositAmount !== null
+      ? String(room.depositAmount)
+      : room.monthlyRent !== null && room.depositMonths
+        ? String(room.monthlyRent * room.depositMonths)
+        : '';
 
   const [values, setValues] = useState<RoomPricingFormValues>({
-    monthlyRent: String(initialRent),
-    depositAmount: String(initialDeposit),
-    electricityRate: String(room.electricityRate ?? 3500),
+    monthlyRent: initialRent,
+    depositAmount: initialDeposit,
+    electricityRate: room.electricityRate !== undefined ? String(room.electricityRate) : '3500',
     waterBillingMode: room.waterBillingMode ?? 'meter',
-    waterRate: String(room.waterRate ?? 20000),
-    waterPerPersonRate: String(room.waterPerPersonRate ?? 100000),
-    serviceFees:
-      room.serviceFees && room.serviceFees.length > 0
-        ? structuredClone(room.serviceFees)
-        : structuredClone(DEFAULT_ROOM_SERVICE_FEES),
+    waterRate: room.waterRate !== undefined ? String(room.waterRate) : '20000',
+    waterPerPersonRate:
+      room.waterPerPersonRate !== undefined ? String(room.waterPerPersonRate) : '100000',
+    serviceFees: initialFees,
     isPublished: room.isPublished,
   });
 
+  const [feeAmountInputs, setFeeAmountInputs] = useState<Record<string, string>>(() =>
+    Object.fromEntries(initialFees.map((fee) => [fee.id, String(fee.amount)])),
+  );
   const [errors, setErrors] = useState<RoomPricingFormErrors>({});
   const [copyToOtherRooms, setCopyToOtherRooms] = useState(false);
-  const [isAddingFee, setIsAddingFee] = useState(false);
-  const [newFeeName, setNewFeeName] = useState('');
-  const [newFeeAmount, setNewFeeAmount] = useState('');
-  const [newFeeUnit, setNewFeeUnit] = useState('/phòng');
 
   const rentValue = Number(values.monthlyRent);
   const depositValue = Number(values.depositAmount);
   const depositRatioLabel =
-    Number.isFinite(rentValue) && rentValue > 0 && Number.isFinite(depositValue) && depositValue > 0
+    values.monthlyRent.trim() &&
+    values.depositAmount.trim() &&
+    Number.isFinite(rentValue) &&
+    rentValue > 0 &&
+    Number.isFinite(depositValue) &&
+    depositValue > 0
       ? `${Number((depositValue / rentValue).toFixed(1))} tháng tiền phòng`
       : 'đ';
 
@@ -64,44 +77,29 @@ export function RoomPricingModal({
   };
 
   const handleFeeAmountChange = (feeId: string, rawValue: string) => {
-    const parsed = Number(rawValue);
+    setFeeAmountInputs((previous) => ({ ...previous, [feeId]: rawValue }));
+    const trimmed = rawValue.trim();
+    const parsed = trimmed === '' ? Number.NaN : Number(trimmed);
     setValues((previous) => ({
       ...previous,
       serviceFees: previous.serviceFees.map((fee) =>
-        fee.id === feeId ? { ...fee, amount: Number.isFinite(parsed) ? parsed : 0 } : fee,
+        fee.id === feeId
+          ? {
+              ...fee,
+              amount: Number.isFinite(parsed) && parsed >= 0 ? parsed : Number.NaN,
+            }
+          : fee,
       ),
     }));
   };
 
-  const handleAddCustomFee = () => {
-    const trimmedName = newFeeName.trim();
-    const parsedAmount = Number(newFeeAmount);
-    if (!trimmedName || !Number.isFinite(parsedAmount) || parsedAmount < 0) {
-      setErrors((previous) => ({
-        ...previous,
-        serviceFees: 'Nhập tên phụ phí và đơn giá hợp lệ (>= 0).',
-      }));
-      return;
-    }
-
+  const handleAddFee = (name: string, amount: number, unit: string) => {
+    const id = `custom-${Date.now()}`;
+    setFeeAmountInputs((previous) => ({ ...previous, [id]: String(amount) }));
     setValues((previous) => ({
       ...previous,
-      serviceFees: [
-        ...previous.serviceFees,
-        {
-          id: `custom-${Date.now()}`,
-          name: trimmedName,
-          amount: parsedAmount,
-          unit: newFeeUnit.trim() || '/phòng',
-          enabled: true,
-        },
-      ],
+      serviceFees: [...previous.serviceFees, { id, name, amount, unit, enabled: true }],
     }));
-    setNewFeeName('');
-    setNewFeeAmount('');
-    setNewFeeUnit('/phòng');
-    setIsAddingFee(false);
-    setErrors((previous) => ({ ...previous, serviceFees: undefined }));
   };
 
   const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
@@ -121,6 +119,7 @@ export function RoomPricingModal({
     <Modal
       isOpen
       onClose={onClose}
+      ariaLabel={`Cấu hình Giá & Dịch vụ — ${room.code}`}
       size="xl"
       className="max-w-[700px] [&>div:nth-child(2)]:max-h-none [&>div:nth-child(2)]:p-0 [&>div:last-child]:shrink-0"
       footer={
@@ -143,20 +142,7 @@ export function RoomPricingModal({
                   : 'cursor-pointer text-brand-500 hover:bg-brand-50/70'
             }`}
           >
-            <svg
-              className="size-4 shrink-0"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="1.8"
-              aria-hidden="true"
-            >
-              <rect x="9" y="9" width="11" height="11" rx="2" />
-              <path
-                d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"
-                strokeLinecap="round"
-              />
-            </svg>
+            <CopyIcon className="size-4 shrink-0" />
             <span>
               {copyToOtherRooms
                 ? `Sẽ sao chép sang ${otherVacantCount} phòng trống khác`
@@ -189,7 +175,6 @@ export function RoomPricingModal({
       }
     >
       <div className="flex flex-col bg-white">
-        {/* Custom Header matching Figma */}
         <div className="flex flex-wrap items-center gap-3 border-b border-border-subtle px-6 py-4 pr-14">
           <span className="inline-flex items-center rounded-pill border border-success-border bg-success-soft px-3 py-1 text-xs font-semibold text-secondary-600">
             {roomBadgeLabel}
@@ -205,7 +190,6 @@ export function RoomPricingModal({
           onSubmit={handleSubmit}
           className="flex flex-col gap-5 p-6"
         >
-          {/* Section 1: Tiền phòng & Cọc bảo đảm */}
           <section>
             <h3 className="mb-3 flex items-center gap-2 font-heading text-sm font-bold text-text-primary before:h-4 before:w-1 before:rounded-pill before:bg-brand-500 before:content-['']">
               Tiền phòng &amp; Cọc bảo đảm
@@ -230,11 +214,12 @@ export function RoomPricingModal({
                     type="number"
                     min="0"
                     step="50000"
+                    placeholder="VD: 3500000"
                     value={values.monthlyRent}
                     aria-invalid={Boolean(errors.monthlyRent)}
                     aria-describedby={errors.monthlyRent ? 'pricing-rent-error' : undefined}
                     onChange={(e) => setValues({ ...values, monthlyRent: e.target.value })}
-                    className="w-full bg-transparent font-heading text-sm font-bold text-text-primary focus:outline-none"
+                    className="w-full bg-transparent font-heading text-sm font-bold text-text-primary placeholder:font-normal placeholder:text-text-disabled focus:outline-none"
                   />
                   <span className="shrink-0 pl-2 text-xs text-text-muted">đ/tháng</span>
                 </div>
@@ -243,6 +228,7 @@ export function RoomPricingModal({
                     {errors.monthlyRent}
                   </span>
                 ) : (
+                  values.monthlyRent.trim() &&
                   Number.isFinite(rentValue) &&
                   rentValue > 0 && (
                     <span className="mt-1 block text-[11px] text-text-muted">
@@ -270,11 +256,12 @@ export function RoomPricingModal({
                     type="number"
                     min="0"
                     step="50000"
+                    placeholder="VD: 3500000"
                     value={values.depositAmount}
                     aria-invalid={Boolean(errors.depositAmount)}
                     aria-describedby={errors.depositAmount ? 'pricing-deposit-error' : undefined}
                     onChange={(e) => setValues({ ...values, depositAmount: e.target.value })}
-                    className="w-full bg-transparent font-heading text-sm font-bold text-text-primary focus:outline-none"
+                    className="w-full bg-transparent font-heading text-sm font-bold text-text-primary placeholder:font-normal placeholder:text-text-disabled focus:outline-none"
                   />
                   <span className="shrink-0 pl-2 text-xs font-semibold text-brand-500">
                     {depositRatioLabel}
@@ -289,7 +276,6 @@ export function RoomPricingModal({
             </div>
           </section>
 
-          {/* Section 2: Định mức Điện & Nước */}
           <section>
             <h3 className="mb-3 flex items-center gap-2 font-heading text-sm font-bold text-text-primary before:h-4 before:w-1 before:rounded-pill before:bg-brand-500 before:content-['']">
               Định mức Điện &amp; Nước
@@ -418,110 +404,22 @@ export function RoomPricingModal({
             </div>
           </section>
 
-          {/* Section 3: Phụ phí dịch vụ định kỳ */}
-          <section>
-            <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
-              <h3 className="flex items-center gap-2 font-heading text-sm font-bold text-text-primary before:h-4 before:w-1 before:rounded-pill before:bg-brand-500 before:content-['']">
-                Phụ phí dịch vụ định kỳ
-              </h3>
-              <button
-                type="button"
-                onClick={() => setIsAddingFee((previous) => !previous)}
-                className="cursor-pointer text-xs font-semibold text-brand-500 hover:text-brand-600"
-              >
-                {isAddingFee ? 'Đóng thêm phụ phí' : '+ Thêm phụ phí khác'}
-              </button>
-            </div>
+          <RoomServiceFeesSection
+            serviceFees={values.serviceFees}
+            feeAmountInputs={feeAmountInputs}
+            error={errors.serviceFees}
+            onToggleFee={handleToggleFee}
+            onFeeAmountChange={handleFeeAmountChange}
+            onAddFee={handleAddFee}
+            onValidationError={(message) =>
+              setErrors((previous) => ({ ...previous, serviceFees: message }))
+            }
+          />
 
-            {isAddingFee && (
-              <div className="mb-3 grid grid-cols-1 gap-2 rounded-lg border border-brand-200 bg-brand-50/40 p-3 sm:grid-cols-[1fr_120px_90px_auto]">
-                <input
-                  type="text"
-                  placeholder="Tên phụ phí (VD: Vệ sinh chung)"
-                  value={newFeeName}
-                  onChange={(e) => setNewFeeName(e.target.value)}
-                  className="rounded-sm border border-border-subtle bg-white px-2.5 py-1.5 text-xs text-text-primary"
-                />
-                <input
-                  type="number"
-                  min="0"
-                  step="5000"
-                  placeholder="Đơn giá (đ)"
-                  value={newFeeAmount}
-                  onChange={(e) => setNewFeeAmount(e.target.value)}
-                  className="rounded-sm border border-border-subtle bg-white px-2.5 py-1.5 text-xs text-text-primary"
-                />
-                <input
-                  type="text"
-                  placeholder="/phòng"
-                  value={newFeeUnit}
-                  onChange={(e) => setNewFeeUnit(e.target.value)}
-                  className="rounded-sm border border-border-subtle bg-white px-2.5 py-1.5 text-xs text-text-primary"
-                />
-                <Button type="button" size="sm" onClick={handleAddCustomFee}>
-                  Thêm
-                </Button>
-              </div>
-            )}
-
-            <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
-              {values.serviceFees.map((fee) => (
-                <div
-                  key={fee.id}
-                  className={`flex flex-col gap-2 rounded-lg border p-3 transition ${
-                    fee.enabled
-                      ? 'border-border-subtle bg-canvas/50'
-                      : 'border-border-subtle/70 bg-white opacity-70'
-                  }`}
-                >
-                  <label className="flex cursor-pointer items-center gap-2 text-xs font-medium text-text-primary">
-                    <input
-                      type="checkbox"
-                      checked={fee.enabled}
-                      onChange={() => handleToggleFee(fee.id)}
-                      className="size-4 shrink-0 cursor-pointer accent-brand-500"
-                    />
-                    <span className="truncate">{fee.name}</span>
-                  </label>
-                  <div className="flex items-center justify-between gap-1">
-                    <input
-                      type="number"
-                      min="0"
-                      step="5000"
-                      aria-label={`Đơn giá ${fee.name}`}
-                      disabled={!fee.enabled}
-                      value={fee.amount}
-                      onChange={(e) => handleFeeAmountChange(fee.id, e.target.value)}
-                      className="w-24 rounded-xs border border-transparent bg-transparent font-heading text-sm font-bold text-text-primary focus:border-brand-300 focus:bg-white focus:px-1.5 focus:outline-none disabled:text-text-disabled"
-                    />
-                    <span className="shrink-0 text-[11px] text-text-muted">
-                      đ {fee.unit}
-                    </span>
-                  </div>
-                </div>
-              ))}
-            </div>
-
-            {errors.serviceFees && (
-              <span className="mt-2 block text-[11px] text-danger">{errors.serviceFees}</span>
-            )}
-          </section>
-
-          {/* Section 4: RentMate Finder visibility toggle */}
           <section className="flex items-center justify-between gap-4 rounded-xl border border-border-subtle bg-canvas/60 px-4 py-3.5">
             <div className="flex items-center gap-3">
               <span className="grid size-9 shrink-0 place-items-center rounded-lg border border-brand-100 bg-white text-brand-500">
-                <svg
-                  className="size-5"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="1.8"
-                  aria-hidden="true"
-                >
-                  <circle cx="11" cy="11" r="7" />
-                  <path d="m20 20-3.5-3.5M11 8v6M8 11h6" strokeLinecap="round" />
-                </svg>
+                <SearchPlusIcon className="size-5" />
               </span>
               <div>
                 <p className="text-xs font-bold text-text-primary">

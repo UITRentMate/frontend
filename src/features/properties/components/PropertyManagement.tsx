@@ -123,11 +123,13 @@ export function PropertyManagement() {
               {property.district}
             </span>
             <span
-              className="inline-block whitespace-nowrap rounded-pill border px-[9px] py-1 font-sans text-[10px]/[15px]
-                font-semibold aria-pressed:outline-2 aria-pressed:outline-offset-2 aria-pressed:outline-current
-                border-success-border bg-success-soft text-secondary-600"
+              className={`inline-block whitespace-nowrap rounded-pill border px-[9px] py-1 font-sans text-[10px]/[15px] font-semibold aria-pressed:outline-2 aria-pressed:outline-offset-2 aria-pressed:outline-current ${
+                property.isArchived
+                  ? 'border-warning-border bg-warning-soft text-warning'
+                  : 'border-success-border bg-success-soft text-secondary-600'
+              }`}
             >
-              ● Đang hoạt động ổn định
+              {property.isArchived ? '● Đã lưu trữ' : '● Đang hoạt động ổn định'}
             </span>
           </div>
         </> : <h2>

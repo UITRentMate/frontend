@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
-import { MANAGEMENT_UNSUPPORTED } from '@/constants';
+import { MANAGEMENT_UNSUPPORTED, PROPERTY_MANAGEMENT_MESSAGES } from '@/constants';
 
 import type {
   CreateManagedRoomInput,
@@ -59,27 +59,30 @@ export function usePropertyManagement() {
   };
 
   const createProperty = useMutation({
+    mutationKey: propertyKeys.mutations.createProperty(),
     mutationFn: (values: PropertyFormValues) => propertyApi.createProperty(values),
     onSuccess: (response) => {
       queryClient.setQueryData(propertyKeys.overview(), response.data);
       const created = response.data.properties[response.data.properties.length - 1];
       setSelectedId(created.id);
       clearFilters();
-      setNotice('Đã tạo khu trọ minh họa. Dữ liệu sẽ mất khi tải lại trang.');
+      setNotice(PROPERTY_MANAGEMENT_MESSAGES.PROPERTY_CREATED);
       setModal('room');
     },
   });
 
   const updateSettings = useMutation({
+    mutationKey: propertyKeys.mutations.updateSettings(),
     mutationFn: (input: UpdatePropertySettingsInput) => propertyApi.updatePropertySettings(input),
     onSuccess: (response) => {
       queryClient.setQueryData(propertyKeys.overview(), response.data);
-      setNotice(response.message ?? 'Đã cập nhật cài đặt & nội quy khu trọ (minh họa).');
+      setNotice(response.message ?? PROPERTY_MANAGEMENT_MESSAGES.SETTINGS_UPDATED);
       setModal(null);
     },
   });
 
   const createRoom = useMutation({
+    mutationKey: propertyKeys.mutations.createRoom(),
     mutationFn: (input: CreateManagedRoomInput) => propertyApi.createRoom(input),
     onSuccess: (response) => {
       queryClient.setQueryData(propertyKeys.overview(), response.data);
@@ -88,10 +91,11 @@ export function usePropertyManagement() {
   });
 
   const updateRoomPricing = useMutation({
+    mutationKey: propertyKeys.mutations.updateRoomPricing(),
     mutationFn: (input: UpdateRoomPricingInput) => propertyApi.updateRoomPricing(input),
     onSuccess: (response) => {
       queryClient.setQueryData(propertyKeys.overview(), response.data);
-      setNotice(response.message ?? 'Đã lưu cấu hình giá & dịch vụ phòng (minh họa).');
+      setNotice(response.message ?? PROPERTY_MANAGEMENT_MESSAGES.ROOM_PRICING_UPDATED);
       setModal(null);
       setPricingRoomId(null);
     },
@@ -145,11 +149,11 @@ export function usePropertyManagement() {
           if (configurePrice) {
             const createdRoom = response.data.rooms[response.data.rooms.length - 1];
             setPricingRoomId(createdRoom.id);
-            setNotice(`Đã thêm phòng ${createdRoom.code}. Tiếp tục cấu hình giá & dịch vụ.`);
+            setNotice(PROPERTY_MANAGEMENT_MESSAGES.ROOM_CREATED_OPEN_PRICING(createdRoom.code));
             setModal('pricing');
             return;
           }
-          setNotice('Đã thêm phòng minh họa; dữ liệu sẽ mất khi tải lại trang.');
+          setNotice(PROPERTY_MANAGEMENT_MESSAGES.ROOM_CREATED);
           setModal(null);
         },
       },

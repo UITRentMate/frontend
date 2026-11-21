@@ -69,3 +69,28 @@ export interface PropertySettingsModalProps {
   onClose: () => void;
   onSubmit: (values: PropertySettingsValues, isDraft?: boolean) => void;
 }
+
+export interface PropertyAddressSectionProps {
+  profileCode: string;
+  values: PropertySettingsValues;
+  errors: PropertySettingsErrors;
+  isEditingAddress: boolean;
+  onToggleEditAddress: () => void;
+  onChange: (nextValues: PropertySettingsValues) => void;
+}
+
+export interface PropertyRulesSectionProps {
+  values: PropertySettingsValues;
+  onChangeGateMode: (mode: 'free' | 'scheduled') => void;
+  onToggleRule: (field: 'visitorRules' | 'safetyRules' | 'quietPetRules', label: string) => void;
+}
+
+export interface PropertyArchiveSectionProps {
+  occupiedCount: number;
+  reservedCount: number;
+  vacantCount: number;
+  isArchived: boolean;
+  isPending: boolean;
+  error: string;
+  onToggleArchive: () => void;
+}

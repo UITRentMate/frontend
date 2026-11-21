@@ -14,9 +14,12 @@ export const apiClient = axios.create({
   },
 });
 
-// FE-06 remains a mock-first workflow until its proposed backend contract is ready.
-// Set VITE_USE_MOCK=false to send these requests through the existing HTTP adapter.
-if (import.meta.env?.VITE_USE_MOCK !== 'false') {
+// FE-06 remains a mock-first workflow in development until its proposed backend contract is ready.
+// In production builds, mock adapter stays disabled unless VITE_USE_MOCK=true is explicitly set.
+if (
+  import.meta.env?.VITE_USE_MOCK === 'true' ||
+  (import.meta.env?.DEV && import.meta.env?.VITE_USE_MOCK !== 'false')
+) {
   apiClient.defaults.adapter = createMockAdapter(axios.getAdapter(apiClient.defaults.adapter));
 }
 

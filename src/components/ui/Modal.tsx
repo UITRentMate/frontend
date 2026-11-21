@@ -6,6 +6,7 @@ export const Modal: React.FC<ModalProps> = ({
   isOpen,
   onClose,
   title,
+  ariaLabel,
   description,
   children,
   footer,
@@ -60,11 +61,12 @@ export const Modal: React.FC<ModalProps> = ({
       role="dialog"
       aria-modal="true"
       aria-labelledby={title ? titleId : undefined}
+      aria-label={!title ? ariaLabel : undefined}
       className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6"
     >
       {/* Backdrop */}
       <div
-        className="fixed inset-0 bg-[#091540]/40 backdrop-blur-xs transition-opacity animate-fadeIn"
+        className="fixed inset-0 bg-brand-900/40 backdrop-blur-xs transition-opacity animate-fadeIn"
         onClick={onClose}
         aria-hidden="true"
       />
