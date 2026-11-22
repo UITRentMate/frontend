@@ -3,6 +3,8 @@ export const ROUTES = {
   ROOMS: '/rooms',
   ROOM_DETAIL: '/rooms/:id',
   CREATE_ROOM: '/rooms/new',
+  SCHEDULE_TOUR: '/schedule-tour',
+  ROOM_SCHEDULE_TOUR: '/rooms/:id/schedule-tour',
   LOGIN: '/login',
   REGISTER: '/register',
   PROFILE: '/profile',

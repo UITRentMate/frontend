@@ -130,9 +130,11 @@ export const RoomDetailPage: React.FC = () => {
               <Button variant="primary" size="md" className="w-full">
                 💬 Liên hệ chủ trọ
               </Button>
-              <Button variant="secondary" size="md" className="w-full">
-                📅 Đặt lịch xem phòng
-              </Button>
+              <Link to={ROUTES.SCHEDULE_TOUR} className="block w-full">
+                <Button variant="secondary" size="md" className="w-full">
+                  📅 Đặt lịch xem phòng
+                </Button>
+              </Link>
             </div>
           </div>
         </div>
