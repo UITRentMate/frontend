@@ -7,6 +7,7 @@ import {
   HomePage,
   RoomsPage,
   RoomDetailPage,
+  RentalRequestPage,
   AdminDashboardPage,
   LandlordDashboardPage,
   LandlordPropertiesPage,
@@ -56,6 +57,14 @@ export const router = createBrowserRouter([
       {
         path: 'rooms/:id',
         element: <RoomDetailPage />,
+      },
+      {
+        path: 'rental-request',
+        element: <RentalRequestPage />,
+      },
+      {
+        path: 'rooms/:id/rental-request',
+        element: <RentalRequestPage />,
       },
 
       // Tuyến bảo vệ dành riêng cho Quản trị viên (Admin Routes)

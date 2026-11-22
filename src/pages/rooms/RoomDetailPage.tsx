@@ -127,9 +127,11 @@ export const RoomDetailPage: React.FC = () => {
             </div>
 
             <div className="space-y-2 pt-2">
-              <Button variant="primary" size="md" className="w-full">
-                💬 Liên hệ chủ trọ
-              </Button>
+              <Link to={ROUTES.RENTAL_REQUEST} className="block w-full">
+                <Button variant="primary" size="md" className="w-full">
+                  📋 Gửi yêu cầu thuê phòng
+                </Button>
+              </Link>
               <Button variant="secondary" size="md" className="w-full">
                 📅 Đặt lịch xem phòng
               </Button>
