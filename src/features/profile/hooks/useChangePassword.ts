@@ -4,8 +4,8 @@ import { useAuth } from '@/hooks/useAuth';
 import { tokenStorage } from '@/utils/tokenStorage';
 
 import { profileApi } from '../services/profileApi';
-import { profileKeys } from './profileKeys';
 import type { ChangePasswordPayload, ChangePasswordResponse } from '../types';
+import { profileKeys } from './profileKeys';
 
 export function useChangePassword() {
   const queryClient = useQueryClient();

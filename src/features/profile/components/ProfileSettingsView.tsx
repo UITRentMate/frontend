@@ -1,8 +1,9 @@
 // 1. Thư viện bên ngoài (React)
 import React, { useEffect, useRef, useState, type ChangeEvent, type FormEvent } from 'react';
 
-// 2. Hooks toàn cục (@/)
+// 2. Hooks & Utils toàn cục (@/)
 import { useAuth } from '@/hooks/useAuth';
+import { isSafeAvatarUrl } from '@/utils';
 
 // 3. Components & Icons dùng chung (@/components)
 import { Badge } from '@/components/ui/Badge';
@@ -10,9 +11,7 @@ import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
 import {
   AlertCircleIcon,
-  CameraIcon,
   CheckCircle2Icon,
-  CheckIcon,
   LockIcon,
   ShieldCheckIcon,
   UserIcon,
@@ -20,7 +19,8 @@ import {
 
 // 4. Hooks, Components & Utils nội bộ feature
 import { useUpdateProfile } from '../hooks/useUpdateProfile';
-import { isSafeAvatarUrl, validateAvatarFile } from '../utils/avatarValidation';
+import { validateAvatarFile } from '../utils/avatarValidation';
+import { ProfileAvatarSection } from './ProfileAvatarSection';
 import { SecuritySettingsTab } from './SecuritySettingsTab';
 
 // 5. Types nội bộ feature (Centralized Types)
@@ -71,11 +71,12 @@ export const ProfileSettingsView: React.FC<ProfileSettingsViewProps> = ({ classN
     setAvatarPreviewUrl(null);
   };
 
-  const isNameChanged = fullName.trim() !== user.name.trim();
+  const isNameChanged = fullName.trim() !== (user.name ?? '').trim();
   const isDirty = isNameChanged || selectedAvatarFile !== null;
   const rawAvatarUrl = avatarPreviewUrl || user.avatarUrl;
   const displayedAvatarUrl = isSafeAvatarUrl(rawAvatarUrl) ? rawAvatarUrl : null;
-  const avatarInitial = (fullName.trim() || user.name.trim() || 'U').charAt(0).toUpperCase();
+  const avatarInitial =
+    (fullName.trim() || (user.name ?? '').trim() || 'U').charAt(0).toUpperCase();
 
   const handleOpenFilePicker = () => {
     fileInputRef.current?.click();
@@ -90,6 +91,8 @@ export const ProfileSettingsView: React.FC<ProfileSettingsViewProps> = ({ classN
 
     const validationError = await validateAvatarFile(file);
     if (validationError) {
+      revokePreviewUrl();
+      setSelectedAvatarFile(null);
       setFormError(validationError);
       e.target.value = '';
       return;
@@ -257,54 +260,15 @@ export const ProfileSettingsView: React.FC<ProfileSettingsViewProps> = ({ classN
           )}
 
           <form onSubmit={handleSubmit} noValidate>
-            {/* PHẦN 1: ẢNH ĐẠI DIỆN */}
-            <div className="flex items-center gap-5 pb-6 border-b border-border-subtle/70">
-              <div className="relative w-16 h-16 shrink-0">
-                <div className="w-16 h-16 bg-brand-50 border border-brand-100 rounded-full flex items-center justify-center text-brand-500 font-heading font-bold text-xl overflow-hidden select-none">
-                  {displayedAvatarUrl ? (
-                    <img
-                      src={displayedAvatarUrl}
-                      alt={user.name}
-                      className="w-full h-full object-cover"
-                    />
-                  ) : (
-                    <span>{avatarInitial}</span>
-                  )}
-                </div>
-
-                {/* Huy hiệu xác thực góc dưới phải */}
-                <span
-                  title="Tài khoản đã xác thực"
-                  className="absolute -bottom-0.5 -right-0.5 w-5 h-5 rounded-full bg-secondary-500 text-white border-2 border-white flex items-center justify-center"
-                >
-                  <CheckIcon className="w-3 h-3" />
-                </span>
-              </div>
-
-              <div className="min-w-0">
-                <p className="text-sm font-semibold text-text-primary">Ảnh đại diện</p>
-                <button
-                  type="button"
-                  onClick={handleOpenFilePicker}
-                  disabled={isPending}
-                  className="mt-2 inline-flex items-center gap-2 px-3.5 py-1.5 rounded-sm bg-white border border-border-subtle text-xs font-semibold text-text-primary hover:border-brand-300 hover:bg-brand-50/40 transition cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
-                >
-                  <CameraIcon className="w-3.5 h-3.5 text-text-secondary" />
-                  <span>Đổi ảnh đại diện</span>
-                </button>
-                <input
-                  ref={fileInputRef}
-                  type="file"
-                  accept="image/jpeg,image/png"
-                  onChange={handleAvatarChange}
-                  className="hidden"
-                  aria-label="Tải lên ảnh đại diện mới"
-                />
-                <p className="text-xs text-text-muted mt-1.5">
-                  Hỗ trợ định dạng JPG, PNG tối đa 5MB
-                </p>
-              </div>
-            </div>
+            <ProfileAvatarSection
+              avatarUrl={displayedAvatarUrl}
+              avatarInitial={avatarInitial}
+              userName={user.name ?? ''}
+              isPending={isPending}
+              fileInputRef={fileInputRef}
+              onOpenFilePicker={handleOpenFilePicker}
+              onAvatarChange={handleAvatarChange}
+            />
 
             {/* PHẦN 2: BIỂU MẪU THÔNG TIN */}
             <div className="space-y-5 py-6 border-b border-border-subtle/70">

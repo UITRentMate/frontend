@@ -1,6 +1,18 @@
+import type { ChangeEvent, RefObject } from 'react';
+
 import type { User } from '@/types';
 
 export type ProfileTab = 'personal' | 'security';
+
+export interface ProfileAvatarSectionProps {
+  avatarUrl: string | null;
+  avatarInitial: string;
+  userName: string;
+  isPending: boolean;
+  fileInputRef: RefObject<HTMLInputElement | null>;
+  onOpenFilePicker: () => void;
+  onAvatarChange: (e: ChangeEvent<HTMLInputElement>) => void;
+}
 
 export interface UpdateProfilePayload {
   name: string;

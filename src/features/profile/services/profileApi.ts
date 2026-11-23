@@ -1,5 +1,7 @@
+import { ENDPOINTS } from '@/api/endpoints';
 import apiClient from '@/lib/apiClient';
 import type { ApiError, User } from '@/types';
+import { validateChangePasswordRules } from '@/utils';
 
 import type {
   ChangePasswordPayload,
@@ -7,96 +9,8 @@ import type {
   UpdateProfilePayload,
   UpdateProfileResponse,
 } from '../types';
-import { isSafeAvatarUrl, validateAvatarFile } from '../utils/avatarValidation';
-
-const PROFILE_ENDPOINT = '/users/me';
-const CHANGE_PASSWORD_ENDPOINT = '/users/me/password';
-const PASSWORD_NUMBER_OR_SPECIAL_REGEX = /[0-9!@#$%^&*(),.?":{}|<>_\-+=[\]\\/;'~`]/;
-
-const validateChangePasswordPayload = (payload: ChangePasswordPayload): string | null => {
-  if (!payload.currentPassword) {
-    return 'Vui lòng nhập mật khẩu hiện tại.';
-  }
-  if (payload.newPassword.trim().length < 8) {
-    return 'Mật khẩu mới phải có tối thiểu 8 ký tự.';
-  }
-  if (payload.newPassword.length > 128) {
-    return 'Mật khẩu mới không được vượt quá 128 ký tự.';
-  }
-  if (!PASSWORD_NUMBER_OR_SPECIAL_REGEX.test(payload.newPassword)) {
-    return 'Mật khẩu mới phải bao gồm ít nhất 1 số hoặc ký tự đặc biệt.';
-  }
-  if (payload.newPassword === payload.currentPassword) {
-    return 'Mật khẩu mới không được trùng với mật khẩu hiện tại.';
-  }
-  if (payload.confirmPassword !== payload.newPassword) {
-    return 'Xác nhận mật khẩu mới không trùng khớp.';
-  }
-  return null;
-};
-
-const delay = (ms: number = 500): Promise<void> =>
-  new Promise((resolve) => setTimeout(resolve, ms));
-
-const readFileAsDataUrl = (file: File): Promise<string> =>
-  new Promise((resolve, reject) => {
-    const reader = new FileReader();
-    reader.onload = () => {
-      if (typeof reader.result === 'string' && isSafeAvatarUrl(reader.result)) {
-        resolve(reader.result);
-      } else {
-        reject(new Error('Không thể đọc tệp ảnh đại diện hợp lệ.'));
-      }
-    };
-    reader.onerror = () => reject(new Error('Không thể đọc tệp ảnh đại diện.'));
-    reader.readAsDataURL(file);
-  });
-
-async function updateProfileMock(
-  payload: UpdateProfilePayload,
-  currentUser: User
-): Promise<UpdateProfileResponse> {
-  await delay(500);
-
-  const trimmedName = payload.name.trim();
-  if (trimmedName.length < 2 || trimmedName.length > 100) {
-    throw new Error('Họ và tên phải từ 2 đến 100 ký tự.');
-  }
-
-  let nextAvatarUrl = currentUser.avatarUrl;
-  if (payload.avatarFile) {
-    const fileError = await validateAvatarFile(payload.avatarFile);
-    if (fileError) {
-      throw new Error(fileError);
-    }
-    nextAvatarUrl = await readFileAsDataUrl(payload.avatarFile);
-  }
-
-  return {
-    user: {
-      ...currentUser,
-      name: trimmedName,
-      avatarUrl: nextAvatarUrl,
-    },
-    message: 'Đã lưu thay đổi hồ sơ thành công!',
-  };
-}
-
-async function changePasswordMock(
-  payload: ChangePasswordPayload
-): Promise<ChangePasswordResponse> {
-  await delay(500);
-
-  const validationError = validateChangePasswordPayload(payload);
-  if (validationError) {
-    throw new Error(validationError);
-  }
-
-  return {
-    success: true,
-    message: 'Đổi mật khẩu thành công!',
-  };
-}
+import { validateAvatarFile } from '../utils/avatarValidation';
+import { changePasswordMock, updateProfileMock } from './mockProfileData';
 
 const isOfflineError = (apiErr: Partial<ApiError>): boolean => {
   const statusCode = apiErr?.statusCode;
@@ -133,13 +47,13 @@ export const profileApi = {
         formData.append('avatar', payload.avatarFile);
 
         // Bỏ Content-Type mặc định của apiClient để trình duyệt tự sinh boundary cho multipart/form-data
-        const response = await apiClient.patch<UpdateProfileResponse>(PROFILE_ENDPOINT, formData, {
+        const response = await apiClient.patch<UpdateProfileResponse>(ENDPOINTS.USERS.ME, formData, {
           headers: { 'Content-Type': undefined },
         });
         return response.data;
       }
 
-      const response = await apiClient.patch<UpdateProfileResponse>(PROFILE_ENDPOINT, {
+      const response = await apiClient.patch<UpdateProfileResponse>(ENDPOINTS.USERS.ME, {
         name: trimmedName,
       });
       return response.data;
@@ -166,14 +80,14 @@ export const profileApi = {
   },
 
   changePassword: async (payload: ChangePasswordPayload): Promise<ChangePasswordResponse> => {
-    const validationError = validateChangePasswordPayload(payload);
+    const validationError = validateChangePasswordRules(payload);
     if (validationError) {
       throw new Error(validationError);
     }
 
     try {
       const response = await apiClient.put<ChangePasswordResponse | undefined>(
-        CHANGE_PASSWORD_ENDPOINT,
+        ENDPOINTS.USERS.CHANGE_PASSWORD,
         payload
       );
       const data = response.data;

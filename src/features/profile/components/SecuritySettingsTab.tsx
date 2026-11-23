@@ -2,8 +2,16 @@
 import React, { useEffect, useMemo, useRef, useState, type FormEvent } from 'react';
 import { Link } from 'react-router-dom';
 
-// 2. Cấu hình, hằng số toàn cục (@/)
+// 2. Cấu hình, hằng số & tiện ích toàn cục (@/)
 import { ROUTES } from '@/routes/paths';
+import {
+  PASSWORD_MAX_LENGTH,
+  PASSWORD_MIN_LENGTH,
+  hasMinPasswordLength,
+  hasPasswordNumberOrSpecial,
+  hasValidMaxPasswordLength,
+  validateChangePasswordRules,
+} from '@/utils';
 
 // 3. Components & Icons dùng chung (@/components)
 import { Button } from '@/components/ui/Button';
@@ -20,8 +28,6 @@ import { useChangePassword } from '../hooks/useChangePassword';
 
 // 5. Types nội bộ feature (Centralized Types)
 import type { SecuritySettingsTabProps } from '../types';
-
-const PASSWORD_NUMBER_OR_SPECIAL_REGEX = /[0-9!@#$%^&*(),.?":{}|<>_\-+=[\]\\/;'~`]/;
 
 export const SecuritySettingsTab: React.FC<SecuritySettingsTabProps> = ({ className = '' }) => {
   const changePasswordMutation = useChangePassword();
@@ -48,9 +54,9 @@ export const SecuritySettingsTab: React.FC<SecuritySettingsTabProps> = ({ classN
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
 
   const isAllEmpty = !currentPassword && !newPassword && !confirmPassword;
-  const hasMinLength = newPassword.trim().length >= 8;
-  const hasValidMaxLength = newPassword.length <= 128;
-  const hasNumberOrSpecial = PASSWORD_NUMBER_OR_SPECIAL_REGEX.test(newPassword);
+  const hasMinLength = hasMinPasswordLength(newPassword);
+  const hasValidMaxLength = hasValidMaxPasswordLength(newPassword);
+  const hasNumberOrSpecial = hasPasswordNumberOrSpecial(newPassword);
   const isNewPasswordRuleMet = hasMinLength && hasValidMaxLength && hasNumberOrSpecial;
 
   const currentPasswordError = useMemo<string | undefined>(() => {
@@ -63,10 +69,10 @@ export const SecuritySettingsTab: React.FC<SecuritySettingsTabProps> = ({ classN
   const newPasswordError = useMemo<string | undefined>(() => {
     if (!hasSubmitted) return undefined;
     if (!hasMinLength) {
-      return 'Mật khẩu mới phải có tối thiểu 8 ký tự.';
+      return `Mật khẩu mới phải có tối thiểu ${PASSWORD_MIN_LENGTH} ký tự.`;
     }
     if (!hasValidMaxLength) {
-      return 'Mật khẩu mới không được vượt quá 128 ký tự.';
+      return `Mật khẩu mới không được vượt quá ${PASSWORD_MAX_LENGTH} ký tự.`;
     }
     if (!hasNumberOrSpecial) {
       return 'Mật khẩu mới phải bao gồm ít nhất 1 số hoặc ký tự đặc biệt.';
@@ -115,32 +121,13 @@ export const SecuritySettingsTab: React.FC<SecuritySettingsTabProps> = ({ classN
     setFormError(null);
     setSuccessMessage(null);
 
-    if (!currentPassword) {
-      setFormError('Vui lòng nhập mật khẩu hiện tại.');
-      return;
-    }
-    if (!hasMinLength) {
-      setFormError('Mật khẩu mới phải có tối thiểu 8 ký tự.');
-      return;
-    }
-    if (!hasValidMaxLength) {
-      setFormError('Mật khẩu mới không được vượt quá 128 ký tự.');
-      return;
-    }
-    if (!hasNumberOrSpecial) {
-      setFormError('Mật khẩu mới phải bao gồm ít nhất 1 số hoặc ký tự đặc biệt.');
-      return;
-    }
-    if (newPassword === currentPassword) {
-      setFormError('Mật khẩu mới không được trùng với mật khẩu hiện tại.');
-      return;
-    }
-    if (!confirmPassword) {
-      setFormError('Vui lòng xác nhận mật khẩu mới.');
-      return;
-    }
-    if (confirmPassword !== newPassword) {
-      setFormError('Xác nhận mật khẩu mới không trùng khớp.');
+    const validationError = validateChangePasswordRules({
+      currentPassword,
+      newPassword,
+      confirmPassword,
+    });
+    if (validationError) {
+      setFormError(validationError);
       return;
     }
 
@@ -174,7 +161,6 @@ export const SecuritySettingsTab: React.FC<SecuritySettingsTabProps> = ({ classN
   ) => (
     <button
       type="button"
-      tabIndex={-1}
       disabled={isPending}
       onClick={onToggle}
       aria-label={isVisible ? hideLabel : showLabel}

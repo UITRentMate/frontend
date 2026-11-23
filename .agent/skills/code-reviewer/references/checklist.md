@@ -29,12 +29,24 @@ Tài liệu tham khảo chuyên biệt cho việc rà soát mã nguồn (Code Re
 
 ---
 
+## 🛡️ KIẾN TRÚC, API, ROUTING & CHẤT LƯỢNG CODE (ÁP DỤNG MỌI FEATURE)
+
+- **Phụ thuộc một chiều:** `layouts/`, `components/`, `lib/`, `utils/`, `types/`, `api/` không bao giờ import từ `features/` hay `pages/`. Logic dùng chung phải đặt trong `src/utils/`.
+- **API & Mock Safety:** Dùng hằng số trong `src/api/endpoints.ts`. Tách mock sang file riêng; fallback mock chỉ chạy khi `import.meta.env.DEV === true`, không nuốt lỗi `4xx` và không che giấu lỗi raw. Cẩn trọng khi `invalidateQueries` sau `setQueryData` với query có thể trả `null` offline.
+- **Router, RBAC & Lazy Loading:** Route động phải đọc `useParams()`. Route cá nhân/quản trị phải bọc `ProtectedRoutes` / `AdminRoutes`. Page dùng `React.lazy()` + `Suspense` không được re-export qua barrel `src/pages/index.ts`.
+- **UI, A11y & Clean Code:** Dùng semantic tokens & shared UI atoms (không hardcode hex, không emoji làm icon, không `window.alert()`). Không đặt `tabIndex={-1}` lên nút tương tác; input lỗi phải có `aria-invalid` + `aria-describedby`. Tách component gọn, dùng chung validator trong `src/utils/`, và reset state cũ khi dữ liệu mới không hợp lệ.
+
+---
+
 ## 📋 PRE-OUTPUT CHECKLIST (KIỂM TRA TRƯỚC KHI XUẤT CODE)
 
-- [ ] File mới có nằm đúng vị trí trong cây thư mục dự án RentMate đã định nghĩa không?
-- [ ] Đã import đúng path alias `@/...` thay vì relative path dài dòng `../../..` chưa?
+- [ ] File mới có nằm đúng vị trí trong cây thư mục và tuân thủ phụ thuộc một chiều (không import ngược từ `features/`/`pages/`) không?
+- [ ] Đã import đúng path alias `@/...` và đúng 5 nhóm import chưa?
 - [ ] Có bị lỗi thiếu Type hoặc dính `any` không?
 - [ ] Có khai báo interface/type inline trong file `.tsx` không? (Bắt buộc phải tách ra thư mục `types/`).
+- [ ] Endpoint đã đặt trong `src/api/endpoints.ts`, mock đã tách file riêng và được guard bằng `import.meta.env.DEV` chưa?
+- [ ] Route động có đọc `useParams()`, route bảo mật đã bọc `ProtectedRoutes`/`AdminRoutes`, và lazy page đã bỏ khỏi `src/pages/index.ts` chưa?
+- [ ] UI đã dùng semantic tokens, shared UI atoms, đạt chuẩn A11y (không `tabIndex={-1}`, có `aria-invalid`/`aria-describedby`), và không lặp logic validate chưa?
 - [ ] Giao diện có đủ các trạng thái: Loading (Skeleton/Spinner), Empty (EmptyState), và Error không?
 - [ ] Nút bấm submit có hiển thị loading state (`disabled` + icon quay) khi `isPending` không?
-- [ ] Có hiển thị Toast feedback sau khi Mutation thành công hoặc thất bại không?
+- [ ] Có hiển thị Toast / feedback rõ ràng sau khi Mutation thành công hoặc thất bại không?

@@ -6,8 +6,8 @@ import { tokenStorage } from '@/utils/tokenStorage';
 import { authKeys } from '@/features/auth/hooks/authKeys';
 
 import { profileApi } from '../services/profileApi';
-import { profileKeys } from './profileKeys';
 import type { UpdateProfilePayload, UpdateProfileResponse } from '../types';
+import { profileKeys } from './profileKeys';
 
 const MAX_STORAGE_DATA_URL_LENGTH = 256 * 1024; // Tránh vượt quota ~5MB của Web Storage
 
@@ -40,10 +40,9 @@ export function useUpdateProfile() {
         : data.user;
       tokenStorage.setUser(userForStorage, tokenStorage.isRemembered());
 
-      // 3. Cập nhật & làm mới cache TanStack Query liên quan
+      // 3. Cập nhật cache Auth bằng dữ liệu mới nhất và invalidate cache profile
       queryClient.setQueryData(authKeys.currentUser(), data.user);
       queryClient.invalidateQueries({ queryKey: profileKeys.all });
-      queryClient.invalidateQueries({ queryKey: authKeys.currentUser() });
     },
     onError: () => {
       // Nếu interceptor đã xóa token do 401 Unauthorized, đồng bộ đăng xuất ngay trên AuthContext

@@ -1,13 +1,14 @@
+import { lazy, Suspense } from 'react';
 import { createBrowserRouter } from 'react-router-dom';
 import MainLayout from '@/layouts/MainLayout';
 import OwnerLayout from '@/layouts/OwnerLayout';
+import { Loading } from '@/components/ui/Loading';
 import {
   LoginPage,
   RegisterPage,
   HomePage,
   RoomsPage,
   RoomDetailPage,
-  ProfilePage,
   AdminDashboardPage,
   LandlordDashboardPage,
   LandlordPropertiesPage,
@@ -16,6 +17,8 @@ import {
 import ProtectedRoutes from './ProtectedRoutes';
 import AdminRoutes from './AdminRoutes';
 import { ROUTES } from './paths';
+
+const ProfilePage = lazy(() => import('@/pages/profile/ProfilePage'));
 
 export const router = createBrowserRouter([
   // 1. Tuyến đường Đăng nhập & Đăng ký (Toàn màn hình, độc lập với MainLayout)
@@ -65,7 +68,11 @@ export const router = createBrowserRouter([
         children: [
           {
             path: 'profile',
-            element: <ProfilePage />,
+            element: (
+              <Suspense fallback={<Loading message="Đang tải trang..." fullScreen />}>
+                <ProfilePage />
+              </Suspense>
+            ),
           },
         ],
       },
