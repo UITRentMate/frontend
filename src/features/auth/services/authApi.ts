@@ -1,8 +1,9 @@
-// 2. Cấu hình & tiện ích toàn cục (@/)
+// 2. Cấu hình, API client & endpoints toàn cục (@/)
+import { ENDPOINTS } from '@/api/endpoints';
 import apiClient from '@/lib/apiClient';
 import type { ApiError } from '@/types/api.types';
 
-// 5. Types & Mock nội bộ feature
+// 5. Types & mock nội bộ feature
 import type {
   ForgotPasswordRequest,
   ForgotPasswordResponse,
@@ -35,7 +36,7 @@ function isNetworkOfflineError(apiErr: Partial<ApiError>): boolean {
 export const authApi = {
   login: async (credentials: LoginCredentials): Promise<LoginResponseData> => {
     try {
-      const response = await apiClient.post<LoginResponseData>('/auth/login', {
+      const response = await apiClient.post<LoginResponseData>(ENDPOINTS.AUTH.LOGIN, {
         email: credentials.email,
         password: credentials.password,
       });
@@ -55,6 +56,9 @@ export const authApi = {
         throw new Error(apiErr.message);
       }
       // Fallback về mock data chỉ khi backend offline / kết nối mạng thất bại trong môi trường dev
+      if (!import.meta.env.DEV) {
+        throw new Error(apiErr?.message || 'Không thể kết nối máy chủ. Vui lòng thử lại sau.');
+      }
       await delay(500);
       return authenticateMockUser(credentials);
     }
@@ -62,7 +66,10 @@ export const authApi = {
 
   register: async (credentials: RegisterCredentials): Promise<RegisterResponseData> => {
     try {
-      const response = await apiClient.post<RegisterResponseData>('/auth/register', credentials);
+      const response = await apiClient.post<RegisterResponseData>(
+        ENDPOINTS.AUTH.REGISTER,
+        credentials
+      );
       return response.data;
     } catch (error) {
       const apiErr = error as Partial<ApiError>;
@@ -78,7 +85,10 @@ export const authApi = {
       ) {
         throw new Error(apiErr.message);
       }
-      // Fallback về mock data chỉ khi backend offline / kết nối mạng thất bại trong môi trường dev
+      // Fallback về mock data chỉ khi backend offline trong môi trường dev
+      if (!import.meta.env.DEV) {
+        throw new Error(apiErr?.message || 'Không thể kết nối máy chủ. Vui lòng thử lại sau.');
+      }
       await delay(500);
       return registerMockUser(credentials);
     }
@@ -86,7 +96,7 @@ export const authApi = {
 
   getCurrentUser: async (): Promise<LoginResponseData['user'] | null> => {
     try {
-      const response = await apiClient.get<LoginResponseData['user']>('/auth/me');
+      const response = await apiClient.get<LoginResponseData['user']>(ENDPOINTS.AUTH.ME);
       return response.data;
     } catch {
       return null;
@@ -95,7 +105,10 @@ export const authApi = {
 
   forgotPassword: async (payload: ForgotPasswordRequest): Promise<ForgotPasswordResponse> => {
     try {
-      const response = await apiClient.post<ForgotPasswordResponse>('/auth/forgot-password', payload);
+      const response = await apiClient.post<ForgotPasswordResponse>(
+        ENDPOINTS.AUTH.FORGOT_PASSWORD,
+        payload
+      );
       return response.data;
     } catch (error) {
       const apiErr = error as Partial<ApiError>;
@@ -116,7 +129,10 @@ export const authApi = {
 
   resetPassword: async (payload: ResetPasswordPayload): Promise<ResetPasswordResponse> => {
     try {
-      const response = await apiClient.post<ResetPasswordResponse>('/auth/reset-password', payload);
+      const response = await apiClient.post<ResetPasswordResponse>(
+        ENDPOINTS.AUTH.RESET_PASSWORD,
+        payload
+      );
       return response.data;
     } catch (error) {
       const apiErr = error as Partial<ApiError>;

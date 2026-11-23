@@ -33,13 +33,17 @@ export const tokenStorage = {
   },
 
   setUser: <T = unknown>(user: T, rememberMe: boolean = false): void => {
-    const serialized = JSON.stringify(user);
-    if (rememberMe) {
-      localStorage.setItem(USER_DATA_KEY, serialized);
-      sessionStorage.removeItem(USER_DATA_KEY);
-    } else {
-      sessionStorage.setItem(USER_DATA_KEY, serialized);
-      localStorage.removeItem(USER_DATA_KEY);
+    try {
+      const serialized = JSON.stringify(user);
+      if (rememberMe) {
+        localStorage.setItem(USER_DATA_KEY, serialized);
+        sessionStorage.removeItem(USER_DATA_KEY);
+      } else {
+        sessionStorage.setItem(USER_DATA_KEY, serialized);
+        localStorage.removeItem(USER_DATA_KEY);
+      }
+    } catch {
+      // Bỏ qua lỗi QuotaExceededError hoặc storage bị khóa để không làm gián đoạn phiên làm việc
     }
   },
 

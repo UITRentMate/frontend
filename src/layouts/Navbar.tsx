@@ -1,7 +1,10 @@
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
+
 import { ROUTES } from '@/routes/paths';
 import { useAuth } from '@/hooks/useAuth';
+import { isSafeAvatarUrl } from '@/utils';
+
 import Button from '@/components/ui/Button';
 
 export const Navbar: React.FC = () => {
@@ -53,9 +56,9 @@ export const Navbar: React.FC = () => {
           </Link>
           {isAuthenticated && user?.role === 'admin' && (
             <Link
-              to="/admin/dashboard"
+              to={ROUTES.ADMIN_DASHBOARD}
               className={`px-3 py-1.5 rounded-sm text-sm font-medium transition-colors ${
-                isActive('/admin/dashboard')
+                isActive(ROUTES.ADMIN_DASHBOARD)
                   ? 'text-purple-700 bg-purple-50 font-semibold'
                   : 'text-purple-600 hover:bg-purple-50/60'
               }`}
@@ -77,9 +80,25 @@ export const Navbar: React.FC = () => {
                   Cổng Chủ trọ
                 </Link>
               )}
-              <div className="flex items-center gap-2 px-2.5 py-1 rounded-full bg-slate-50 border border-slate-200">
-                <div className="w-6 h-6 rounded-full bg-brand-500 text-white font-bold text-xs flex items-center justify-center">
-                  {user.name.charAt(0)}
+              <Link
+                to={ROUTES.PROFILE}
+                title="Cài đặt tài khoản"
+                className={`flex items-center gap-2 px-2.5 py-1 rounded-full border transition-colors ${
+                  isActive(ROUTES.PROFILE)
+                    ? 'bg-brand-50 border-brand-200'
+                    : 'bg-canvas border-border-subtle hover:border-brand-300 hover:bg-brand-50/40'
+                }`}
+              >
+                <div className="w-6 h-6 rounded-full bg-brand-500 text-white font-bold text-xs flex items-center justify-center overflow-hidden shrink-0">
+                  {isSafeAvatarUrl(user.avatarUrl) ? (
+                    <img
+                      src={user.avatarUrl}
+                      alt={user.name || 'Avatar'}
+                      className="w-full h-full object-cover"
+                    />
+                  ) : (
+                    (user.name ?? '').trim().charAt(0).toUpperCase() || 'U'
+                  )}
                 </div>
                 <div className="flex flex-col text-left hidden sm:flex">
                   <span className="text-xs font-semibold text-text-primary truncate max-w-[120px]">
@@ -89,7 +108,7 @@ export const Navbar: React.FC = () => {
                     {user.role}
                   </span>
                 </div>
-              </div>
+              </Link>
 
               <Button
                 variant="ghost"

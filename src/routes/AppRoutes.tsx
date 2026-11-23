@@ -21,6 +21,7 @@ import { ROUTES } from './paths';
 
 const ForgotPasswordPage = lazy(() => import('@/pages/auth/ForgotPasswordPage'));
 const ResetPasswordPage = lazy(() => import('@/pages/auth/ResetPasswordPage'));
+const ProfilePage = lazy(() => import('@/pages/profile/ProfilePage'));
 
 const authRouteFallback = <Loading message="Đang tải trang..." fullScreen />;
 
@@ -80,6 +81,21 @@ export const router = createBrowserRouter([
       {
         path: 'rooms/:id',
         element: <RoomDetailPage />,
+      },
+
+      // Tuyến bảo vệ yêu cầu đăng nhập (Protected Routes)
+      {
+        element: <ProtectedRoutes />,
+        children: [
+          {
+            path: 'profile',
+            element: (
+              <Suspense fallback={<Loading message="Đang tải trang..." fullScreen />}>
+                <ProfilePage />
+              </Suspense>
+            ),
+          },
+        ],
       },
 
       // Tuyến bảo vệ dành riêng cho Quản trị viên (Admin Routes)
