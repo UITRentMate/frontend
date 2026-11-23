@@ -1,4 +1,11 @@
 import { ROUTES } from '@/routes/paths';
+import {
+  hasPasswordNumberOrSpecial,
+  hasValidPasswordLength,
+  isValidEmail,
+  PASSWORD_MAX_LENGTH,
+} from '@/utils';
+
 import type {
   DemoAccount,
   LoginCredentials,
@@ -164,9 +171,7 @@ export async function forgotPasswordMock(
     throw new Error('Vui lòng nhập địa chỉ email của bạn.');
   }
 
-  // Regex kiểm tra định dạng email chuẩn
-  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-  if (!emailRegex.test(normalizedEmail)) {
+  if (!isValidEmail(normalizedEmail)) {
     throw new Error('Địa chỉ email không đúng định dạng.');
   }
 
@@ -186,18 +191,22 @@ export async function resetPasswordMock(
 
   const normalizedToken = payload.token.trim().toLowerCase();
   if (!normalizedToken || normalizedToken === 'expired' || normalizedToken === 'invalid') {
-    throw new Error('Liên kết đặt lại mật khẩu đã hết hạn hoặc không hợp lệ. Vui lòng yêu cầu gửi lại email.');
+    const tokenError = new Error(
+      'Liên kết đặt lại mật khẩu đã hết hạn hoặc không hợp lệ. Vui lòng yêu cầu gửi lại email.'
+    );
+    tokenError.name = 'ResetTokenError';
+    throw tokenError;
   }
 
-  if (payload.newPassword.trim().length < 8) {
-    throw new Error('Mật khẩu mới phải có tối thiểu 8 ký tự (không tính khoảng trắng thừa).');
-  }
-
-  if (payload.newPassword.length > 128) {
+  if (payload.newPassword.length > PASSWORD_MAX_LENGTH) {
     throw new Error('Mật khẩu mới không được vượt quá 128 ký tự.');
   }
 
-  if (!/[0-9!@#$%^&*(),.?":{}|<>_\-+=[\]\\/;'~`]/.test(payload.newPassword)) {
+  if (!hasValidPasswordLength(payload.newPassword)) {
+    throw new Error('Mật khẩu mới phải có tối thiểu 8 ký tự (không tính khoảng trắng thừa).');
+  }
+
+  if (!hasPasswordNumberOrSpecial(payload.newPassword)) {
     throw new Error('Mật khẩu mới phải chứa ít nhất một chữ số hoặc ký tự đặc biệt.');
   }
 

@@ -1,39 +1,30 @@
-// 1. Thư viện bên ngoài (React, Router)
 import React, { useEffect, useMemo, useState, type FormEvent } from 'react';
 import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 
-// 2. Cấu hình, hằng số và layouts toàn cục (@/)
 import { ROUTES } from '@/routes/paths';
 import AuthLayout from '@/layouts/AuthLayout';
+import {
+  hasMinPasswordLength,
+  hasPasswordNumberOrSpecial,
+  hasValidPasswordLength,
+  PASSWORD_MAX_LENGTH,
+  PASSWORD_MIN_LENGTH,
+} from '@/utils';
 
-// 3. Components & Icons dùng chung (@/components)
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
 import {
   AlertCircleIcon,
   ArrowLeftIcon,
-  CheckCircle2Icon,
-  CircleIcon,
   EyeIcon,
   EyeOffIcon,
   LockIcon,
 } from '@/components/ui/icons';
 
-// 4. Hooks nội bộ feature
 import { useResetPassword } from '../hooks/useResetPassword';
-
-// 5. Types nội bộ feature (Centralized Types)
 import type { RentMateResetPasswordProps } from '../types';
-
-const SPECIAL_OR_NUMBER_REGEX = /[0-9!@#$%^&*(),.?":{}|<>_\-+=[\]\\/;'~`]/;
-
-const STRENGTH_CONFIG = [
-  { label: 'Chưa nhập', textClass: 'text-text-muted', barClass: 'bg-surface-accent' },
-  { label: 'Yếu', textClass: 'text-danger', barClass: 'bg-danger' },
-  { label: 'Trung bình', textClass: 'text-warning', barClass: 'bg-warning' },
-  { label: 'Khá', textClass: 'text-brand-400', barClass: 'bg-brand-400' },
-  { label: 'Mạnh', textClass: 'text-secondary-500', barClass: 'bg-secondary-500' },
-] as const;
+import { PasswordStrengthMeter, usePasswordStrength } from './PasswordStrengthMeter';
+import { ResetPasswordSuccessView } from './ResetPasswordSuccessView';
 
 export const RentMateResetPassword: React.FC<RentMateResetPasswordProps> = ({
   onSuccess,
@@ -57,43 +48,29 @@ export const RentMateResetPassword: React.FC<RentMateResetPasswordProps> = ({
   const [confirmPassword, setConfirmPassword] = useState<string>('');
   const [showPassword, setShowPassword] = useState<boolean>(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState<boolean>(false);
-  const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [errorMessage, setErrorMessage] = useState<string | null>(() =>
+    resetToken
+      ? null
+      : 'Liên kết đặt lại mật khẩu không hợp lệ hoặc đã hết hạn. Vui lòng yêu cầu gửi lại email.'
+  );
+  const [isTokenError, setIsTokenError] = useState<boolean>(() => !resetToken);
   const [hasSubmitted, setHasSubmitted] = useState<boolean>(false);
   const [isCompleted, setIsCompleted] = useState<boolean>(false);
 
   const resetPasswordMutation = useResetPassword();
   const isPending = resetPasswordMutation.isPending;
 
-  // Tiêu chí kiểm tra mật khẩu realtime
-  const hasMinLength = newPassword.length >= 8;
-  const hasNumberOrSpecial = SPECIAL_OR_NUMBER_REGEX.test(newPassword);
+  const hasMinLength = hasMinPasswordLength(newPassword);
+  const hasNumberOrSpecial = hasPasswordNumberOrSpecial(newPassword);
+  const currentStrength = usePasswordStrength(newPassword, hasMinLength, hasNumberOrSpecial);
 
-  // Tính điểm độ mạnh mật khẩu từ 0 đến 4
-  const strengthScore = useMemo<number>(() => {
-    if (!newPassword) return 0;
-    let score = 0;
-    if (hasMinLength) score += 1;
-    if (hasNumberOrSpecial) score += 1;
-    if (/[a-z]/.test(newPassword) && /[A-Z]/.test(newPassword)) score += 1;
-    if (
-      newPassword.length >= 12 ||
-      (/[0-9]/.test(newPassword) && /[!@#$%^&*(),.?":{}|<>]/.test(newPassword))
-    ) {
-      score += 1;
-    }
-    return Math.max(1, Math.min(4, score));
-  }, [newPassword, hasMinLength, hasNumberOrSpecial]);
-
-  const currentStrength = STRENGTH_CONFIG[strengthScore];
-
-  // Lỗi mật khẩu mới khi người dùng đã bấm submit nhưng chưa đạt tiêu chí
   const newPasswordError = useMemo<string | undefined>(() => {
     if (!hasSubmitted) return undefined;
-    if (newPassword.trim().length < 8) {
-      return 'Mật khẩu mới phải có tối thiểu 8 ký tự.';
+    if (newPassword.trim().length < PASSWORD_MIN_LENGTH) {
+      return `Mật khẩu mới phải có tối thiểu ${PASSWORD_MIN_LENGTH} ký tự.`;
     }
-    if (newPassword.length > 128) {
-      return 'Mật khẩu mới không được vượt quá 128 ký tự.';
+    if (newPassword.length > PASSWORD_MAX_LENGTH) {
+      return `Mật khẩu mới không được vượt quá ${PASSWORD_MAX_LENGTH} ký tự.`;
     }
     if (!hasNumberOrSpecial) {
       return 'Mật khẩu mới cần chứa ít nhất một chữ số hoặc ký tự đặc biệt.';
@@ -101,7 +78,6 @@ export const RentMateResetPassword: React.FC<RentMateResetPasswordProps> = ({
     return undefined;
   }, [hasSubmitted, newPassword, hasNumberOrSpecial]);
 
-  // Lỗi xác nhận mật khẩu hiển thị realtime khi đã nhập hoặc sau khi bấm submit
   const confirmPasswordError = useMemo<string | undefined>(() => {
     if (!confirmPassword && hasSubmitted) {
       return 'Vui lòng nhập lại mật khẩu mới.';
@@ -116,23 +92,20 @@ export const RentMateResetPassword: React.FC<RentMateResetPasswordProps> = ({
     e.preventDefault();
     setHasSubmitted(true);
     setErrorMessage(null);
+    setIsTokenError(false);
 
     if (!resetToken) {
+      setIsTokenError(true);
       setErrorMessage(
         'Liên kết đặt lại mật khẩu không hợp lệ hoặc đã hết hạn. Vui lòng yêu cầu gửi lại email.'
       );
       return;
     }
 
-    if (newPassword.trim().length < 8 || !hasNumberOrSpecial) {
+    if (!hasValidPasswordLength(newPassword) || !hasNumberOrSpecial) {
       setErrorMessage(
         'Mật khẩu mới chưa đáp ứng đủ tiêu chí bảo mật. Vui lòng kiểm tra lại các yêu cầu bên dưới.'
       );
-      return;
-    }
-
-    if (newPassword.length > 128) {
-      setErrorMessage('Mật khẩu mới không được vượt quá 128 ký tự.');
       return;
     }
 
@@ -154,10 +127,12 @@ export const RentMateResetPassword: React.FC<RentMateResetPasswordProps> = ({
         onSuccess();
       }
     } catch (err: unknown) {
+      const isInvalidToken = err instanceof Error && err.name === 'ResetTokenError';
       const message =
         err instanceof Error
           ? err.message
           : 'Không thể đặt lại mật khẩu. Liên kết có thể đã hết hạn hoặc không hợp lệ.';
+      setIsTokenError(isInvalidToken);
       setErrorMessage(message);
     }
   };
@@ -171,34 +146,9 @@ export const RentMateResetPassword: React.FC<RentMateResetPasswordProps> = ({
     >
       <div className="max-w-md w-full space-y-6">
         {isCompleted ? (
-          /* TRẠNG THÁI ĐẶT LẠI MẬT KHẨU THÀNH CÔNG */
-          <div className="flex flex-col items-center text-center py-4 animate-in fade-in duration-300">
-            <div className="w-16 h-16 rounded-full bg-secondary-50 border border-secondary-200 text-secondary-500 flex items-center justify-center mb-5">
-              <CheckCircle2Icon className="w-9 h-9 text-secondary-500" />
-            </div>
-
-            <h1 className="text-2xl sm:text-3xl font-bold font-heading text-text-primary tracking-tight">
-              Đặt lại mật khẩu thành công!
-            </h1>
-
-            <p className="text-sm text-text-muted mt-2 mb-8 leading-relaxed font-sans max-w-sm">
-              Mật khẩu tài khoản RentMate của bạn đã được cập nhật an toàn. Bạn có thể đăng nhập ngay bằng mật khẩu mới.
-            </p>
-
-            <Button
-              type="button"
-              variant="primary"
-              size="lg"
-              className="w-full h-11 rounded-md cursor-pointer"
-              onClick={() => navigate(ROUTES.LOGIN)}
-            >
-              Đăng nhập ngay
-            </Button>
-          </div>
+          <ResetPasswordSuccessView onNavigateLogin={() => navigate(ROUTES.LOGIN)} />
         ) : (
-          /* BIỂU MẪU ĐẶT LẠI MẬT KHẨU */
           <>
-            {/* 1. Khối tiêu đề */}
             <div>
               <h1 className="text-3xl font-bold font-heading text-text-primary tracking-tight">
                 Đặt lại mật khẩu
@@ -208,19 +158,16 @@ export const RentMateResetPassword: React.FC<RentMateResetPasswordProps> = ({
               </p>
             </div>
 
-            {/* Alert lỗi từ client/API */}
             {errorMessage && (
               <div
                 role="alert"
-                className="flex flex-col gap-1.5 p-3.5 rounded-lg bg-danger-soft border border-danger-border text-xs text-danger animate-in fade-in duration-200"
+                className="flex flex-col gap-1.5 p-3.5 rounded-sm bg-danger-soft border border-danger-border text-xs text-danger"
               >
                 <div className="flex items-start gap-2.5">
                   <AlertCircleIcon className="w-4 h-4 text-danger shrink-0 mt-0.5" />
                   <span className="leading-relaxed">{errorMessage}</span>
                 </div>
-                {(errorMessage.toLowerCase().includes('hết hạn') ||
-                  errorMessage.toLowerCase().includes('không hợp lệ') ||
-                  errorMessage.toLowerCase().includes('token')) && (
+                {isTokenError && (
                   <Link
                     to={ROUTES.FORGOT_PASSWORD}
                     className="ml-6.5 font-semibold text-brand-500 hover:underline w-fit"
@@ -232,7 +179,6 @@ export const RentMateResetPassword: React.FC<RentMateResetPasswordProps> = ({
             )}
 
             <form onSubmit={handleSubmit} noValidate className="space-y-5">
-              {/* 2. Trường "Mật khẩu mới" */}
               <div>
                 <div className="flex items-center justify-between mb-1.5">
                   <label
@@ -250,11 +196,11 @@ export const RentMateResetPassword: React.FC<RentMateResetPasswordProps> = ({
                   id="reset-new-password"
                   type={showPassword ? 'text' : 'password'}
                   autoComplete="new-password"
-                  disabled={isPending}
+                  disabled={isPending || !resetToken}
                   value={newPassword}
                   onChange={(e) => {
                     setNewPassword(e.target.value);
-                    if (errorMessage) setErrorMessage(null);
+                    if (errorMessage && !isTokenError) setErrorMessage(null);
                   }}
                   placeholder="Nhập tối thiểu 8 ký tự"
                   error={newPasswordError}
@@ -262,8 +208,7 @@ export const RentMateResetPassword: React.FC<RentMateResetPasswordProps> = ({
                   rightElement={
                     <button
                       type="button"
-                      tabIndex={-1}
-                      disabled={isPending}
+                      disabled={isPending || !resetToken}
                       onClick={() => setShowPassword((prev) => !prev)}
                       aria-label={showPassword ? 'Ẩn mật khẩu mới' : 'Hiện mật khẩu mới'}
                       className="text-text-muted hover:text-text-primary transition p-1 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
@@ -278,49 +223,13 @@ export const RentMateResetPassword: React.FC<RentMateResetPasswordProps> = ({
                   className="py-2.5"
                 />
 
-                {/* Thanh tiến trình độ mạnh mật khẩu (4 đoạn) */}
-                <div className="grid grid-cols-4 gap-1.5 mt-2.5" aria-hidden="true">
-                  {[1, 2, 3, 4].map((segment) => (
-                    <div
-                      key={segment}
-                      className={`h-1 rounded-full transition-colors duration-200 ${
-                        strengthScore >= segment ? currentStrength.barClass : 'bg-surface-accent'
-                      }`}
-                    />
-                  ))}
-                </div>
-
-                {/* Khối tiêu chí mật khẩu */}
-                <div className="mt-3 p-3.5 rounded-lg bg-brand-50/70 border border-brand-100/80 flex flex-col gap-2 text-xs select-none">
-                  <div
-                    className={`flex items-center gap-2 transition-colors duration-200 ${
-                      hasMinLength ? 'text-secondary-500 font-medium' : 'text-text-muted'
-                    }`}
-                  >
-                    {hasMinLength ? (
-                      <CheckCircle2Icon className="w-3.5 h-3.5 text-secondary-500 shrink-0" />
-                    ) : (
-                      <CircleIcon className="w-3.5 h-3.5 text-text-disabled shrink-0" />
-                    )}
-                    <span>Tối thiểu 8 ký tự</span>
-                  </div>
-
-                  <div
-                    className={`flex items-center gap-2 transition-colors duration-200 ${
-                      hasNumberOrSpecial ? 'text-secondary-500 font-medium' : 'text-text-muted'
-                    }`}
-                  >
-                    {hasNumberOrSpecial ? (
-                      <CheckCircle2Icon className="w-3.5 h-3.5 text-secondary-500 shrink-0" />
-                    ) : (
-                      <CircleIcon className="w-3.5 h-3.5 text-text-disabled shrink-0" />
-                    )}
-                    <span>Chứa ít nhất một chữ số (0-9) hoặc ký tự đặc biệt (@, #, $, ...)</span>
-                  </div>
-                </div>
+                <PasswordStrengthMeter
+                  password={newPassword}
+                  hasMinLength={hasMinLength}
+                  hasNumberOrSpecial={hasNumberOrSpecial}
+                />
               </div>
 
-              {/* 3. Trường "Xác nhận mật khẩu mới" */}
               <div>
                 <label
                   htmlFor="reset-confirm-password"
@@ -333,11 +242,11 @@ export const RentMateResetPassword: React.FC<RentMateResetPasswordProps> = ({
                   id="reset-confirm-password"
                   type={showConfirmPassword ? 'text' : 'password'}
                   autoComplete="new-password"
-                  disabled={isPending}
+                  disabled={isPending || !resetToken}
                   value={confirmPassword}
                   onChange={(e) => {
                     setConfirmPassword(e.target.value);
-                    if (errorMessage) setErrorMessage(null);
+                    if (errorMessage && !isTokenError) setErrorMessage(null);
                   }}
                   placeholder="Nhập lại mật khẩu mới"
                   error={confirmPasswordError}
@@ -345,8 +254,7 @@ export const RentMateResetPassword: React.FC<RentMateResetPasswordProps> = ({
                   rightElement={
                     <button
                       type="button"
-                      tabIndex={-1}
-                      disabled={isPending}
+                      disabled={isPending || !resetToken}
                       onClick={() => setShowConfirmPassword((prev) => !prev)}
                       aria-label={
                         showConfirmPassword ? 'Ẩn xác nhận mật khẩu' : 'Hiện xác nhận mật khẩu'
@@ -364,12 +272,12 @@ export const RentMateResetPassword: React.FC<RentMateResetPasswordProps> = ({
                 />
               </div>
 
-              {/* 4. Nút hành động chính & Link quay lại */}
               <div className="pt-1">
                 <Button
                   type="submit"
                   variant="primary"
                   size="lg"
+                  disabled={!resetToken}
                   isLoading={isPending}
                   className="w-full h-11 rounded-md cursor-pointer"
                 >

@@ -18,6 +18,21 @@ export interface RentMateResetPasswordProps {
   className?: string;
 }
 
+export interface ForgotPasswordSuccessViewProps {
+  submittedEmail: string;
+  onResetForm: () => void;
+}
+
+export interface PasswordStrengthMeterProps {
+  password: string;
+  hasMinLength: boolean;
+  hasNumberOrSpecial: boolean;
+}
+
+export interface ResetPasswordSuccessViewProps {
+  onNavigateLogin: () => void;
+}
+
 export interface RoleSwitcherProps {
   selectedRole: 'tenant' | 'landlord';
   onChange: (role: 'tenant' | 'landlord') => void;

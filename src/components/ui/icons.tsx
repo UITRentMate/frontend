@@ -1,5 +1,6 @@
 import React from 'react';
-import type { SvgIconProps } from '../../types';
+
+import type { SvgIconProps } from '@/types';
 
 export const LayoutDashboardIcon: React.FC<SvgIconProps> = ({ className = 'w-5 h-5', size = 20 }) => (
   <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className={className}>
@@ -358,20 +359,7 @@ export const InfoIcon: React.FC<SvgIconProps> = ({ className = 'w-3.5 h-3.5', si
 );
 
 export const CheckCircleIcon: React.FC<SvgIconProps> = ({ className = 'w-12 h-12', size }) => (
-  <svg
-    width={size || 48}
-    height={size || 48}
-    viewBox="0 0 24 24"
-    fill="none"
-    stroke="currentColor"
-    strokeWidth="2"
-    strokeLinecap="round"
-    strokeLinejoin="round"
-    className={className}
-  >
-    <circle cx="12" cy="12" r="10" />
-    <path d="m9 12 2 2 4-4" />
-  </svg>
+  <CheckCircle2Icon className={className} size={size || 48} />
 );
 
 export const ArrowLeftIcon: React.FC<SvgIconProps> = ({ className = 'w-4 h-4', size }) => (
