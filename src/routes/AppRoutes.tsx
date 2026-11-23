@@ -1,5 +1,6 @@
 import { lazy, Suspense } from 'react';
 import { createBrowserRouter } from 'react-router-dom';
+
 import MainLayout from '@/layouts/MainLayout';
 import OwnerLayout from '@/layouts/OwnerLayout';
 import { Loading } from '@/components/ui/Loading';
@@ -18,7 +19,11 @@ import ProtectedRoutes from './ProtectedRoutes';
 import AdminRoutes from './AdminRoutes';
 import { ROUTES } from './paths';
 
+const ForgotPasswordPage = lazy(() => import('@/pages/auth/ForgotPasswordPage'));
+const ResetPasswordPage = lazy(() => import('@/pages/auth/ResetPasswordPage'));
 const ProfilePage = lazy(() => import('@/pages/profile/ProfilePage'));
+
+const authRouteFallback = <Loading message="Đang tải trang..." fullScreen />;
 
 export const router = createBrowserRouter([
   // 1. Tuyến đường Đăng nhập & Đăng ký (Toàn màn hình, độc lập với MainLayout)
@@ -29,6 +34,22 @@ export const router = createBrowserRouter([
   {
     path: ROUTES.REGISTER,
     element: <RegisterPage />,
+  },
+  {
+    path: ROUTES.FORGOT_PASSWORD,
+    element: (
+      <Suspense fallback={authRouteFallback}>
+        <ForgotPasswordPage />
+      </Suspense>
+    ),
+  },
+  {
+    path: ROUTES.RESET_PASSWORD,
+    element: (
+      <Suspense fallback={authRouteFallback}>
+        <ResetPasswordPage />
+      </Suspense>
+    ),
   },
   {
     element: <ProtectedRoutes requiredRole="landlord" />,
