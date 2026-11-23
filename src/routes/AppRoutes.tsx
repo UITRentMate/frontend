@@ -1,6 +1,8 @@
+import { lazy, Suspense } from 'react';
 import { createBrowserRouter } from 'react-router-dom';
 import MainLayout from '@/layouts/MainLayout';
 import OwnerLayout from '@/layouts/OwnerLayout';
+import { Loading } from '@/components/ui/Loading';
 import {
   LoginPage,
   RegisterPage,
@@ -15,6 +17,8 @@ import {
 import ProtectedRoutes from './ProtectedRoutes';
 import AdminRoutes from './AdminRoutes';
 import { ROUTES } from './paths';
+
+const ProfilePage = lazy(() => import('@/pages/profile/ProfilePage'));
 
 export const router = createBrowserRouter([
   // 1. Tuyến đường Đăng nhập & Đăng ký (Toàn màn hình, độc lập với MainLayout)
@@ -56,6 +60,21 @@ export const router = createBrowserRouter([
       {
         path: 'rooms/:id',
         element: <RoomDetailPage />,
+      },
+
+      // Tuyến bảo vệ yêu cầu đăng nhập (Protected Routes)
+      {
+        element: <ProtectedRoutes />,
+        children: [
+          {
+            path: 'profile',
+            element: (
+              <Suspense fallback={<Loading message="Đang tải trang..." fullScreen />}>
+                <ProfilePage />
+              </Suspense>
+            ),
+          },
+        ],
       },
 
       // Tuyến bảo vệ dành riêng cho Quản trị viên (Admin Routes)

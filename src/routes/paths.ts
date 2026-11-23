@@ -5,6 +5,7 @@ export const ROUTES = {
   CREATE_ROOM: '/rooms/new',
   LOGIN: '/login',
   REGISTER: '/register',
+  FORGOT_PASSWORD: '/forgot-password',
   PROFILE: '/profile',
   ADMIN_DASHBOARD: '/admin/dashboard',
   LANDLORD_DASHBOARD: '/landlord/dashboard',
