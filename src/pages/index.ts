@@ -4,4 +4,4 @@ export * from './rooms';
 export * from './admin';
 export * from './landlord';
 export * from './errors';
-export * from './ScheduleTourPage';
+export * from './schedule-tour';

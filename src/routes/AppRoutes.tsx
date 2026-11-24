@@ -58,13 +58,19 @@ export const router = createBrowserRouter([
         path: 'rooms/:id',
         element: <RoomDetailPage />,
       },
+      // Tuyến bảo vệ dành cho người dùng đăng nhập (Protected Routes)
       {
-        path: 'schedule-tour',
-        element: <ScheduleTourPage />,
-      },
-      {
-        path: 'rooms/:id/schedule-tour',
-        element: <ScheduleTourPage />,
+        element: <ProtectedRoutes />,
+        children: [
+          {
+            path: 'schedule-tour',
+            element: <ScheduleTourPage />,
+          },
+          {
+            path: 'rooms/:id/schedule-tour',
+            element: <ScheduleTourPage />,
+          },
+        ],
       },
 
       // Tuyến bảo vệ dành riêng cho Quản trị viên (Admin Routes)

@@ -1,5 +1,5 @@
 import React from 'react';
-import type { SvgIconProps } from '../../types';
+import type { SvgIconProps } from '@/types';
 
 export const LayoutDashboardIcon: React.FC<SvgIconProps> = ({ className = 'w-5 h-5', size = 20 }) => (
   <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className={className}>

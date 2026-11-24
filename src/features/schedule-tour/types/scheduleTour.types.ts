@@ -23,6 +23,7 @@ export interface LandlordTourInfo {
 }
 
 export interface RoomTourSnapshot {
+  id?: string;
   roomCode: string;
   title: string;
   buildingName: string;
@@ -35,6 +36,21 @@ export interface RoomTourSnapshot {
   imageUrl: string;
   photosCount: number;
   landlord: LandlordTourInfo;
+}
+
+export interface BookTourPayload {
+  roomId: string;
+  date: string;
+  slotIds: string[];
+  note?: string;
+}
+
+export interface BookTourResponse {
+  bookingId: string;
+  bookingCode: string;
+  status: 'PENDING_CONFIRMATION' | 'CONFIRMED';
+  message: string;
+  createdAt: string;
 }
 
 export interface TourBookingFormData {

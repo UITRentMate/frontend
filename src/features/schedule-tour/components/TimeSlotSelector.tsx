@@ -7,6 +7,7 @@ export const TimeSlotSelector: React.FC<TimeSlotSelectorProps> = ({
   selectedSlotIds,
   onToggleSlot,
   maxSlots = 3,
+  inlineError,
 }) => {
   const morningSlots = slots.filter((s) => s.period === 'morning');
   const afternoonSlots = slots.filter((s) => s.period === 'afternoon');
@@ -21,6 +22,7 @@ export const TimeSlotSelector: React.FC<TimeSlotSelectorProps> = ({
           key={slot.id}
           type="button"
           disabled
+          aria-disabled="true"
           className="flex-1 min-w-[120px] p-3 rounded-lg bg-surface-muted/50 border border-border-subtle text-center cursor-not-allowed opacity-70"
         >
           <span className="text-xs sm:text-sm font-normal text-text-disabled line-through block">
@@ -37,6 +39,7 @@ export const TimeSlotSelector: React.FC<TimeSlotSelectorProps> = ({
       <button
         key={slot.id}
         type="button"
+        aria-pressed={isSelected}
         onClick={() => onToggleSlot(slot.id)}
         className={`flex-1 min-w-[120px] p-3 rounded-lg border text-center transition-all cursor-pointer ${
           isSelected
@@ -86,6 +89,10 @@ export const TimeSlotSelector: React.FC<TimeSlotSelectorProps> = ({
           Đã chọn {selectedSlotIds.length}/{maxSlots}
         </div>
       </div>
+
+      {inlineError && (
+        <span className="text-xs text-danger font-medium -mt-1">{inlineError}</span>
+      )}
 
       {/* Morning Slots */}
       <div className="flex flex-col gap-2">

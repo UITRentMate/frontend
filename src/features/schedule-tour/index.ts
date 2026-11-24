@@ -1,3 +1,3 @@
-export * from './ScheduleTourFeature';
+export * from './components/ScheduleTourFeature';
 export * from './types';
-export { default } from './ScheduleTourFeature';
+export { default } from './components/ScheduleTourFeature';

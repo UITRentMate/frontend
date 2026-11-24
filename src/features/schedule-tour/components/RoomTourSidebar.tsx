@@ -1,4 +1,5 @@
-import React from 'react';
+import React, { useState } from 'react';
+import { Link } from 'react-router-dom';
 import {
   ImageIcon,
   MapPinIcon,
@@ -11,19 +12,30 @@ import {
   DropletsIcon,
 } from '@/components/ui/icons';
 import roomPreviewImg from '@/assets/room-preview.png';
+import { formatCurrency } from '@/utils/formatCurrency';
+import { ROUTES } from '@/routes/paths';
 import type { RoomTourSidebarProps } from '../types';
 
-export const RoomTourSidebar: React.FC<RoomTourSidebarProps> = ({ room }) => {
-  const formatCurrency = (amount: number) => {
-    return new Intl.NumberFormat('vi-VN').format(amount) + ' ₫';
+export const RoomTourSidebar: React.FC<RoomTourSidebarProps> = ({ room, onContactLandlord }) => {
+  const [copiedContact, setCopiedContact] = useState(false);
+
+  const handleMessageClick = () => {
+    if (onContactLandlord) {
+      onContactLandlord();
+      return;
+    }
+    setCopiedContact(true);
+    setTimeout(() => setCopiedContact(false), 2500);
   };
+
+  const detailUrl = room.id ? `/rooms/${room.id}` : ROUTES.ROOMS;
 
   return (
     <aside className="w-full bg-surface-card border border-border-subtle rounded-xl p-4 shadow-soft-xs sticky top-20 flex flex-col gap-4">
-      {/* Image with badges */}
+      {/* Image with badges (Ưu tiên ảnh phòng thật, fallback sang ảnh mẫu) */}
       <div className="relative h-44 bg-surface-muted rounded-lg overflow-hidden">
         <img
-          src={roomPreviewImg || room.imageUrl}
+          src={room.imageUrl || roomPreviewImg}
           alt={room.title}
           className="w-full h-full object-cover"
         />
@@ -36,7 +48,7 @@ export const RoomTourSidebar: React.FC<RoomTourSidebarProps> = ({ room }) => {
         {/* Photos Count Badge */}
         <div className="absolute bottom-2.5 right-2.5 bg-text-primary/75 text-white text-[11px] font-medium px-2 py-0.5 rounded-xs flex items-center gap-1">
           <ImageIcon className="w-3 h-3" />
-          <span>{room.photosCount} ảnh</span>
+          <span>{room.photosCount || 8} ảnh</span>
         </div>
       </div>
 
@@ -114,13 +126,13 @@ export const RoomTourSidebar: React.FC<RoomTourSidebarProps> = ({ room }) => {
 
         {/* View Listing Link */}
         <div className="text-center pt-0.5">
-          <a
-            href="#full-listing"
+          <Link
+            to={detailUrl}
             className="inline-flex items-center gap-1 text-xs font-semibold text-brand-500 hover:text-brand-600 transition-colors"
           >
             <span>Xem bài đăng đầy đủ</span>
             <ExternalLinkIcon className="w-3 h-3" />
-          </a>
+          </Link>
         </div>
       </div>
 
@@ -170,10 +182,11 @@ export const RoomTourSidebar: React.FC<RoomTourSidebarProps> = ({ room }) => {
 
         <button
           type="button"
+          onClick={handleMessageClick}
           className="w-full h-9 bg-surface-card hover:bg-surface-muted border border-border-subtle rounded-md text-xs font-bold text-text-primary flex items-center justify-center gap-1.5 transition-colors cursor-pointer"
         >
           <MessageSquareIcon className="w-3.5 h-3.5 text-brand-500" />
-          <span>Nhắn tin hỏi trước khi đến</span>
+          <span>{copiedContact ? '✓ Đã mở kết nối trò chuyện' : 'Nhắn tin hỏi trước khi đến'}</span>
         </button>
       </div>
     </aside>

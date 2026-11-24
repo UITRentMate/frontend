@@ -7,6 +7,7 @@ export interface ReminderBannerProps {
 export interface ScheduleBreadcrumbProps {
   buildingName: string;
   roomTitle: string;
+  roomId?: string;
 }
 
 export interface DateSelectorProps {
@@ -15,6 +16,7 @@ export interface DateSelectorProps {
   onSelectDate: (dateVal: string) => void;
   customDate: string;
   onCustomDateChange: (customDateVal: string) => void;
+  inlineError?: string | null;
 }
 
 export interface TimeSlotSelectorProps {
@@ -22,6 +24,7 @@ export interface TimeSlotSelectorProps {
   selectedSlotIds: string[];
   onToggleSlot: (slotId: string) => void;
   maxSlots?: number;
+  inlineError?: string | null;
 }
 
 export interface IdentityNoticeProps {
@@ -37,4 +40,13 @@ export interface TourActionBarProps {
 
 export interface RoomTourSidebarProps {
   room: RoomTourSnapshot;
+  onContactLandlord?: () => void;
+}
+
+export interface ScheduleTourSuccessViewProps {
+  room: RoomTourSnapshot;
+  selectedDate: string;
+  selectedSlotCount: number;
+  onEditBooking: () => void;
+  onBackToDetail: () => void;
 }

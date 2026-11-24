@@ -130,7 +130,7 @@ export const RoomDetailPage: React.FC = () => {
               <Button variant="primary" size="md" className="w-full">
                 💬 Liên hệ chủ trọ
               </Button>
-              <Link to={ROUTES.SCHEDULE_TOUR} className="block w-full">
+              <Link to={ROUTES.ROOM_SCHEDULE_TOUR.replace(':id', room.id)} className="block w-full">
                 <Button variant="secondary" size="md" className="w-full">
                   📅 Đặt lịch xem phòng
                 </Button>

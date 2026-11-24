@@ -7,7 +7,10 @@ import type { ScheduleBreadcrumbProps } from '../types';
 export const ScheduleBreadcrumb: React.FC<ScheduleBreadcrumbProps> = ({
   buildingName,
   roomTitle,
+  roomId,
 }) => {
+  const roomLink = roomId ? `/rooms/${roomId}` : ROUTES.ROOMS;
+
   return (
     <div className="w-full flex flex-col gap-3">
       {/* Breadcrumb links */}
@@ -20,7 +23,7 @@ export const ScheduleBreadcrumb: React.FC<ScheduleBreadcrumbProps> = ({
         </Link>
         <ChevronRightIcon className="w-3.5 h-3.5 text-text-muted shrink-0" />
         <Link
-          to={ROUTES.ROOMS}
+          to={roomLink}
           className="text-text-muted hover:text-brand-500 transition-colors"
         >
           {buildingName}
