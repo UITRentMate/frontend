@@ -1,4 +1,5 @@
 import React from 'react';
+
 import type { SvgIconProps } from '@/types';
 
 export const LayoutDashboardIcon: React.FC<SvgIconProps> = ({ className = 'w-5 h-5', size = 20 }) => (
@@ -354,6 +355,28 @@ export const ChevronDownIcon: React.FC<SvgIconProps> = ({ className = 'w-4 h-4',
   </svg>
 );
 
+export const InfoIcon: React.FC<SvgIconProps> = ({ className = 'w-3.5 h-3.5', size }) => (
+  <svg
+    width={size || 14}
+    height={size || 14}
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+    className={className}
+  >
+    <circle cx="12" cy="12" r="10" />
+    <path d="M12 16v-4" />
+    <path d="M12 8h.01" />
+  </svg>
+);
+
+export const CheckCircleIcon: React.FC<SvgIconProps> = ({ className = 'w-12 h-12', size }) => (
+  <CheckCircle2Icon className={className} size={size || 48} />
+);
+
 export const ArrowLeftIcon: React.FC<SvgIconProps> = ({ className = 'w-4 h-4', size }) => (
   <svg
     width={size || 16}
@@ -368,6 +391,23 @@ export const ArrowLeftIcon: React.FC<SvgIconProps> = ({ className = 'w-4 h-4', s
   >
     <path d="m12 19-7-7 7-7" />
     <path d="M19 12H5" />
+  </svg>
+);
+
+export const CameraIcon: React.FC<SvgIconProps> = ({ className = 'w-4 h-4', size }) => (
+  <svg
+    width={size || 16}
+    height={size || 16}
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+    className={className}
+  >
+    <path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z" />
+    <circle cx="12" cy="13" r="3" />
   </svg>
 );
 

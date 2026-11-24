@@ -1,7 +1,7 @@
 import assert from 'node:assert';
 import { parseDate, validateMoveInDate, validateTenantCount } from '../src/features/rental-request/utils/validation.ts';
 
-console.log('🧪 Running validation unit tests...');
+console.log('🧪 Running validation unit tests via test-validation runner...');
 
 // 1. parseDate tests
 const valid = parseDate('15/12/2026');

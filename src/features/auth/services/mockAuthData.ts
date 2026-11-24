@@ -1,10 +1,21 @@
 import { ROUTES } from '@/routes/paths';
+import {
+  hasPasswordNumberOrSpecial,
+  hasValidPasswordLength,
+  isValidEmail,
+  PASSWORD_MAX_LENGTH,
+} from '@/utils';
+
 import type {
   DemoAccount,
   LoginCredentials,
   LoginResponseData,
   RegisterCredentials,
   RegisterResponseData,
+  ForgotPasswordRequest,
+  ForgotPasswordResponse,
+  ResetPasswordPayload,
+  ResetPasswordResponse,
 } from '../types/auth.types';
 
 export const delay = (ms: number = 500): Promise<void> =>
@@ -143,5 +154,68 @@ export async function registerMockUser(
       refreshToken: `rentmate_refresh_${role}_${Date.now()}`,
     },
     message: 'Tài khoản của bạn đã được đăng ký thành công! Hãy đăng nhập để bắt đầu trải nghiệm.',
+  };
+}
+
+/**
+ * Giả lập API Quên mật khẩu (Forgot Password) với độ trễ 600ms
+ */
+export async function forgotPasswordMock(
+  payload: ForgotPasswordRequest
+): Promise<ForgotPasswordResponse> {
+  await delay(600);
+
+  const normalizedEmail = payload.email.trim().toLowerCase();
+
+  if (!normalizedEmail) {
+    throw new Error('Vui lòng nhập địa chỉ email của bạn.');
+  }
+
+  if (!isValidEmail(normalizedEmail)) {
+    throw new Error('Địa chỉ email không đúng định dạng.');
+  }
+
+  return {
+    success: true,
+    message: 'Hướng dẫn đặt lại mật khẩu đã được gửi đến email của bạn. Vui lòng kiểm tra hộp thư đến hoặc hòm thư rác (Spam).',
+  };
+}
+
+/**
+ * Giả lập API Đặt lại mật khẩu (Reset Password) với độ trễ 600ms
+ */
+export async function resetPasswordMock(
+  payload: ResetPasswordPayload
+): Promise<ResetPasswordResponse> {
+  await delay(600);
+
+  const normalizedToken = payload.token.trim().toLowerCase();
+  if (!normalizedToken || normalizedToken === 'expired' || normalizedToken === 'invalid') {
+    const tokenError = new Error(
+      'Liên kết đặt lại mật khẩu đã hết hạn hoặc không hợp lệ. Vui lòng yêu cầu gửi lại email.'
+    );
+    tokenError.name = 'ResetTokenError';
+    throw tokenError;
+  }
+
+  if (payload.newPassword.length > PASSWORD_MAX_LENGTH) {
+    throw new Error('Mật khẩu mới không được vượt quá 128 ký tự.');
+  }
+
+  if (!hasValidPasswordLength(payload.newPassword)) {
+    throw new Error('Mật khẩu mới phải có tối thiểu 8 ký tự (không tính khoảng trắng thừa).');
+  }
+
+  if (!hasPasswordNumberOrSpecial(payload.newPassword)) {
+    throw new Error('Mật khẩu mới phải chứa ít nhất một chữ số hoặc ký tự đặc biệt.');
+  }
+
+  if (payload.newPassword !== payload.confirmPassword) {
+    throw new Error('Mật khẩu xác nhận không khớp với mật khẩu mới.');
+  }
+
+  return {
+    success: true,
+    message: 'Mật khẩu của bạn đã được cập nhật thành công.',
   };
 }

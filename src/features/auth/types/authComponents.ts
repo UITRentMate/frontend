@@ -1,5 +1,3 @@
-import type { ReactNode } from 'react';
-
 export interface RentMateLoginProps {
   onSuccess?: (targetRoute: string) => void;
   className?: string;
@@ -8,6 +6,31 @@ export interface RentMateLoginProps {
 export interface RentMateRegisterProps {
   onSuccess?: () => void;
   className?: string;
+}
+
+export interface RentMateForgotPasswordProps {
+  onSuccess?: () => void;
+  className?: string;
+}
+
+export interface RentMateResetPasswordProps {
+  onSuccess?: () => void;
+  className?: string;
+}
+
+export interface ForgotPasswordSuccessViewProps {
+  submittedEmail: string;
+  onResetForm: () => void;
+}
+
+export interface PasswordStrengthMeterProps {
+  password: string;
+  hasMinLength: boolean;
+  hasNumberOrSpecial: boolean;
+}
+
+export interface ResetPasswordSuccessViewProps {
+  onNavigateLogin: () => void;
 }
 
 export interface RoleSwitcherProps {
@@ -51,10 +74,4 @@ export interface AuthFooterProps {
 export interface SecurityAlertProps {
   message: string;
   onDismiss?: () => void;
-}
-
-export interface SvgIconProps {
-  className?: string;
-  size?: number;
-  children?: ReactNode;
 }

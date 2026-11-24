@@ -6,14 +6,6 @@ export interface TenantProfile {
 
 export type ContractDurationOption = '6_months' | '12_months' | 'flexible';
 
-export interface RentalPlanFormData {
-  moveInDate: string;
-  tenantCount: number;
-  contractDuration: ContractDurationOption;
-  noteToLandlord: string;
-  isConfirmed: boolean;
-}
-
 export interface LandlordInfo {
   name: string;
   avatarText: string;

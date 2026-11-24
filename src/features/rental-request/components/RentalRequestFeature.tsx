@@ -5,6 +5,7 @@ import { ROUTES } from '@/routes/paths';
 
 import Loading from '@/components/ui/Loading';
 import Button from '@/components/ui/Button';
+import { AlertCircleIcon } from '@/components/ui/icons';
 
 import { BreadcrumbHeader } from './BreadcrumbHeader';
 import { TenantInfoCard } from './TenantInfoCard';
@@ -50,7 +51,7 @@ export const RentalRequestFeature: React.FC = () => {
   const [actionNotice, setActionNotice] = useState<string | null>(null);
 
   const handleBack = () => {
-    navigate(id ? `/rooms/${id}` : ROUTES.ROOMS);
+    navigate(room?.id ? `/rooms/${room.id}` : ROUTES.ROOMS);
   };
 
   const handleUpdateProfile = () => {
@@ -129,7 +130,9 @@ export const RentalRequestFeature: React.FC = () => {
   if (isRoomError || !room) {
     return (
       <div className="w-full py-16 flex flex-col items-center justify-center text-center space-y-4">
-        <div className="text-4xl">⚠️</div>
+        <div className="w-12 h-12 rounded-full bg-danger-soft text-danger flex items-center justify-center mx-auto mb-1">
+          <AlertCircleIcon className="w-7 h-7" />
+        </div>
         <h2 className="text-xl font-heading font-bold text-text-primary">
           Không tìm thấy thông tin phòng trọ
         </h2>
