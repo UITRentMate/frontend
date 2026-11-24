@@ -1,9 +1,13 @@
 import React, { useState, useMemo } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { useAuth } from '@/hooks/useAuth';
+
 import Loading from '@/components/ui/Loading';
 import Button from '@/components/ui/Button';
+
+import { useAuth } from '@/hooks/useAuth';
+
 import { ROUTES } from '@/routes/paths';
+
 import {
   useScheduleTourRoom,
   useAvailableTourSlots,
@@ -45,7 +49,7 @@ export const ScheduleTourFeature: React.FC = () => {
   const [dateError, setDateError] = useState<string | null>(null);
   const [slotError, setSlotError] = useState<string | null>(null);
 
-  const { data: slots = [], isLoading: isLoadingSlots } = useAvailableTourSlots(roomId, selectedDate);
+  const { data: slots = [] } = useAvailableTourSlots(roomId, selectedDate);
   const { mutate: bookTour, isPending: isBooking } = useBookRoomTour();
 
   const handleToggleSlot = (slotId: string) => {
@@ -65,15 +69,23 @@ export const ScheduleTourFeature: React.FC = () => {
   const handleSelectDate = (dateVal: string) => {
     setSelectedDate(dateVal);
     setCustomDate(dateVal);
+    setSelectedSlotIds([]);
     setDateError(null);
+    setSlotError(null);
     setFeedbackMessage(null);
   };
 
   const handleCustomDateChange = (dateVal: string) => {
     setCustomDate(dateVal);
     setSelectedDate(dateVal);
+    setSelectedSlotIds([]);
     setDateError(null);
+    setSlotError(null);
     setFeedbackMessage(null);
+  };
+
+  const handleContactLandlord = () => {
+    setFeedbackMessage('Đang mở kết nối nhắn tin trực tiếp với chủ trọ...');
   };
 
   const handleBack = () => {
@@ -118,38 +130,47 @@ export const ScheduleTourFeature: React.FC = () => {
   if (isLoadingRoom) {
     return (
       <div className="py-20 flex flex-col items-center justify-center">
-        <Loading size="lg" message="Đang tải thông tin đặt lịch xem phòng..." />
+        <Loading message="Đang tải thông tin phòng..." fullScreen />
       </div>
     );
   }
 
   if (isErrorRoom || !room) {
     return (
-      <div className="bg-surface-card border border-border-subtle rounded-xl p-8 max-w-md mx-auto text-center my-12">
-        <h3 className="text-base font-bold text-text-primary mb-2">Không tìm thấy thông tin phòng</h3>
-        <p className="text-xs text-text-muted mb-4">
-          Phòng trọ này có thể đã bị gỡ hoặc đường dẫn không còn hiệu lực.
+      <div className="max-w-md mx-auto my-16 p-8 bg-surface-card border border-border-subtle rounded-xl text-center space-y-4 shadow-soft-xs">
+        <div className="w-12 h-12 mx-auto rounded-pill bg-danger-subtle text-danger flex items-center justify-center font-bold text-xl">
+          !
+        </div>
+        <h2 className="text-base sm:text-lg font-bold font-heading text-text-primary">
+          Không thể tải thông tin phòng
+        </h2>
+        <p className="text-xs text-text-muted leading-relaxed">
+          Phòng trọ này hiện không khả dụng hoặc liên kết đặt lịch xem phòng đã hết hạn.
         </p>
-        <Button variant="primary" size="sm" onClick={() => navigate(ROUTES.ROOMS)}>
-          Quay lại danh sách phòng
-        </Button>
+        <div className="pt-2">
+          <Button variant="primary" size="sm" onClick={handleBack} className="w-full">
+            Quay lại bài đăng phòng
+          </Button>
+        </div>
       </div>
     );
   }
 
   return (
-    <div className="w-full flex flex-col gap-5">
-      {/* 1. Reminder Banner */}
-      {showBanner && <ReminderBanner onDismiss={() => setShowBanner(false)} />}
-
-      {/* 2. Breadcrumb & Header */}
+    <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+      {/* 1. Breadcrumb */}
       <ScheduleBreadcrumb
         buildingName={room.buildingName}
         roomTitle={room.title}
         roomId={room.id}
       />
 
-      {/* 3. Main Form or Success View */}
+      {/* 2. Reminder Banner */}
+      {showBanner && (
+        <ReminderBanner onDismiss={() => setShowBanner(false)} />
+      )}
+
+      {/* 3. Main layout 2 columns (Content vs Sidebar) */}
       {isSubmitted ? (
         <ScheduleTourSuccessView
           room={room}
@@ -159,38 +180,32 @@ export const ScheduleTourFeature: React.FC = () => {
           onBackToDetail={handleBack}
         />
       ) : (
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
-          {/* Left Column (~65% - 8 cols) */}
-          <div className="lg:col-span-8 flex flex-col gap-6">
+        <div className="grid grid-cols-1 lg:grid-cols-11 gap-6 items-start">
+          {/* Left Column (~65% - 7 cols) */}
+          <div className="lg:col-span-7 bg-surface-card border border-border-subtle rounded-xl p-5 sm:p-6 shadow-soft-xs flex flex-col gap-6">
+            {/* Step indicator */}
             <StepIndicator />
 
-            {/* Validation Message if any */}
+            {/* Error or validation alert */}
             {feedbackMessage && (
               <div
                 role="alert"
-                className="bg-danger-soft border border-danger-border text-danger text-xs px-4 py-2.5 rounded-lg flex items-center justify-between"
+                className="p-3 bg-danger-subtle border border-danger rounded-md text-xs text-danger font-medium flex items-center justify-between"
               >
                 <span>{feedbackMessage}</span>
                 <button
                   type="button"
                   onClick={() => setFeedbackMessage(null)}
-                  aria-label="Đóng thông báo lỗi"
-                  className="font-bold ml-2 cursor-pointer"
+                  className="text-danger hover:text-danger font-bold text-sm px-1 cursor-pointer"
+                  aria-label="Đóng thông báo"
                 >
-                  ✕
+                  ×
                 </button>
               </div>
             )}
 
-            {/* Booking Form Card */}
-            <form
-              onSubmit={(e) => {
-                e.preventDefault();
-                handleSubmit();
-              }}
-              className="bg-surface-card border border-border-subtle rounded-xl p-5 sm:p-7 shadow-soft-xs flex flex-col gap-6"
-            >
-              {/* Section 1: Date Selection */}
+            <form onSubmit={(e) => { e.preventDefault(); handleSubmit(); }} className="flex flex-col gap-6">
+              {/* Section 1: Choose Date */}
               <DateSelector
                 dateOptions={dynamicDateOptions}
                 selectedDate={selectedDate}
@@ -200,23 +215,18 @@ export const ScheduleTourFeature: React.FC = () => {
                 inlineError={dateError}
               />
 
-              {/* Section 2: Time Slots */}
-              {isLoadingSlots ? (
-                <div className="py-6 flex justify-center">
-                  <Loading size="sm" message="Đang cập nhật khung giờ trống..." />
-                </div>
-              ) : (
+              {/* Section 2: Choose Time Slots (3 ca) */}
+              <div className="pt-2 border-t border-border-subtle">
                 <TimeSlotSelector
                   slots={slots}
                   selectedSlotIds={selectedSlotIds}
                   onToggleSlot={handleToggleSlot}
-                  maxSlots={3}
                   inlineError={slotError}
                 />
-              )}
+              </div>
 
-              {/* Section 3: Note to landlord */}
-              <div className="flex flex-col gap-1.5">
+              {/* Section 3: Note for Landlord */}
+              <div className="pt-2 border-t border-border-subtle flex flex-col gap-2">
                 <div className="flex items-center justify-between text-xs">
                   <label htmlFor="tour-note" className="font-bold text-text-primary">
                     3. Lời nhắn gửi chủ trọ{' '}
@@ -238,7 +248,7 @@ export const ScheduleTourFeature: React.FC = () => {
               </div>
 
               {/* Identity Protection Notice */}
-              <IdentityNotice userName={user?.name || 'Nguyễn Minh Hoàng'} />
+              <IdentityNotice userName={user?.name || 'Bạn'} />
 
               {/* Action Bar */}
               <TourActionBar
@@ -252,7 +262,7 @@ export const ScheduleTourFeature: React.FC = () => {
 
           {/* Right Column (~35% - 4 cols, Sticky) */}
           <div className="lg:col-span-4">
-            <RoomTourSidebar room={room} />
+            <RoomTourSidebar room={room} onContactLandlord={handleContactLandlord} />
           </div>
         </div>
       )}

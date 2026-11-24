@@ -138,7 +138,7 @@ export const RentMateLogin: React.FC<RentMateLoginProps> = ({ onSuccess, classNa
                       Mật khẩu <span className="text-red-500">*</span>
                     </label>
                     <Link
-                      to="#"
+                      to={ROUTES.FORGOT_PASSWORD}
                       className="text-xs font-medium text-[#6E7DB4] hover:text-[#1B2CC1] transition"
                     >
                       Quên mật khẩu?

@@ -1,5 +1,6 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { Link } from 'react-router-dom';
+
 import {
   ImageIcon,
   MapPinIcon,
@@ -11,21 +12,18 @@ import {
   ZapIcon,
   DropletsIcon,
 } from '@/components/ui/icons';
+
 import roomPreviewImg from '@/assets/room-preview.png';
 import { formatCurrency } from '@/utils/formatCurrency';
 import { ROUTES } from '@/routes/paths';
+
 import type { RoomTourSidebarProps } from '../types';
 
 export const RoomTourSidebar: React.FC<RoomTourSidebarProps> = ({ room, onContactLandlord }) => {
-  const [copiedContact, setCopiedContact] = useState(false);
-
   const handleMessageClick = () => {
     if (onContactLandlord) {
       onContactLandlord();
-      return;
     }
-    setCopiedContact(true);
-    setTimeout(() => setCopiedContact(false), 2500);
   };
 
   const detailUrl = room.id ? `/rooms/${room.id}` : ROUTES.ROOMS;
@@ -186,7 +184,7 @@ export const RoomTourSidebar: React.FC<RoomTourSidebarProps> = ({ room, onContac
           className="w-full h-9 bg-surface-card hover:bg-surface-muted border border-border-subtle rounded-md text-xs font-bold text-text-primary flex items-center justify-center gap-1.5 transition-colors cursor-pointer"
         >
           <MessageSquareIcon className="w-3.5 h-3.5 text-brand-500" />
-          <span>{copiedContact ? '✓ Đã mở kết nối trò chuyện' : 'Nhắn tin hỏi trước khi đến'}</span>
+          <span>Nhắn tin hỏi trước khi đến</span>
         </button>
       </div>
     </aside>

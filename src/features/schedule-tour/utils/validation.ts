@@ -63,24 +63,31 @@ export function validateSlotSelection(slotIds: string[]): string | null {
 export function generateDynamicDateOptions(): DatePillOption[] {
   const daysOfWeek = ['Chủ nhật', 'Thứ hai', 'Thứ ba', 'Thứ tư', 'Thứ năm', 'Thứ sáu', 'Thứ bảy'];
   const dayShorts = ['CN', 'T.Hai', 'T.Ba', 'T.Tư', 'T.Năm', 'T.Sáu', 'T.Bảy'];
-  
+
   const options: DatePillOption[] = [];
   const baseDate = new Date();
-
-  const labels = ['HÔM NAY', 'NGÀY MAI', 'TIẾP THEO', 'CUỐI TUẦN'];
 
   for (let i = 0; i < 4; i++) {
     const cur = new Date(baseDate);
     cur.setDate(baseDate.getDate() + i);
 
-    const dayName = i === 0 ? 'HÔM NAY' : i === 1 ? 'NGÀY MAI' : daysOfWeek[cur.getDay()].toUpperCase();
+    const isWeekend = cur.getDay() === 0 || cur.getDay() === 6;
+    const dayName =
+      i === 0
+        ? 'HÔM NAY'
+        : i === 1
+        ? 'NGÀY MAI'
+        : isWeekend
+        ? 'CUỐI TUẦN'
+        : daysOfWeek[cur.getDay()].toUpperCase();
+
     const shortName = dayShorts[cur.getDay()];
     const dateFormatted = `${shortName}, ${formatDateToDMY(cur)}`;
     const dateValue = formatDateToDMY(cur);
 
     options.push({
       id: `date-opt-${i + 1}`,
-      label: labels[i] || dayName,
+      label: dayName,
       dateFormatted,
       dateValue,
       availableSlotsCount: 4 - (i % 2),

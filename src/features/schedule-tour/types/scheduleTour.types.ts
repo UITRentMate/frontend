@@ -52,10 +52,3 @@ export interface BookTourResponse {
   message: string;
   createdAt: string;
 }
-
-export interface TourBookingFormData {
-  date: string;
-  slotIds: string[];
-  note?: string;
-  userName?: string;
-}

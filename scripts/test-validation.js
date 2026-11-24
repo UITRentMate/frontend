@@ -52,5 +52,7 @@ assert.strictEqual(validSlotsErr, null, 'Should accept 1 to 3 valid slots');
 const opts = generateDynamicDateOptions();
 assert.strictEqual(opts.length, 4, 'Should generate 4 dynamic date options');
 assert(opts[0].dateValue.length > 0, 'First option should have non-empty dateValue');
+assert.strictEqual(opts[0].label, 'HÔM NAY', 'First option should be HÔM NAY');
+assert.strictEqual(opts[1].label, 'NGÀY MAI', 'Second option should be NGÀY MAI');
 
 console.log('✅ All schedule-tour validation unit tests passed successfully!');

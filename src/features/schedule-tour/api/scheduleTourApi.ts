@@ -1,4 +1,7 @@
+import axios from 'axios';
+
 import apiClient from '@/lib/apiClient';
+import { ENDPOINTS } from '@/api/endpoints';
 import type { ApiResponse } from '@/types/api.types';
 import type { RoomTourSnapshot, TimeSlotOption, BookTourPayload, BookTourResponse } from '../types';
 import { MOCK_ROOM_SNAPSHOT, MOCK_TIME_SLOTS } from '../services/mockData';
@@ -9,12 +12,16 @@ export const scheduleTourApi = {
    */
   async getScheduleTourRoom(roomId: string): Promise<RoomTourSnapshot> {
     try {
-      const response = await apiClient.get<ApiResponse<RoomTourSnapshot>>(`/rooms/${roomId}/tour-snapshot`);
+      const response = await apiClient.get<ApiResponse<RoomTourSnapshot>>(
+        ENDPOINTS.TOUR.ROOM_SNAPSHOT(roomId)
+      );
       if (response.data?.data) {
         return response.data.data;
       }
-    } catch {
-      // API backend đang phát triển -> fallback dữ liệu snapshot mẫu có gắn roomId
+    } catch (error) {
+      if (!import.meta.env.DEV || (axios.isAxiosError(error) && error.response && error.response.status >= 400 && error.response.status < 500)) {
+        throw error;
+      }
     }
 
     return {
@@ -29,14 +36,19 @@ export const scheduleTourApi = {
    */
   async getAvailableTourSlots(roomId: string, date: string): Promise<TimeSlotOption[]> {
     try {
-      const response = await apiClient.get<ApiResponse<TimeSlotOption[]>>(`/rooms/${roomId}/tour-slots`, {
-        params: { date },
-      });
+      const response = await apiClient.get<ApiResponse<TimeSlotOption[]>>(
+        ENDPOINTS.TOUR.ROOM_SLOTS(roomId),
+        {
+          params: { date },
+        }
+      );
       if (response.data?.data) {
         return response.data.data;
       }
-    } catch {
-      // Fallback
+    } catch (error) {
+      if (!import.meta.env.DEV || (axios.isAxiosError(error) && error.response && error.response.status >= 400 && error.response.status < 500)) {
+        throw error;
+      }
     }
 
     return MOCK_TIME_SLOTS;
@@ -47,12 +59,18 @@ export const scheduleTourApi = {
    */
   async bookRoomTour(payload: BookTourPayload): Promise<BookTourResponse> {
     try {
-      const response = await apiClient.post<ApiResponse<BookTourResponse>>('/tour-bookings', payload);
+      const response = await apiClient.post<ApiResponse<BookTourResponse>>(
+        ENDPOINTS.TOUR.BOOKINGS,
+        payload
+      );
       if (response.data?.data) {
         return response.data.data;
       }
-    } catch {
-      // Mock delay
+    } catch (error) {
+      if (!import.meta.env.DEV || (axios.isAxiosError(error) && error.response && error.response.status >= 400 && error.response.status < 500)) {
+        throw error;
+      }
+
       await new Promise((resolve) => setTimeout(resolve, 500));
     }
 
