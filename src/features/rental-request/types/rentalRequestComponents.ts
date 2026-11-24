@@ -24,6 +24,8 @@ export interface RentalPlanCardProps {
   onContractDurationChange: (val: ContractDurationOption) => void;
   note: string;
   onNoteChange: (val: string) => void;
+  dateError?: string | null;
+  tenantCountError?: string | null;
 }
 
 export interface ActionCardProps {
@@ -36,4 +38,14 @@ export interface ActionCardProps {
 
 export interface RoomSummarySidebarProps {
   room: RentalRoomDetail;
+  onContactLandlord?: () => void;
+}
+
+export interface RentalRequestSuccessViewProps {
+  room: RentalRoomDetail;
+  moveInDate: string;
+  tenantCount: number;
+  contractDuration: ContractDurationOption;
+  onReset: () => void;
+  onBack: () => void;
 }

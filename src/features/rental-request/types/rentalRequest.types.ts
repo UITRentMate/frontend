@@ -50,3 +50,19 @@ export interface RentalRoomDetail {
   landlord: LandlordInfo;
   imageUrl: string;
 }
+
+export interface SubmitRentalRequestPayload {
+  roomId: string;
+  moveInDate: string;
+  tenantCount: number;
+  contractDuration: ContractDurationOption;
+  note?: string;
+}
+
+export interface RentalRequestResponse {
+  id: string;
+  roomId: string;
+  status: 'PENDING' | 'APPROVED' | 'REJECTED';
+  createdAt: string;
+  message?: string;
+}

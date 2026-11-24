@@ -31,9 +31,9 @@ export const TenantInfoCard: React.FC<TenantInfoCardProps> = ({
 
       {/* Full Name */}
       <div className="flex flex-col gap-1.5">
-        <label className="text-xs font-semibold text-text-muted">
+        <span className="text-xs font-semibold text-text-muted">
           Họ và tên người thuê
-        </label>
+        </span>
         <div className="bg-canvas border border-border-subtle rounded-md px-3.5 py-2.5 text-xs sm:text-sm font-semibold text-text-primary">
           {tenant.fullName}
         </div>
@@ -43,9 +43,9 @@ export const TenantInfoCard: React.FC<TenantInfoCardProps> = ({
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
         {/* Phone */}
         <div className="flex flex-col gap-1.5">
-          <label className="text-xs font-semibold text-text-muted">
+          <span className="text-xs font-semibold text-text-muted">
             Số điện thoại
-          </label>
+          </span>
           <div className="bg-canvas border border-border-subtle rounded-md px-3.5 py-2.5 flex items-center justify-between">
             <span className="text-xs sm:text-sm font-semibold text-text-primary font-mono">
               {tenant.phone}
@@ -59,9 +59,9 @@ export const TenantInfoCard: React.FC<TenantInfoCardProps> = ({
 
         {/* Email */}
         <div className="flex flex-col gap-1.5">
-          <label className="text-xs font-semibold text-text-muted">
+          <span className="text-xs font-semibold text-text-muted">
             Email liên lạc
-          </label>
+          </span>
           <div className="bg-canvas border border-border-subtle rounded-md px-3.5 py-2.5 flex items-center justify-between">
             <span className="text-xs sm:text-sm font-semibold text-text-primary font-mono truncate">
               {tenant.email}

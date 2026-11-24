@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 import {
   ExternalLinkIcon,
   ShieldCheckIcon,
@@ -7,21 +8,22 @@ import {
   UsersIcon,
   SofaIcon,
   LeafIcon,
+  MapPinIcon,
 } from '@/components/ui/icons';
+import { formatCurrency } from '@/utils/formatCurrency';
 import roomPreviewImg from '@/assets/room-preview.png';
 import type { RoomSummarySidebarProps } from '../types';
 
-export const RoomSummarySidebar: React.FC<RoomSummarySidebarProps> = ({ room }) => {
-  const formatCurrency = (amount: number) => {
-    return new Intl.NumberFormat('vi-VN').format(amount) + ' đ';
-  };
-
+export const RoomSummarySidebar: React.FC<RoomSummarySidebarProps> = ({
+  room,
+  onContactLandlord,
+}) => {
   return (
     <aside className="w-full bg-surface-card border border-border-subtle rounded-xl p-4 shadow-soft-xs sticky top-20 flex flex-col gap-4">
       {/* Image with badges */}
       <div className="relative h-48 bg-surface-muted rounded-lg overflow-hidden">
         <img
-          src={roomPreviewImg || room.imageUrl}
+          src={room.imageUrl || roomPreviewImg}
           alt={room.title}
           className="w-full h-full object-cover"
         />
@@ -39,7 +41,7 @@ export const RoomSummarySidebar: React.FC<RoomSummarySidebarProps> = ({ room }) 
         {/* Price Tag Overlay */}
         <div className="absolute bottom-2.5 right-2.5 bg-text-primary/80 backdrop-blur-xs text-white text-xs font-bold px-2.5 py-1 rounded-xs">
           <span>{formatCurrency(room.financials.monthlyRent)}</span>
-          <span className="font-normal text-[10px] text-slate-300 ml-1">/ tháng</span>
+          <span className="font-normal text-[10px] text-white/80 ml-1">/ tháng</span>
         </div>
       </div>
 
@@ -51,8 +53,9 @@ export const RoomSummarySidebar: React.FC<RoomSummarySidebarProps> = ({ room }) 
         <h3 className="text-sm sm:text-base font-heading font-bold text-text-primary leading-snug">
           {room.title}
         </h3>
-        <p className="text-xs text-text-muted mt-0.5">
-          📍 {room.address}
+        <p className="text-xs text-text-muted mt-0.5 flex items-center">
+          <MapPinIcon className="w-3.5 h-3.5 text-text-muted shrink-0 mr-1" />
+          <span className="truncate">{room.address}</span>
         </p>
       </div>
 
@@ -156,6 +159,7 @@ export const RoomSummarySidebar: React.FC<RoomSummarySidebarProps> = ({ room }) 
 
         <button
           type="button"
+          onClick={onContactLandlord}
           className="w-full h-9 bg-surface-card hover:bg-surface-muted border border-border-subtle rounded-md text-xs font-bold text-text-primary flex items-center justify-center gap-1.5 transition-colors cursor-pointer"
         >
           <MessageSquareIcon className="w-3.5 h-3.5 text-brand-500" />
@@ -165,13 +169,13 @@ export const RoomSummarySidebar: React.FC<RoomSummarySidebarProps> = ({ room }) 
 
       {/* View Full Listing */}
       <div className="text-center pt-1">
-        <a
-          href="#full-listing"
+        <Link
+          to={`/rooms/${room.id}`}
           className="inline-flex items-center gap-1 text-xs font-semibold text-brand-500 hover:text-brand-600 transition-colors"
         >
-          <span>Xem lại bài đăng chi tiết phòng (802)</span>
+          <span>Xem lại bài đăng chi tiết phòng ({room.roomCode})</span>
           <ExternalLinkIcon className="w-3 h-3" />
-        </a>
+        </Link>
       </div>
     </aside>
   );

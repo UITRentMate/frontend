@@ -127,7 +127,7 @@ export const RoomDetailPage: React.FC = () => {
             </div>
 
             <div className="space-y-2 pt-2">
-              <Link to={ROUTES.RENTAL_REQUEST} className="block w-full">
+              <Link to={ROUTES.ROOM_RENTAL_REQUEST.replace(':id', room.id)} className="block w-full">
                 <Button variant="primary" size="md" className="w-full">
                   📋 Gửi yêu cầu thuê phòng
                 </Button>

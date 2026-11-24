@@ -1,4 +1,5 @@
 import React from 'react';
+import Button from '@/components/ui/Button';
 import { ArrowLeftIcon, SendIcon } from '@/components/ui/icons';
 import type { ActionCardProps } from '../types';
 
@@ -26,28 +27,29 @@ export const ActionCard: React.FC<ActionCardProps> = ({
 
       {/* Buttons */}
       <div className="pt-2 flex flex-col sm:flex-row items-center justify-between gap-3">
-        <button
+        <Button
           type="button"
+          variant="outline"
+          size="md"
           onClick={onBack}
-          className="w-full sm:w-auto px-5 h-11 bg-surface-card border border-border-subtle hover:bg-surface-muted text-text-primary text-xs sm:text-sm font-semibold rounded-md flex items-center justify-center gap-2 transition-colors cursor-pointer"
+          className="w-full sm:w-auto"
         >
-          <ArrowLeftIcon className="w-4 h-4" />
+          <ArrowLeftIcon className="w-4 h-4 mr-2" />
           <span>Quay lại chi tiết phòng</span>
-        </button>
+        </Button>
 
-        <button
+        <Button
           type="button"
+          variant="primary"
+          size="md"
           onClick={onSubmit}
+          isLoading={isSubmitting}
           disabled={!isConfirmed || isSubmitting}
-          className={`w-full sm:w-auto px-6 h-11 rounded-md text-white text-xs sm:text-sm font-bold flex items-center justify-center gap-2 shadow-soft-sm transition-all cursor-pointer ${
-            !isConfirmed || isSubmitting
-              ? 'bg-text-disabled cursor-not-allowed shadow-none'
-              : 'bg-brand-500 hover:bg-brand-600 shadow-soft-md active:scale-[0.98]'
-          }`}
+          className="w-full sm:w-auto"
         >
-          <SendIcon className="w-4 h-4" />
+          {!isSubmitting && <SendIcon className="w-4 h-4 mr-2" />}
           <span>{isSubmitting ? 'Đang gửi yêu cầu...' : 'Gửi yêu cầu thuê phòng'}</span>
-        </button>
+        </Button>
       </div>
 
       {/* Assurance subtext */}

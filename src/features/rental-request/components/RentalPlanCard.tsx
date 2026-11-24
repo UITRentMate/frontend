@@ -1,6 +1,7 @@
 import React from 'react';
 import { CalendarIcon, ChevronDownIcon, CircleIcon, CheckCircle2Icon } from '@/components/ui/icons';
-import type { RentalPlanCardProps, ContractDurationOption } from '../types';
+import { CONTRACT_DURATION_OPTIONS } from '../constants';
+import type { RentalPlanCardProps } from '../types';
 
 export const RentalPlanCard: React.FC<RentalPlanCardProps> = ({
   moveInDate,
@@ -12,29 +13,9 @@ export const RentalPlanCard: React.FC<RentalPlanCardProps> = ({
   onContractDurationChange,
   note,
   onNoteChange,
+  dateError,
+  tenantCountError,
 }) => {
-  const durationOptions: {
-    value: ContractDurationOption;
-    title: string;
-    description: string;
-  }[] = [
-    {
-      value: '6_months',
-      title: '6 tháng',
-      description: 'Mức tối thiểu quy định',
-    },
-    {
-      value: '12_months',
-      title: '12 tháng',
-      description: 'Hợp đồng tiêu chuẩn',
-    },
-    {
-      value: 'flexible',
-      title: 'Linh hoạt',
-      description: 'Thương lượng thêm với chủ',
-    },
-  ];
-
   return (
     <div className="w-full bg-surface-card border border-border-subtle rounded-xl p-5 sm:p-6 shadow-soft-xs flex flex-col gap-5">
       {/* Header */}
@@ -68,11 +49,22 @@ export const RentalPlanCard: React.FC<RentalPlanCardProps> = ({
               type="text"
               value={moveInDate}
               onChange={(e) => onMoveInDateChange(e.target.value)}
-              placeholder="01/11/2026"
-              className="w-full h-10 bg-canvas border border-border-subtle rounded-md pl-3.5 pr-9 text-xs sm:text-sm font-semibold text-text-primary focus:outline-none focus:ring-2 focus:ring-brand-500 transition-all"
+              placeholder="DD/MM/YYYY"
+              aria-invalid={Boolean(dateError)}
+              aria-describedby={dateError ? 'move-in-date-error' : undefined}
+              className={`w-full h-10 bg-canvas border rounded-md pl-3.5 pr-9 text-xs sm:text-sm font-semibold text-text-primary focus:outline-none focus:ring-2 transition-all ${
+                dateError
+                  ? 'border-danger focus:ring-danger'
+                  : 'border-border-subtle focus:ring-brand-500'
+              }`}
             />
             <CalendarIcon className="w-4 h-4 text-text-muted absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none" />
           </div>
+          {dateError && (
+            <p id="move-in-date-error" className="text-[11px] text-danger leading-tight mt-0.5">
+              {dateError}
+            </p>
+          )}
         </div>
 
         {/* Tenant Count Dropdown */}
@@ -90,7 +82,13 @@ export const RentalPlanCard: React.FC<RentalPlanCardProps> = ({
               id="tenant-count"
               value={tenantCount}
               onChange={(e) => onTenantCountChange(Number(e.target.value))}
-              className="w-full h-10 bg-canvas border border-border-subtle rounded-md pl-3.5 pr-9 text-xs sm:text-sm font-semibold text-text-primary appearance-none cursor-pointer focus:outline-none focus:ring-2 focus:ring-brand-500 transition-all"
+              aria-invalid={Boolean(tenantCountError)}
+              aria-describedby={tenantCountError ? 'tenant-count-error' : undefined}
+              className={`w-full h-10 bg-canvas border rounded-md pl-3.5 pr-9 text-xs sm:text-sm font-semibold text-text-primary appearance-none cursor-pointer focus:outline-none focus:ring-2 transition-all ${
+                tenantCountError
+                  ? 'border-danger focus:ring-danger'
+                  : 'border-border-subtle focus:ring-brand-500'
+              }`}
             >
               {Array.from({ length: maxTenants }, (_, i) => i + 1).map((n) => (
                 <option key={n} value={n}>
@@ -100,21 +98,32 @@ export const RentalPlanCard: React.FC<RentalPlanCardProps> = ({
             </select>
             <ChevronDownIcon className="w-4 h-4 text-text-muted absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none" />
           </div>
+          {tenantCountError && (
+            <p id="tenant-count-error" className="text-[11px] text-danger leading-tight mt-0.5">
+              {tenantCountError}
+            </p>
+          )}
         </div>
       </div>
 
-      {/* Row 2: Contract Duration Options (3 radio cards) */}
-      <div className="flex flex-col gap-2">
-        <label className="text-xs font-bold text-text-primary">
+      {/* Row 2: Contract Duration Options (fieldset + radiogroup for a11y) */}
+      <fieldset className="flex flex-col gap-2 border-0 p-0 m-0">
+        <legend className="text-xs font-bold text-text-primary p-0 mb-1">
           Thời hạn hợp đồng mong muốn <span className="text-danger">*</span>
-        </label>
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-          {durationOptions.map((opt) => {
+        </legend>
+        <div
+          role="radiogroup"
+          aria-label="Thời hạn hợp đồng mong muốn"
+          className="grid grid-cols-1 sm:grid-cols-3 gap-3"
+        >
+          {CONTRACT_DURATION_OPTIONS.map((opt) => {
             const isSelected = contractDuration === opt.value;
             return (
               <button
                 key={opt.value}
                 type="button"
+                role="radio"
+                aria-checked={isSelected}
                 onClick={() => onContractDurationChange(opt.value)}
                 className={`p-3.5 rounded-xl border text-left transition-all cursor-pointer flex flex-col justify-between ${
                   isSelected
@@ -143,7 +152,7 @@ export const RentalPlanCard: React.FC<RentalPlanCardProps> = ({
             );
           })}
         </div>
-      </div>
+      </fieldset>
 
       {/* Row 3: Note to Landlord */}
       <div className="flex flex-col gap-1.5">
@@ -162,7 +171,7 @@ export const RentalPlanCard: React.FC<RentalPlanCardProps> = ({
           maxLength={250}
           value={note}
           onChange={(e) => onNoteChange(e.target.value)}
-          placeholder="Chào anh An, em làm kỹ sư phần mềm tại Q.1, lịch sinh hoạt gọn gàng, dự kiến dọn vào đúng đầu tháng 11 ạ."
+          placeholder="Nhập lời nhắn gửi chủ trọ (nghề nghiệp, lịch sinh hoạt, mong muốn đặc biệt nếu có)..."
           className="w-full bg-canvas border border-border-subtle rounded-md p-3 text-xs sm:text-sm text-text-primary placeholder:text-text-disabled focus:outline-none focus:ring-2 focus:ring-brand-500 focus:bg-white resize-none transition-all leading-relaxed"
         />
       </div>
