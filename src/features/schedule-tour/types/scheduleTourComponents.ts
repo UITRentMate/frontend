@@ -33,7 +33,7 @@ export interface IdentityNoticeProps {
 
 export interface TourActionBarProps {
   onBack: () => void;
-  onSubmit: () => void;
+  onSubmit?: () => void;
   isSubmitting?: boolean;
   isDisabled?: boolean;
 }

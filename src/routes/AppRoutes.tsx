@@ -22,6 +22,7 @@ import { ROUTES } from './paths';
 const ForgotPasswordPage = lazy(() => import('@/pages/auth/ForgotPasswordPage'));
 const ResetPasswordPage = lazy(() => import('@/pages/auth/ResetPasswordPage'));
 const ProfilePage = lazy(() => import('@/pages/profile/ProfilePage'));
+const RentalRequestPage = lazy(() => import('@/pages/rental-request/RentalRequestPage'));
 const ScheduleTourPage = lazy(() => import('@/pages/schedule-tour/ScheduleTourPage'));
 
 const authRouteFallback = <Loading message="Đang tải trang..." fullScreen />;
@@ -93,6 +94,22 @@ export const router = createBrowserRouter([
             element: (
               <Suspense fallback={<Loading message="Đang tải trang..." fullScreen />}>
                 <ProfilePage />
+              </Suspense>
+            ),
+          },
+          {
+            path: 'rental-request',
+            element: (
+              <Suspense fallback={<Loading message="Đang tải trang..." fullScreen />}>
+                <RentalRequestPage />
+              </Suspense>
+            ),
+          },
+          {
+            path: 'rooms/:id/rental-request',
+            element: (
+              <Suspense fallback={<Loading message="Đang tải trang..." fullScreen />}>
+                <RentalRequestPage />
               </Suspense>
             ),
           },

@@ -1,11 +1,12 @@
 import React from 'react';
+
 import Button from '@/components/ui/Button';
 import { ArrowLeftIcon, SendIcon } from '@/components/ui/icons';
+
 import type { TourActionBarProps } from '../types';
 
 export const TourActionBar: React.FC<TourActionBarProps> = ({
   onBack,
-  onSubmit,
   isSubmitting = false,
   isDisabled = false,
 }) => {
@@ -26,7 +27,6 @@ export const TourActionBar: React.FC<TourActionBarProps> = ({
         type="submit"
         variant="primary"
         size="md"
-        onClick={onSubmit}
         isLoading={isSubmitting}
         disabled={isDisabled || isSubmitting}
         className="w-full sm:w-auto flex items-center justify-center gap-2 shadow-soft-sm"

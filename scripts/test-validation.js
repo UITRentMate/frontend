@@ -6,8 +6,12 @@ import {
   validateSlotSelection,
   generateDynamicDateOptions,
 } from '../src/features/schedule-tour/utils/validation.ts';
+import {
+  validateMoveInDate,
+  validateTenantCount,
+} from '../src/features/rental-request/utils/validation.ts';
 
-console.log('🧪 Running Schedule Tour validation unit tests...');
+console.log('🧪 Running Schedule Tour & Rental Request validation unit tests...');
 
 // 1. parseDate tests
 const valid = parseDate('25/12/2026');
@@ -55,4 +59,24 @@ assert(opts[0].dateValue.length > 0, 'First option should have non-empty dateVal
 assert.strictEqual(opts[0].label, 'HÔM NAY', 'First option should be HÔM NAY');
 assert.strictEqual(opts[1].label, 'NGÀY MAI', 'Second option should be NGÀY MAI');
 
-console.log('✅ All schedule-tour validation unit tests passed successfully!');
+// 6. Rental Request validation tests
+const emptyMoveInErr = validateMoveInDate('');
+assert.strictEqual(emptyMoveInErr, 'Vui lòng nhập ngày dự kiến dọn vào ở.');
+
+const pastMoveInErr = validateMoveInDate('01/01/2020');
+assert.strictEqual(pastMoveInErr, 'Ngày dự kiến vào ở không thể là ngày trong quá khứ.');
+
+const validMoveInDate = `01/01/${futureYear}`;
+const validMoveInErr = validateMoveInDate(validMoveInDate);
+assert.strictEqual(validMoveInErr, null, 'Should accept future valid date');
+
+const zeroTenantErr = validateTenantCount(0, 4);
+assert.strictEqual(zeroTenantErr, 'Số người ở tối thiểu là 1 người.');
+
+const exceedTenantErr = validateTenantCount(5, 4);
+assert.strictEqual(exceedTenantErr, 'Số người ở vượt quá giới hạn cho phép (tối đa 4 người).');
+
+const validTenant = validateTenantCount(2, 4);
+assert.strictEqual(validTenant, null, 'Should accept valid tenant count within room capacity');
+
+console.log('✅ All validation unit tests passed successfully!');

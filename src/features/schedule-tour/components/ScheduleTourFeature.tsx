@@ -97,6 +97,8 @@ export const ScheduleTourFeature: React.FC = () => {
   };
 
   const handleSubmit = () => {
+    if (isBooking) return;
+
     const vDateErr = validateTourDate(selectedDate);
     const vSlotErr = validateSlotSelection(selectedSlotIds);
 
