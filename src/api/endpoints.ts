@@ -14,4 +14,9 @@ export const ENDPOINTS = {
     LIST: '/rooms',
     DETAIL: (id: string) => `/rooms/${id}`,
   },
+  RENTAL: {
+    ROOM_INFO: (id: string) => `/rooms/${id}/rental-info`,
+    TENANT_PROFILE: '/user/profile/tenant',
+    REQUESTS: '/rental-requests',
+  },
 } as const;

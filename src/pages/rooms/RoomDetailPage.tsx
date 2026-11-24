@@ -3,6 +3,7 @@ import { useParams, Link } from 'react-router-dom';
 import { useRoom } from '@/features/rooms/hooks/useRooms';
 import Button from '@/components/ui/Button';
 import Badge from '@/components/ui/Badge';
+import { MapPinIcon, FileTextIcon, CalendarIcon } from '@/components/ui/icons';
 import { ROUTES } from '@/routes/paths';
 
 export const RoomDetailPage: React.FC = () => {
@@ -81,7 +82,10 @@ export const RoomDetailPage: React.FC = () => {
             </h1>
 
             <div className="flex items-center gap-2 text-xs text-text-muted">
-              <span>📍 Địa chỉ:</span>
+              <span className="flex items-center gap-1">
+                <MapPinIcon className="w-3.5 h-3.5 text-brand-500 inline" />
+                Địa chỉ:
+              </span>
               <span className="text-text-primary font-medium">{room.specificAddress}</span>
               <span className="text-brand-600 font-semibold">({room.campusZone})</span>
             </div>
@@ -127,11 +131,15 @@ export const RoomDetailPage: React.FC = () => {
             </div>
 
             <div className="space-y-2 pt-2">
-              <Button variant="primary" size="md" className="w-full">
-                💬 Liên hệ chủ trọ
-              </Button>
-              <Button variant="secondary" size="md" className="w-full">
-                📅 Đặt lịch xem phòng
+              <Link to={ROUTES.ROOM_RENTAL_REQUEST.replace(':id', room.id)} className="block w-full">
+                <Button variant="primary" size="md" className="w-full flex items-center justify-center gap-1.5">
+                  <FileTextIcon className="w-4 h-4" />
+                  <span>Gửi yêu cầu thuê phòng</span>
+                </Button>
+              </Link>
+              <Button variant="secondary" size="md" className="w-full flex items-center justify-center gap-1.5">
+                <CalendarIcon className="w-4 h-4" />
+                <span>Đặt lịch xem phòng</span>
               </Button>
             </div>
           </div>

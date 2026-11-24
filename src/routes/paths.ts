@@ -3,6 +3,8 @@ export const ROUTES = {
   ROOMS: '/rooms',
   ROOM_DETAIL: '/rooms/:id',
   CREATE_ROOM: '/rooms/new',
+  RENTAL_REQUEST: '/rental-request',
+  ROOM_RENTAL_REQUEST: '/rooms/:id/rental-request',
   LOGIN: '/login',
   REGISTER: '/register',
   FORGOT_PASSWORD: '/forgot-password',
