@@ -1,10 +1,18 @@
-import axios from 'axios';
-
 import apiClient from '@/lib/apiClient';
 import { ENDPOINTS } from '@/api/endpoints';
-import type { ApiResponse } from '@/types/api.types';
+import type { ApiError, ApiResponse } from '@/types/api.types';
 import type { RoomTourSnapshot, TimeSlotOption, BookTourPayload, BookTourResponse } from '../types';
 import { MOCK_ROOM_SNAPSHOT, MOCK_TIME_SLOTS } from '../services/mockData';
+
+function shouldFallbackToMock(error: unknown): boolean {
+  if (!import.meta.env.DEV) return false;
+  const apiErr = error as Partial<ApiError>;
+  // Không nuốt lỗi nghiệp vụ 4xx (400, 401, 403, 404, 422...) mà ném để UI xử lý
+  if (apiErr?.statusCode && apiErr.statusCode >= 400 && apiErr.statusCode < 500) {
+    return false;
+  }
+  return true;
+}
 
 export const scheduleTourApi = {
   /**
@@ -19,7 +27,7 @@ export const scheduleTourApi = {
         return response.data.data;
       }
     } catch (error) {
-      if (!import.meta.env.DEV || (axios.isAxiosError(error) && error.response && error.response.status >= 400 && error.response.status < 500)) {
+      if (!shouldFallbackToMock(error)) {
         throw error;
       }
     }
@@ -46,7 +54,7 @@ export const scheduleTourApi = {
         return response.data.data;
       }
     } catch (error) {
-      if (!import.meta.env.DEV || (axios.isAxiosError(error) && error.response && error.response.status >= 400 && error.response.status < 500)) {
+      if (!shouldFallbackToMock(error)) {
         throw error;
       }
     }
@@ -67,7 +75,7 @@ export const scheduleTourApi = {
         return response.data.data;
       }
     } catch (error) {
-      if (!import.meta.env.DEV || (axios.isAxiosError(error) && error.response && error.response.status >= 400 && error.response.status < 500)) {
+      if (!shouldFallbackToMock(error)) {
         throw error;
       }
 

@@ -25,6 +25,7 @@ export interface TimeSlotSelectorProps {
   onToggleSlot: (slotId: string) => void;
   maxSlots?: number;
   inlineError?: string | null;
+  isLoading?: boolean;
 }
 
 export interface IdentityNoticeProps {
@@ -33,7 +34,6 @@ export interface IdentityNoticeProps {
 
 export interface TourActionBarProps {
   onBack: () => void;
-  onSubmit?: () => void;
   isSubmitting?: boolean;
   isDisabled?: boolean;
 }

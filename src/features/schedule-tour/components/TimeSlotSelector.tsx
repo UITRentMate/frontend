@@ -1,5 +1,8 @@
 import React from 'react';
+
+import Loading from '@/components/ui/Loading';
 import { SunIcon, CloudSunIcon, MoonIcon, CheckIcon } from '@/components/ui/icons';
+
 import type { TimeSlotSelectorProps, TimeSlotOption } from '../types';
 
 export const TimeSlotSelector: React.FC<TimeSlotSelectorProps> = ({
@@ -8,6 +11,7 @@ export const TimeSlotSelector: React.FC<TimeSlotSelectorProps> = ({
   onToggleSlot,
   maxSlots = 3,
   inlineError,
+  isLoading = false,
 }) => {
   const morningSlots = slots.filter((s) => s.period === 'morning');
   const afternoonSlots = slots.filter((s) => s.period === 'afternoon');
@@ -94,38 +98,44 @@ export const TimeSlotSelector: React.FC<TimeSlotSelectorProps> = ({
         <span className="text-xs text-danger font-medium -mt-1">{inlineError}</span>
       )}
 
-      {/* Morning Slots */}
-      <div className="flex flex-col gap-2">
-        <div className="flex items-center gap-1.5 text-xs font-bold text-text-muted uppercase tracking-wider">
-          <SunIcon className="w-3.5 h-3.5 text-warning" />
-          <span>BUỔI SÁNG (08:30 - 11:30)</span>
-        </div>
-        <div className="flex flex-wrap sm:flex-nowrap gap-2.5">
-          {morningSlots.map(renderSlotButton)}
-        </div>
-      </div>
+      {isLoading ? (
+        <Loading message="Đang tải khung giờ trống..." size="sm" className="p-4" />
+      ) : (
+        <>
+          {/* Morning Slots */}
+          <div className="flex flex-col gap-2">
+            <div className="flex items-center gap-1.5 text-xs font-bold text-text-muted uppercase tracking-wider">
+              <SunIcon className="w-3.5 h-3.5 text-warning" />
+              <span>BUỔI SÁNG (08:30 - 11:30)</span>
+            </div>
+            <div className="flex flex-wrap sm:flex-nowrap gap-2.5">
+              {morningSlots.map(renderSlotButton)}
+            </div>
+          </div>
 
-      {/* Afternoon Slots */}
-      <div className="flex flex-col gap-2">
-        <div className="flex items-center gap-1.5 text-xs font-bold text-text-muted uppercase tracking-wider">
-          <CloudSunIcon className="w-3.5 h-3.5 text-accent-300" />
-          <span>BUỔI CHIỀU (14:00 - 17:30)</span>
-        </div>
-        <div className="flex flex-wrap sm:flex-nowrap gap-2.5">
-          {afternoonSlots.map(renderSlotButton)}
-        </div>
-      </div>
+          {/* Afternoon Slots */}
+          <div className="flex flex-col gap-2">
+            <div className="flex items-center gap-1.5 text-xs font-bold text-text-muted uppercase tracking-wider">
+              <CloudSunIcon className="w-3.5 h-3.5 text-accent-300" />
+              <span>BUỔI CHIỀU (14:00 - 17:30)</span>
+            </div>
+            <div className="flex flex-wrap sm:flex-nowrap gap-2.5">
+              {afternoonSlots.map(renderSlotButton)}
+            </div>
+          </div>
 
-      {/* Evening Slots */}
-      <div className="flex flex-col gap-2">
-        <div className="flex items-center gap-1.5 text-xs font-bold text-text-muted uppercase tracking-wider">
-          <MoonIcon className="w-3.5 h-3.5 text-brand-600" />
-          <span>BUỔI TỐI (18:00 - 20:00)</span>
-        </div>
-        <div className="flex flex-wrap sm:flex-nowrap gap-2.5">
-          {eveningSlots.map(renderSlotButton)}
-        </div>
-      </div>
+          {/* Evening Slots */}
+          <div className="flex flex-col gap-2">
+            <div className="flex items-center gap-1.5 text-xs font-bold text-text-muted uppercase tracking-wider">
+              <MoonIcon className="w-3.5 h-3.5 text-brand-600" />
+              <span>BUỔI TỐI (18:00 - 20:00)</span>
+            </div>
+            <div className="flex flex-wrap sm:flex-nowrap gap-2.5">
+              {eveningSlots.map(renderSlotButton)}
+            </div>
+          </div>
+        </>
+      )}
     </div>
   );
 };

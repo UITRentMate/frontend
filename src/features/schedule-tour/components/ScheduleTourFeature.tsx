@@ -46,10 +46,11 @@ export const ScheduleTourFeature: React.FC = () => {
   const [landlordNote, setLandlordNote] = useState('');
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [feedbackMessage, setFeedbackMessage] = useState<string | null>(null);
+  const [actionNotice, setActionNotice] = useState<string | null>(null);
   const [dateError, setDateError] = useState<string | null>(null);
   const [slotError, setSlotError] = useState<string | null>(null);
 
-  const { data: slots = [] } = useAvailableTourSlots(roomId, selectedDate);
+  const { data: slots = [], isLoading: isLoadingSlots } = useAvailableTourSlots(roomId, selectedDate);
   const { mutate: bookTour, isPending: isBooking } = useBookRoomTour();
 
   const handleToggleSlot = (slotId: string) => {
@@ -85,15 +86,12 @@ export const ScheduleTourFeature: React.FC = () => {
   };
 
   const handleContactLandlord = () => {
-    setFeedbackMessage('Đang mở kết nối nhắn tin trực tiếp với chủ trọ...');
+    setActionNotice('Đang mở kết nối nhắn tin trực tiếp với chủ trọ...');
   };
 
   const handleBack = () => {
-    if (id) {
-      navigate(`/rooms/${id}`);
-    } else {
-      navigate(ROUTES.ROOMS);
-    }
+    const targetRoomId = room?.id || id;
+    navigate(targetRoomId ? `/rooms/${targetRoomId}` : ROUTES.ROOMS);
   };
 
   const handleSubmit = () => {
@@ -140,7 +138,7 @@ export const ScheduleTourFeature: React.FC = () => {
   if (isErrorRoom || !room) {
     return (
       <div className="max-w-md mx-auto my-16 p-8 bg-surface-card border border-border-subtle rounded-xl text-center space-y-4 shadow-soft-xs">
-        <div className="w-12 h-12 mx-auto rounded-pill bg-danger-subtle text-danger flex items-center justify-center font-bold text-xl">
+        <div className="w-12 h-12 mx-auto rounded-pill bg-danger-soft text-danger flex items-center justify-center font-bold text-xl">
           !
         </div>
         <h2 className="text-base sm:text-lg font-bold font-heading text-text-primary">
@@ -159,7 +157,7 @@ export const ScheduleTourFeature: React.FC = () => {
   }
 
   return (
-    <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+    <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-6 flex flex-col gap-5">
       {/* 1. Breadcrumb */}
       <ScheduleBreadcrumb
         buildingName={room.buildingName}
@@ -192,13 +190,31 @@ export const ScheduleTourFeature: React.FC = () => {
             {feedbackMessage && (
               <div
                 role="alert"
-                className="p-3 bg-danger-subtle border border-danger rounded-md text-xs text-danger font-medium flex items-center justify-between"
+                className="p-3 bg-danger-soft border border-danger-border rounded-md text-xs text-danger font-medium flex items-center justify-between"
               >
                 <span>{feedbackMessage}</span>
                 <button
                   type="button"
                   onClick={() => setFeedbackMessage(null)}
                   className="text-danger hover:text-danger font-bold text-sm px-1 cursor-pointer"
+                  aria-label="Đóng thông báo lỗi"
+                >
+                  ×
+                </button>
+              </div>
+            )}
+
+            {/* Action notice (non-error status feedback) */}
+            {actionNotice && (
+              <div
+                role="status"
+                className="p-3 bg-brand-50 border border-brand-200 rounded-md text-xs text-brand-700 font-medium flex items-center justify-between"
+              >
+                <span>{actionNotice}</span>
+                <button
+                  type="button"
+                  onClick={() => setActionNotice(null)}
+                  className="text-brand-700 hover:text-brand-900 font-bold text-sm px-1 cursor-pointer"
                   aria-label="Đóng thông báo"
                 >
                   ×
@@ -224,6 +240,7 @@ export const ScheduleTourFeature: React.FC = () => {
                   selectedSlotIds={selectedSlotIds}
                   onToggleSlot={handleToggleSlot}
                   inlineError={slotError}
+                  isLoading={isLoadingSlots}
                 />
               </div>
 
@@ -255,7 +272,6 @@ export const ScheduleTourFeature: React.FC = () => {
               {/* Action Bar */}
               <TourActionBar
                 onBack={handleBack}
-                onSubmit={handleSubmit}
                 isSubmitting={isBooking}
                 isDisabled={selectedSlotIds.length === 0}
               />
