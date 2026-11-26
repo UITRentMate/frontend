@@ -26,6 +26,12 @@ assert.strictEqual(invalidLeap, null, 'Should reject 29/02 in non-leap year');
 const invalidFormat = parseDate('2026-12-25');
 assert.strictEqual(invalidFormat, null, 'Should reject non DD/MM/YYYY format');
 
+const invalidAlphanumeric = parseDate('25abc/12/2026');
+assert.strictEqual(invalidAlphanumeric, null, 'Should reject non-numeric day/month/year segments');
+
+const invalidFebDay = parseDate('31/02/2026');
+assert.strictEqual(invalidFebDay, null, 'Should reject impossible calendar dates like 31/02');
+
 // 2. formatDateToDMY tests
 const testDate = new Date(2026, 9, 24);
 assert.strictEqual(formatDateToDMY(testDate), '24/10/2026');
@@ -33,6 +39,12 @@ assert.strictEqual(formatDateToDMY(testDate), '24/10/2026');
 // 3. validateTourDate tests
 const emptyDateErr = validateTourDate('');
 assert.strictEqual(emptyDateErr, 'Vui lòng chọn hoặc nhập ngày muốn xem phòng.');
+
+const invalidTextDateErr = validateTourDate('abc');
+assert.strictEqual(
+  invalidTextDateErr,
+  'Ngày xem phòng không hợp lệ (định dạng chuẩn: DD/MM/YYYY).'
+);
 
 const pastDateErr = validateTourDate('01/01/2020');
 assert.strictEqual(pastDateErr, 'Ngày xem phòng không thể là ngày trong quá khứ.');
@@ -58,6 +70,16 @@ assert.strictEqual(opts.length, 4, 'Should generate 4 dynamic date options');
 assert(opts[0].dateValue.length > 0, 'First option should have non-empty dateValue');
 assert.strictEqual(opts[0].label, 'HÔM NAY', 'First option should be HÔM NAY');
 assert.strictEqual(opts[1].label, 'NGÀY MAI', 'Second option should be NGÀY MAI');
+for (let i = 2; i < opts.length; i++) {
+  const parsedOpt = parseDate(opts[i].dateValue);
+  assert(parsedOpt !== null, `Option ${i} should have valid dateValue`);
+  const isWeekend = parsedOpt.getDay() === 0 || parsedOpt.getDay() === 6;
+  if (isWeekend) {
+    assert.strictEqual(opts[i].label, 'CUỐI TUẦN', `Weekend option ${i} should be labeled CUỐI TUẦN`);
+  } else {
+    assert.notStrictEqual(opts[i].label, 'CUỐI TUẦN', `Weekday option ${i} should not be labeled CUỐI TUẦN`);
+  }
+}
 
 // 6. Rental Request validation tests
 const emptyMoveInErr = validateMoveInDate('');

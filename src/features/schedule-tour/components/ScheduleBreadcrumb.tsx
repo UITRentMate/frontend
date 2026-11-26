@@ -1,7 +1,10 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { ChevronRightIcon } from '@/components/ui/icons';
+
 import { ROUTES } from '@/routes/paths';
+
+import { ChevronRightIcon } from '@/components/ui/icons';
+
 import type { ScheduleBreadcrumbProps } from '../types';
 
 export const ScheduleBreadcrumb: React.FC<ScheduleBreadcrumbProps> = ({

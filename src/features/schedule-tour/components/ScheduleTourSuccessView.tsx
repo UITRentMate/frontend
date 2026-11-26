@@ -1,6 +1,8 @@
 import React from 'react';
+
 import Button from '@/components/ui/Button';
 import { CheckCircle2Icon } from '@/components/ui/icons';
+
 import type { ScheduleTourSuccessViewProps } from '../types';
 
 export const ScheduleTourSuccessView: React.FC<ScheduleTourSuccessViewProps> = ({

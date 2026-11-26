@@ -1,7 +1,14 @@
 import React from 'react';
 
+import Button from '@/components/ui/Button';
 import Loading from '@/components/ui/Loading';
-import { SunIcon, CloudSunIcon, MoonIcon, CheckIcon } from '@/components/ui/icons';
+import {
+  AlertCircleIcon,
+  SunIcon,
+  CloudSunIcon,
+  MoonIcon,
+  CheckIcon,
+} from '@/components/ui/icons';
 
 import type { TimeSlotSelectorProps, TimeSlotOption } from '../types';
 
@@ -12,6 +19,8 @@ export const TimeSlotSelector: React.FC<TimeSlotSelectorProps> = ({
   maxSlots = 3,
   inlineError,
   isLoading = false,
+  isError = false,
+  onRetry,
 }) => {
   const morningSlots = slots.filter((s) => s.period === 'morning');
   const afternoonSlots = slots.filter((s) => s.period === 'afternoon');
@@ -100,6 +109,25 @@ export const TimeSlotSelector: React.FC<TimeSlotSelectorProps> = ({
 
       {isLoading ? (
         <Loading message="Đang tải khung giờ trống..." size="sm" className="p-4" />
+      ) : isError ? (
+        <div
+          role="alert"
+          className="p-4 bg-danger-soft border border-danger-border rounded-lg flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-danger"
+        >
+          <div className="flex items-center gap-2 font-medium">
+            <AlertCircleIcon className="w-4 h-4 shrink-0" />
+            <span>Không thể tải danh sách khung giờ trống. Vui lòng thử lại.</span>
+          </div>
+          {onRetry && (
+            <Button type="button" variant="outline" size="sm" onClick={onRetry}>
+              Thử lại
+            </Button>
+          )}
+        </div>
+      ) : slots.length === 0 ? (
+        <div className="p-5 bg-canvas border border-border-subtle rounded-lg text-center text-xs text-text-muted">
+          Chưa có khung giờ trống cho ngày này. Vui lòng chọn một ngày hợp lệ khác.
+        </div>
       ) : (
         <>
           {/* Morning Slots */}

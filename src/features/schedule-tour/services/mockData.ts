@@ -1,35 +1,4 @@
-import type { DatePillOption, TimeSlotOption, RoomTourSnapshot } from '../types';
-
-export const MOCK_DATE_OPTIONS: DatePillOption[] = [
-  {
-    id: 'date-today',
-    label: 'HÔM NAY',
-    dateFormatted: 'T.Sáu, 24/10/2026',
-    dateValue: '24/10/2026',
-    availableSlotsCount: 4,
-  },
-  {
-    id: 'date-tomorrow',
-    label: 'NGÀY MAI',
-    dateFormatted: 'T.Bảy, 25/10/2026',
-    dateValue: '25/10/2026',
-    availableSlotsCount: 6,
-  },
-  {
-    id: 'date-sunday',
-    label: 'CHỦ NHẬT',
-    dateFormatted: 'C.Nhật, 26/10/2026',
-    dateValue: '26/10/2026',
-    availableSlotsCount: 5,
-  },
-  {
-    id: 'date-monday',
-    label: 'ĐẦU TUẦN',
-    dateFormatted: 'Thứ 2, 27/10/2026',
-    dateValue: '27/10/2026',
-    availableSlotsCount: 2,
-  },
-];
+import type { TimeSlotOption, RoomTourSnapshot } from '../types';
 
 export const MOCK_TIME_SLOTS: TimeSlotOption[] = [
   // Sáng (08:30 - 11:30)

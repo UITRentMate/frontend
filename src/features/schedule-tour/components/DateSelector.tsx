@@ -10,6 +10,7 @@ export const DateSelector: React.FC<DateSelectorProps> = ({
   onSelectDate,
   customDate,
   onCustomDateChange,
+  onCustomDateBlur,
   inlineError,
 }) => {
   return (
@@ -75,6 +76,7 @@ export const DateSelector: React.FC<DateSelectorProps> = ({
             type="text"
             value={customDate}
             onChange={(e) => onCustomDateChange(e.target.value)}
+            onBlur={onCustomDateBlur}
             placeholder="DD/MM/YYYY"
             aria-label="Nhập ngày xem phòng tùy chọn (DD/MM/YYYY)"
             aria-invalid={Boolean(inlineError)}

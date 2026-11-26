@@ -1,5 +1,7 @@
 import React from 'react';
+
 import { InfoIcon, XIcon } from '@/components/ui/icons';
+
 import type { ReminderBannerProps } from '../types';
 
 export const ReminderBanner: React.FC<ReminderBannerProps> = ({ onDismiss }) => {

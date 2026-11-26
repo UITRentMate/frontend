@@ -2,11 +2,13 @@ import type { DatePillOption } from '../types';
 
 export function parseDate(dateStr: string): Date | null {
   if (!dateStr) return null;
-  const parts = dateStr.trim().split('/');
-  if (parts.length !== 3) return null;
-  const day = parseInt(parts[0], 10);
-  const month = parseInt(parts[1], 10) - 1;
-  const year = parseInt(parts[2], 10);
+  const trimmed = dateStr.trim();
+  if (!/^\d{1,2}\/\d{1,2}\/\d{4}$/.test(trimmed)) return null;
+
+  const [dayStr, monthStr, yearStr] = trimmed.split('/');
+  const day = Number(dayStr);
+  const month = Number(monthStr) - 1;
+  const year = Number(yearStr);
 
   if (isNaN(day) || isNaN(month) || isNaN(year)) return null;
   const date = new Date(year, month, day);

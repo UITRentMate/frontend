@@ -1,6 +1,10 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 
+import roomPreviewImg from '@/assets/room-preview.png';
+import { ROUTES } from '@/routes/paths';
+import { formatCurrency } from '@/utils/formatCurrency';
+
 import {
   ImageIcon,
   MapPinIcon,
@@ -12,10 +16,6 @@ import {
   ZapIcon,
   DropletsIcon,
 } from '@/components/ui/icons';
-
-import roomPreviewImg from '@/assets/room-preview.png';
-import { formatCurrency } from '@/utils/formatCurrency';
-import { ROUTES } from '@/routes/paths';
 
 import type { RoomTourSidebarProps } from '../types';
 

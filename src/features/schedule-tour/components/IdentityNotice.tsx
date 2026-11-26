@@ -1,5 +1,7 @@
 import React from 'react';
+
 import { ShieldCheckIcon } from '@/components/ui/icons';
+
 import type { IdentityNoticeProps } from '../types';
 
 export const IdentityNotice: React.FC<IdentityNoticeProps> = ({ userName }) => {

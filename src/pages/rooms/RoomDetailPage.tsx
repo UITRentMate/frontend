@@ -1,11 +1,9 @@
 import React from 'react';
 import { useParams, Link } from 'react-router-dom';
-
+import { useRoom } from '@/features/rooms/hooks/useRooms';
 import Button from '@/components/ui/Button';
 import Badge from '@/components/ui/Badge';
-import { MapPinIcon, MessageSquareIcon, FileTextIcon, CalendarIcon } from '@/components/ui/icons';
-
-import { useRoom } from '@/features/rooms/hooks/useRooms';
+import { MapPinIcon, FileTextIcon, CalendarIcon } from '@/components/ui/icons';
 import { ROUTES } from '@/routes/paths';
 
 export const RoomDetailPage: React.FC = () => {
@@ -42,32 +40,39 @@ export const RoomDetailPage: React.FC = () => {
   }
 
   return (
-    <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
-      {/* Breadcrumb / Back button */}
-      <div>
-        <Link
-          to={ROUTES.ROOMS}
-          className="text-xs font-semibold text-brand-500 hover:text-brand-600 inline-flex items-center gap-1"
-        >
-          ← Quay lại danh sách phòng
-        </Link>
+    <div className="max-w-5xl mx-auto space-y-8">
+      {/* Breadcrumb */}
+      <div className="flex items-center gap-2 text-xs text-text-muted">
+        <Link to={ROUTES.HOME} className="hover:text-brand-500">Trang chủ</Link>
+        <span>/</span>
+        <Link to={ROUTES.ROOMS} className="hover:text-brand-500">Phòng trọ</Link>
+        <span>/</span>
+        <span className="text-text-primary font-medium truncate max-w-xs">{room.title}</span>
       </div>
 
+      {/* Main Grid */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-        {/* Left Column: Room info & details */}
+        {/* Left Column: Images & Details */}
         <div className="lg:col-span-2 space-y-6">
-          <div className="h-80 sm:h-96 rounded-xl overflow-hidden bg-surface-muted border border-border-subtle">
+          {/* Gallery image */}
+          <div className="relative aspect-16/10 rounded-xl overflow-hidden border border-border-subtle shadow-soft-sm bg-surface-muted">
             <img
-              src={room.images[0] || 'https://placehold.co/800x600?text=RentMate'}
+              src={room.images[0]}
               alt={room.title}
               className="w-full h-full object-cover"
             />
+            <div className="absolute top-4 left-4 flex gap-2">
+              <Badge variant="verified">Đang cho thuê</Badge>
+            </div>
           </div>
 
-          <div className="space-y-4">
-            <div className="flex items-center gap-2">
-              <Badge variant="success">Phòng còn trống</Badge>
-              <span className="text-xs text-text-muted">
+          {/* Title & Info */}
+          <div className="bg-white p-6 rounded-lg border border-border-subtle shadow-soft-xs space-y-4">
+            <div className="flex items-baseline justify-between gap-4">
+              <span className="text-2xl font-bold font-heading text-brand-500">
+                {room.price.toLocaleString('vi-VN')} đ/tháng
+              </span>
+              <span className="text-sm font-semibold text-text-muted bg-surface-muted px-3 py-1 rounded-sm">
                 Diện tích: {room.area} m²
               </span>
             </div>
@@ -77,9 +82,9 @@ export const RoomDetailPage: React.FC = () => {
             </h1>
 
             <div className="flex items-center gap-2 text-xs text-text-muted">
-              <span className="inline-flex items-center gap-1">
-                <MapPinIcon className="w-3.5 h-3.5 text-text-muted" />
-                <span>Địa chỉ:</span>
+              <span className="flex items-center gap-1">
+                <MapPinIcon className="w-3.5 h-3.5 text-brand-500 inline" />
+                Địa chỉ:
               </span>
               <span className="text-text-primary font-medium">{room.specificAddress}</span>
               <span className="text-brand-600 font-semibold">({room.campusZone})</span>
@@ -127,21 +132,17 @@ export const RoomDetailPage: React.FC = () => {
 
             <div className="space-y-2 pt-2">
               <Link to={ROUTES.ROOM_RENTAL_REQUEST.replace(':id', room.id)} className="block w-full">
-                <Button variant="primary" size="md" className="w-full inline-flex items-center justify-center gap-2">
+                <Button variant="primary" size="md" className="w-full flex items-center justify-center gap-1.5">
                   <FileTextIcon className="w-4 h-4" />
                   <span>Gửi yêu cầu thuê phòng</span>
                 </Button>
               </Link>
               <Link to={ROUTES.ROOM_SCHEDULE_TOUR.replace(':id', room.id)} className="block w-full">
-                <Button variant="secondary" size="md" className="w-full inline-flex items-center justify-center gap-2">
+                <Button variant="secondary" size="md" className="w-full flex items-center justify-center gap-1.5">
                   <CalendarIcon className="w-4 h-4" />
                   <span>Đặt lịch xem phòng</span>
                 </Button>
               </Link>
-              <Button variant="outline" size="md" className="w-full inline-flex items-center justify-center gap-2">
-                <MessageSquareIcon className="w-4 h-4" />
-                <span>Liên hệ chủ trọ</span>
-              </Button>
             </div>
           </div>
         </div>

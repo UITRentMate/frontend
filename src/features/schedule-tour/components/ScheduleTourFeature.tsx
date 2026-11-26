@@ -1,12 +1,11 @@
 import React, { useState, useMemo } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 
-import Loading from '@/components/ui/Loading';
-import Button from '@/components/ui/Button';
-
 import { useAuth } from '@/hooks/useAuth';
-
 import { ROUTES } from '@/routes/paths';
+
+import Button from '@/components/ui/Button';
+import Loading from '@/components/ui/Loading';
 
 import {
   useScheduleTourRoom,
@@ -27,6 +26,9 @@ import { IdentityNotice } from './IdentityNotice';
 import { TourActionBar } from './TourActionBar';
 import { RoomTourSidebar } from './RoomTourSidebar';
 import { ScheduleTourSuccessView } from './ScheduleTourSuccessView';
+
+const MAX_TOUR_SLOTS = 3;
+const PARTIAL_DATE_PATTERN = /^\d{0,2}(\/\d{0,2}(\/\d{0,4})?)?$/;
 
 export const ScheduleTourFeature: React.FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -50,7 +52,12 @@ export const ScheduleTourFeature: React.FC = () => {
   const [dateError, setDateError] = useState<string | null>(null);
   const [slotError, setSlotError] = useState<string | null>(null);
 
-  const { data: slots = [], isLoading: isLoadingSlots } = useAvailableTourSlots(roomId, selectedDate);
+  const {
+    data: slots = [],
+    isLoading: isLoadingSlots,
+    isError: isErrorSlots,
+    refetch: refetchSlots,
+  } = useAvailableTourSlots(roomId, selectedDate);
   const { mutate: bookTour, isPending: isBooking } = useBookRoomTour();
 
   const handleToggleSlot = (slotId: string) => {
@@ -59,8 +66,8 @@ export const ScheduleTourFeature: React.FC = () => {
     if (selectedSlotIds.includes(slotId)) {
       setSelectedSlotIds((prev) => prev.filter((item) => item !== slotId));
     } else {
-      if (selectedSlotIds.length >= 3) {
-        setFeedbackMessage('Bạn chỉ có thể chọn tối đa 3 khung giờ xem phòng.');
+      if (selectedSlotIds.length >= MAX_TOUR_SLOTS) {
+        setFeedbackMessage(`Bạn chỉ có thể chọn tối đa ${MAX_TOUR_SLOTS} khung giờ xem phòng.`);
         return;
       }
       setSelectedSlotIds((prev) => [...prev, slotId]);
@@ -80,9 +87,21 @@ export const ScheduleTourFeature: React.FC = () => {
     setCustomDate(dateVal);
     setSelectedDate(dateVal);
     setSelectedSlotIds([]);
-    setDateError(null);
     setSlotError(null);
     setFeedbackMessage(null);
+
+    const trimmed = dateVal.trim();
+    if (!trimmed) {
+      setDateError(validateTourDate(dateVal));
+    } else if (!PARTIAL_DATE_PATTERN.test(trimmed) || trimmed.length >= 8) {
+      setDateError(validateTourDate(dateVal));
+    } else {
+      setDateError(null);
+    }
+  };
+
+  const handleCustomDateBlur = () => {
+    setDateError(validateTourDate(customDate));
   };
 
   const handleContactLandlord = () => {
@@ -196,7 +215,7 @@ export const ScheduleTourFeature: React.FC = () => {
                 <button
                   type="button"
                   onClick={() => setFeedbackMessage(null)}
-                  className="text-danger hover:text-danger font-bold text-sm px-1 cursor-pointer"
+                  className="text-danger hover:opacity-80 font-bold text-sm px-1 cursor-pointer"
                   aria-label="Đóng thông báo lỗi"
                 >
                   ×
@@ -230,6 +249,7 @@ export const ScheduleTourFeature: React.FC = () => {
                 onSelectDate={handleSelectDate}
                 customDate={customDate}
                 onCustomDateChange={handleCustomDateChange}
+                onCustomDateBlur={handleCustomDateBlur}
                 inlineError={dateError}
               />
 
@@ -239,8 +259,13 @@ export const ScheduleTourFeature: React.FC = () => {
                   slots={slots}
                   selectedSlotIds={selectedSlotIds}
                   onToggleSlot={handleToggleSlot}
+                  maxSlots={MAX_TOUR_SLOTS}
                   inlineError={slotError}
                   isLoading={isLoadingSlots}
+                  isError={isErrorSlots}
+                  onRetry={() => {
+                    void refetchSlots();
+                  }}
                 />
               </div>
 
@@ -262,7 +287,7 @@ export const ScheduleTourFeature: React.FC = () => {
                   value={landlordNote}
                   onChange={(e) => setLandlordNote(e.target.value)}
                   placeholder="Nhập lời nhắn nếu cần (tối đa 250 ký tự)..."
-                  className="w-full bg-canvas border border-border-subtle rounded-md p-3 text-xs sm:text-sm text-text-primary placeholder:text-text-disabled focus:outline-none focus:ring-2 focus:ring-brand-500 focus:bg-white resize-none transition-all"
+                  className="w-full bg-canvas border border-border-subtle rounded-md p-3 text-xs sm:text-sm text-text-primary placeholder:text-text-disabled focus:outline-none focus:ring-2 focus:ring-brand-500 focus:bg-surface-card resize-none transition-all"
                 />
               </div>
 
@@ -273,7 +298,7 @@ export const ScheduleTourFeature: React.FC = () => {
               <TourActionBar
                 onBack={handleBack}
                 isSubmitting={isBooking}
-                isDisabled={selectedSlotIds.length === 0}
+                isDisabled={selectedSlotIds.length === 0 || Boolean(dateError)}
               />
             </form>
           </div>

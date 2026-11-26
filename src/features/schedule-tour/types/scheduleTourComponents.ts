@@ -16,6 +16,7 @@ export interface DateSelectorProps {
   onSelectDate: (dateVal: string) => void;
   customDate: string;
   onCustomDateChange: (customDateVal: string) => void;
+  onCustomDateBlur?: () => void;
   inlineError?: string | null;
 }
 
@@ -26,6 +27,8 @@ export interface TimeSlotSelectorProps {
   maxSlots?: number;
   inlineError?: string | null;
   isLoading?: boolean;
+  isError?: boolean;
+  onRetry?: () => void;
 }
 
 export interface IdentityNoticeProps {
