@@ -3,7 +3,7 @@ import { useParams, Link } from 'react-router-dom';
 import { useRoom } from '@/features/rooms/hooks/useRooms';
 import Button from '@/components/ui/Button';
 import Badge from '@/components/ui/Badge';
-import { MapPinIcon, FileTextIcon, CalendarIcon } from '@/components/ui/icons';
+import { AlertCircleIcon, MapPinIcon, FileTextIcon, CalendarIcon } from '@/components/ui/icons';
 import { ROUTES } from '@/routes/paths';
 
 export const RoomDetailPage: React.FC = () => {
@@ -23,7 +23,9 @@ export const RoomDetailPage: React.FC = () => {
   if (isError || !room) {
     return (
       <div className="max-w-md mx-auto text-center py-16 space-y-4">
-        <div className="text-4xl">🏚️</div>
+        <div className="w-14 h-14 mx-auto rounded-pill bg-danger-soft text-danger flex items-center justify-center">
+          <AlertCircleIcon className="w-7 h-7" size={28} />
+        </div>
         <h2 className="text-xl font-heading font-bold text-text-primary">
           Không tìm thấy phòng trọ
         </h2>
