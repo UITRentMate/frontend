@@ -9,6 +9,7 @@ import {
   RegisterPage,
   HomePage,
   RoomsPage,
+  LandingPage,
   RoomDetailPage,
   AdminDashboardPage,
   LandlordDashboardPage,
@@ -37,6 +38,10 @@ export const router = createBrowserRouter([
     path: ROUTES.REGISTER,
     element: <RegisterPage />,
   },
+  {                              
+    path: ROUTES.LANDING,
+    element: <LandingPage />,
+  },       
   {
     path: ROUTES.FORGOT_PASSWORD,
     element: (
