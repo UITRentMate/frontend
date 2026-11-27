@@ -19,4 +19,9 @@ export const ENDPOINTS = {
     TENANT_PROFILE: '/user/profile/tenant',
     REQUESTS: '/rental-requests',
   },
+  TOUR: {
+    ROOM_SNAPSHOT: (roomId: string) => `/rooms/${roomId}/tour-snapshot`,
+    ROOM_SLOTS: (roomId: string) => `/rooms/${roomId}/tour-slots`,
+    BOOKINGS: '/tour-bookings',
+  },
 } as const;

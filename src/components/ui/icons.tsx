@@ -1,5 +1,4 @@
 import React from 'react';
-
 import type { SvgIconProps } from '@/types';
 
 export const LayoutDashboardIcon: React.FC<SvgIconProps> = ({ className = 'w-5 h-5', size = 20 }) => (
@@ -289,6 +288,10 @@ export const CheckCircle2Icon: React.FC<SvgIconProps> = ({ className = 'w-3.5 h-
   </svg>
 );
 
+export const CheckCircleIcon: React.FC<SvgIconProps> = ({ className = 'w-12 h-12', size }) => (
+  <CheckCircle2Icon className={className} size={size || 48} />
+);
+
 export const XIcon: React.FC<SvgIconProps> = ({ className = 'w-4 h-4', size }) => (
   <svg
     width={size || 16}
@@ -320,6 +323,23 @@ export const InboxIcon: React.FC<SvgIconProps> = ({ className = 'w-8 h-8', size 
   >
     <polyline points="22 12 16 12 14 15 10 15 8 12 2 12" />
     <path d="M5.45 5.11 2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11z" />
+  </svg>
+);
+
+export const SendIcon: React.FC<SvgIconProps> = ({ className = 'w-4 h-4', size }) => (
+  <svg
+    width={size || 16}
+    height={size || 16}
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+    className={className}
+  >
+    <path d="m22 2-7 20-4-9-9-4Z" />
+    <path d="M22 2 11 13" />
   </svg>
 );
 
@@ -373,8 +393,21 @@ export const InfoIcon: React.FC<SvgIconProps> = ({ className = 'w-3.5 h-3.5', si
   </svg>
 );
 
-export const CheckCircleIcon: React.FC<SvgIconProps> = ({ className = 'w-12 h-12', size }) => (
-  <CheckCircle2Icon className={className} size={size || 48} />
+export const CameraIcon: React.FC<SvgIconProps> = ({ className = 'w-4 h-4', size }) => (
+  <svg
+    width={size || 16}
+    height={size || 16}
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+    className={className}
+  >
+    <path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z" />
+    <circle cx="12" cy="13" r="3" />
+  </svg>
 );
 
 export const ArrowLeftIcon: React.FC<SvgIconProps> = ({ className = 'w-4 h-4', size }) => (
@@ -394,7 +427,7 @@ export const ArrowLeftIcon: React.FC<SvgIconProps> = ({ className = 'w-4 h-4', s
   </svg>
 );
 
-export const CameraIcon: React.FC<SvgIconProps> = ({ className = 'w-4 h-4', size }) => (
+export const SunIcon: React.FC<SvgIconProps> = ({ className = 'w-4 h-4', size }) => (
   <svg
     width={size || 16}
     height={size || 16}
@@ -406,12 +439,19 @@ export const CameraIcon: React.FC<SvgIconProps> = ({ className = 'w-4 h-4', size
     strokeLinejoin="round"
     className={className}
   >
-    <path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z" />
-    <circle cx="12" cy="13" r="3" />
+    <circle cx="12" cy="12" r="4" />
+    <path d="M12 2v2" />
+    <path d="M12 20v2" />
+    <path d="m4.93 4.93 1.41 1.41" />
+    <path d="m17.66 17.66 1.41 1.41" />
+    <path d="M2 12h2" />
+    <path d="M20 12h2" />
+    <path d="m6.34 17.66-1.41 1.41" />
+    <path d="m19.07 4.93-1.41 1.41" />
   </svg>
 );
 
-export const SendIcon: React.FC<SvgIconProps> = ({ className = 'w-4 h-4', size }) => (
+export const CloudSunIcon: React.FC<SvgIconProps> = ({ className = 'w-4 h-4', size }) => (
   <svg
     width={size || 16}
     height={size || 16}
@@ -423,8 +463,28 @@ export const SendIcon: React.FC<SvgIconProps> = ({ className = 'w-4 h-4', size }
     strokeLinejoin="round"
     className={className}
   >
-    <path d="m22 2-7 20-4-9-9-4Z" />
-    <path d="M22 2 11 13" />
+    <path d="M12 2v2" />
+    <path d="m4.93 4.93 1.41 1.41" />
+    <path d="M20 12h2" />
+    <path d="m19.07 4.93-1.41 1.41" />
+    <path d="M15.947 12.65a4 4 0 0 0-5.925-4.128" />
+    <path d="M13 22H7a5 5 0 1 1 4.9-6H13a3 3 0 0 1 0 6Z" />
+  </svg>
+);
+
+export const MoonIcon: React.FC<SvgIconProps> = ({ className = 'w-4 h-4', size }) => (
+  <svg
+    width={size || 16}
+    height={size || 16}
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+    className={className}
+  >
+    <path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z" />
   </svg>
 );
 
