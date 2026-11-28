@@ -24,4 +24,8 @@ export const ENDPOINTS = {
     ROOM_SLOTS: (roomId: string) => `/rooms/${roomId}/tour-slots`,
     BOOKINGS: '/tour-bookings',
   },
+  BOOKING_DETAIL: {
+    DETAIL: (roomId: string) => `/rooms/${roomId}/booking-detail`,
+    INITIATE_PAYMENT: '/booking-deposits/initiate',
+  },
 } as const;

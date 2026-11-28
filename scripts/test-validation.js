@@ -10,8 +10,12 @@ import {
   validateMoveInDate,
   validateTenantCount,
 } from '../src/features/rental-request/utils/validation.ts';
+import {
+  calculateMonthlyFixedTotal,
+  canProceedDepositPayment,
+} from '../src/features/booking-detail/utils/validation.ts';
 
-console.log('🧪 Running Schedule Tour & Rental Request validation unit tests...');
+console.log('🧪 Running Schedule Tour, Rental Request & Booking Detail validation unit tests...');
 
 // 1. parseDate tests
 const valid = parseDate('25/12/2026');
@@ -100,5 +104,14 @@ assert.strictEqual(exceedTenantErr, 'Số người ở vượt quá giới hạn
 
 const validTenant = validateTenantCount(2, 4);
 assert.strictEqual(validTenant, null, 'Should accept valid tenant count within room capacity');
+
+// 7. Booking Detail validation & cost helpers
+assert.strictEqual(calculateMonthlyFixedTotal(4500000, 150000), 4650000);
+assert.strictEqual(calculateMonthlyFixedTotal(Number.NaN, 150000), 150000);
+assert.strictEqual(calculateMonthlyFixedTotal(-100, 150000), 150000);
+assert.strictEqual(canProceedDepositPayment('AWAITING_PAYMENT', false), true);
+assert.strictEqual(canProceedDepositPayment('AWAITING_PAYMENT', true), false);
+assert.strictEqual(canProceedDepositPayment('PAID', false), false);
+assert.strictEqual(canProceedDepositPayment('EXPIRED', false), false);
 
 console.log('✅ All validation unit tests passed successfully!');

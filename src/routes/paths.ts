@@ -7,6 +7,8 @@ export const ROUTES = {
   ROOM_RENTAL_REQUEST: '/rooms/:id/rental-request',
   SCHEDULE_TOUR: '/schedule-tour',
   ROOM_SCHEDULE_TOUR: '/rooms/:id/schedule-tour',
+  BOOKING_DETAIL: '/booking-detail',
+  ROOM_BOOKING_DETAIL: '/rooms/:id/booking-detail',
   LOGIN: '/login',
   REGISTER: '/register',
   FORGOT_PASSWORD: '/forgot-password',
