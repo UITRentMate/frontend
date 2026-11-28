@@ -7,6 +7,8 @@ export const ROUTES = {
   ROOM_RENTAL_REQUEST: '/rooms/:id/rental-request',
   SCHEDULE_TOUR: '/schedule-tour',
   ROOM_SCHEDULE_TOUR: '/rooms/:id/schedule-tour',
+  DEPOSIT_PAYMENT: '/deposit-payment',
+  ROOM_DEPOSIT_PAYMENT: '/rooms/:id/deposit-payment',
   LOGIN: '/login',
   REGISTER: '/register',
   FORGOT_PASSWORD: '/forgot-password',

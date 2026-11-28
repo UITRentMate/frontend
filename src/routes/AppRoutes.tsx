@@ -24,6 +24,7 @@ const ResetPasswordPage = lazy(() => import('@/pages/auth/ResetPasswordPage'));
 const ProfilePage = lazy(() => import('@/pages/profile/ProfilePage'));
 const RentalRequestPage = lazy(() => import('@/pages/rental-request/RentalRequestPage'));
 const ScheduleTourPage = lazy(() => import('@/pages/schedule-tour/ScheduleTourPage'));
+const DepositPaymentPage = lazy(() => import('@/pages/deposit-payment/DepositPaymentPage'));
 
 const authRouteFallback = <Loading message="Đang tải trang..." fullScreen />;
 
@@ -126,6 +127,22 @@ export const router = createBrowserRouter([
             element: (
               <Suspense fallback={<Loading message="Đang tải trang..." fullScreen />}>
                 <ScheduleTourPage />
+              </Suspense>
+            ),
+          },
+          {
+            path: 'deposit-payment',
+            element: (
+              <Suspense fallback={<Loading message="Đang tải trang..." fullScreen />}>
+                <DepositPaymentPage />
+              </Suspense>
+            ),
+          },
+          {
+            path: 'rooms/:id/deposit-payment',
+            element: (
+              <Suspense fallback={<Loading message="Đang tải trang..." fullScreen />}>
+                <DepositPaymentPage />
               </Suspense>
             ),
           },
