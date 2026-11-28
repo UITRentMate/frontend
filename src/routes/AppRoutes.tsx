@@ -24,6 +24,9 @@ const ResetPasswordPage = lazy(() => import('@/pages/auth/ResetPasswordPage'));
 const ProfilePage = lazy(() => import('@/pages/profile/ProfilePage'));
 const RentalRequestPage = lazy(() => import('@/pages/rental-request/RentalRequestPage'));
 const ScheduleTourPage = lazy(() => import('@/pages/schedule-tour/ScheduleTourPage'));
+const BookingConfirmationPage = lazy(
+  () => import('@/pages/booking-confirmation/BookingConfirmationPage')
+);
 
 const authRouteFallback = <Loading message="Đang tải trang..." fullScreen />;
 
@@ -126,6 +129,14 @@ export const router = createBrowserRouter([
             element: (
               <Suspense fallback={<Loading message="Đang tải trang..." fullScreen />}>
                 <ScheduleTourPage />
+              </Suspense>
+            ),
+          },
+          {
+            path: 'rooms/:id/booking-confirmation',
+            element: (
+              <Suspense fallback={<Loading message="Đang tải trang..." fullScreen />}>
+                <BookingConfirmationPage />
               </Suspense>
             ),
           },
