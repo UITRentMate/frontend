@@ -10,8 +10,12 @@ import {
   validateMoveInDate,
   validateTenantCount,
 } from '../src/features/rental-request/utils/validation.ts';
+import {
+  validatePaymentMethod,
+  canSubmitDepositPayment,
+} from '../src/features/deposit-payment/utils/validation.ts';
 
-console.log('🧪 Running Schedule Tour & Rental Request validation unit tests...');
+console.log('🧪 Running Schedule Tour, Rental Request & Deposit Payment validation unit tests...');
 
 // 1. parseDate tests
 const valid = parseDate('25/12/2026');
@@ -100,5 +104,22 @@ assert.strictEqual(exceedTenantErr, 'Số người ở vượt quá giới hạn
 
 const validTenant = validateTenantCount(2, 4);
 assert.strictEqual(validTenant, null, 'Should accept valid tenant count within room capacity');
+
+// 7. Deposit Payment validation tests
+assert.strictEqual(validatePaymentMethod('VNPAY'), null, 'Should accept VNPAY');
+assert.strictEqual(validatePaymentMethod('MOMO'), null, 'Should accept MOMO');
+assert.strictEqual(
+  validatePaymentMethod('CASH'),
+  'Vui lòng chọn cổng thanh toán hợp lệ (VNPAY hoặc MoMo).'
+);
+assert.strictEqual(
+  validatePaymentMethod(null),
+  'Vui lòng chọn cổng thanh toán hợp lệ (VNPAY hoặc MoMo).'
+);
+assert.strictEqual(canSubmitDepositPayment('VNPAY', false, 4500000), true);
+assert.strictEqual(canSubmitDepositPayment('MOMO', true, 4500000), false);
+assert.strictEqual(canSubmitDepositPayment('VNPAY', false, 0), false);
+assert.strictEqual(canSubmitDepositPayment('VNPAY', false, Number.NaN), false);
+assert.strictEqual(canSubmitDepositPayment(null, false, 4500000), false);
 
 console.log('✅ All validation unit tests passed successfully!');
