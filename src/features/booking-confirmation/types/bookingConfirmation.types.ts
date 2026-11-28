@@ -34,6 +34,7 @@ export interface BookingRoomSidebarSummary {
   buildingName: string;
   title: string;
   address: string;
+  imageUrl?: string;
   areaSqm: number;
   maxTenants: number;
   monthlyRent: number;
@@ -59,7 +60,7 @@ export interface BookingSupportNote {
   hotline: string;
 }
 
-export interface BookingConfirmationFixture {
+export interface BookingConfirmationData {
   pageTitle: string;
   pageSubtitle: string;
   approvedSummary: ApprovedBookingSummary;
@@ -69,4 +70,21 @@ export interface BookingConfirmationFixture {
   room: BookingRoomSidebarSummary;
   landlord: BookingLandlordSummary;
   supportNote: BookingSupportNote;
+}
+
+export interface ConfirmBookingPayload {
+  roomId: string;
+  requestCode: string;
+  depositAmount: number;
+  isTermsAccepted: boolean;
+}
+
+export interface ConfirmBookingResponse {
+  confirmationId: string;
+  bookingCode: string;
+  status: 'AWAITING_DEPOSIT' | 'CONFIRMED';
+  depositAmount: number;
+  holdDeadline: string;
+  message: string;
+  createdAt: string;
 }

@@ -1,9 +1,9 @@
 import React from 'react';
 
+import studioPhotoImg from '@/assets/room-preview.png';
 import { formatCurrency } from '@/utils/formatCurrency';
 
 import Button from '@/components/ui/Button';
-import studioPhotoImg from '@/assets/room-preview.png';
 import areaMetricIcon from '@/assets/booking-confirmation/a6e37.svg';
 import capacityMetricIcon from '@/assets/booking-confirmation/ccc8f.svg';
 import verifiedBadgeIcon from '@/assets/booking-confirmation/ba259.svg';
@@ -12,6 +12,7 @@ import responseIcon from '@/assets/booking-confirmation/36008.svg';
 import messageIcon from '@/assets/booking-confirmation/fc6c4.svg';
 import supportIcon from '@/assets/booking-confirmation/d16d4.svg';
 
+import { calculateMonthlyFixedTotal } from '../utils/validation';
 import type { BookingRoomSidebarProps } from '../types';
 
 export const BookingRoomSidebar: React.FC<BookingRoomSidebarProps> = ({
@@ -29,7 +30,7 @@ export const BookingRoomSidebar: React.FC<BookingRoomSidebarProps> = ({
       <div className="bg-surface-card border border-border-subtle rounded-[12px] overflow-hidden shadow-soft-xs flex flex-col">
         <div className="relative aspect-[7/3] w-full bg-surface-muted overflow-hidden">
           <img
-            src={studioPhotoImg}
+            src={room.imageUrl || studioPhotoImg}
             alt={room.title}
             className="w-full h-full object-cover"
           />
@@ -102,7 +103,9 @@ export const BookingRoomSidebar: React.FC<BookingRoomSidebarProps> = ({
 
             <p className="rounded-sm border border-border-subtle bg-canvas p-2.5 text-xs text-text-muted">
               Tổng các khoản cố định định kỳ hằng tháng:{' '}
-              <strong className="text-text-primary">{formatCurrency(room.monthlyRent + room.serviceFee)} / tháng</strong>
+              <strong className="text-text-primary">
+                {formatCurrency(calculateMonthlyFixedTotal(room.monthlyRent, room.serviceFee))} / tháng
+              </strong>
               <br />
               {room.feesFootnote}
             </p>

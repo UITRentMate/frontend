@@ -44,7 +44,7 @@ export const BookingBreadcrumbHeader: React.FC<BookingBreadcrumbHeaderProps> = (
           className="shrink-0"
         />
         <Link
-          to={ROUTES.ROOMS}
+          to={roomDetailPath}
           className="text-text-muted hover:text-brand-500 transition-colors"
         >
           {buildingName}

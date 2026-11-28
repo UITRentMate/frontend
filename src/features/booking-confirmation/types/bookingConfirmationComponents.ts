@@ -6,6 +6,7 @@ import type {
   BookingRoomSidebarSummary,
   BookingSupportNote,
   BookingTenantContact,
+  ConfirmBookingResponse,
 } from './bookingConfirmation.types';
 
 export interface BookingBreadcrumbHeaderProps {
@@ -34,8 +35,9 @@ export interface BookingConfirmationCardProps {
   onConfirmChange: (checked: boolean) => void;
   backToRentalRequestPath: string;
   onContinue: () => void;
-  paymentNotice: string | null;
-  onDismissNotice: () => void;
+  isSubmitting?: boolean;
+  errorMessage?: string | null;
+  onDismissError?: () => void;
 }
 
 export interface BookingRoomSidebarProps {
@@ -46,4 +48,11 @@ export interface BookingRoomSidebarProps {
   onMessageLandlord: () => void;
   messageNotice: string | null;
   onDismissMessageNotice: () => void;
+}
+
+export interface BookingConfirmationSuccessViewProps {
+  confirmation: ConfirmBookingResponse;
+  room: BookingRoomSidebarSummary;
+  backToDetailPath: string;
+  onEditConfirmation: () => void;
 }

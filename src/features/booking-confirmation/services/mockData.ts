@@ -1,6 +1,6 @@
-import type { BookingConfirmationFixture } from '../types';
+import type { BookingConfirmationData } from '../types';
 
-export const BOOKING_CONFIRMATION_FIXTURE: BookingConfirmationFixture = {
+export const MOCK_BOOKING_CONFIRMATION: BookingConfirmationData = {
   pageTitle: 'Xác nhận đặt phòng',
   pageSubtitle: 'Kiểm tra thông tin trước khi tiếp tục thanh toán tiền cọc.',
   approvedSummary: {
@@ -11,9 +11,9 @@ export const BOOKING_CONFIRMATION_FIXTURE: BookingConfirmationFixture = {
     occupantCountLabel: '2 người',
   },
   tenantContact: {
-    fullName: 'Nguyễn Minh Hoàng',
+    fullName: 'Thành viên RentMate',
     phone: '098***321',
-    email: 'hoang.nguyen***@email.com',
+    email: 'tenant***@email.com',
   },
   depositHold: {
     ruleBadge: 'Quy định giữ chỗ 24h',
@@ -38,6 +38,7 @@ export const BOOKING_CONFIRMATION_FIXTURE: BookingConfirmationFixture = {
     buildingName: 'An Gia Building',
     title: 'Phòng Studio gác lửng ban công thoáng mát',
     address: '285/12 CMT8, P.12, Q.10, TP.HCM',
+    imageUrl: '',
     areaSqm: 28,
     maxTenants: 2,
     monthlyRent: 4500000,

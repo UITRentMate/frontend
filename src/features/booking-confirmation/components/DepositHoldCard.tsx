@@ -55,7 +55,7 @@ export const DepositHoldCard: React.FC<DepositHoldCardProps> = ({ depositHold })
             {depositHold.holdDeadline}
           </p>
 
-          <div className="inline-flex items-center gap-1.5 bg-warning-soft border border-warning-border text-amber-800 rounded-xs px-2.5 py-1 text-xs font-semibold w-fit">
+          <div className="inline-flex items-center gap-1.5 bg-warning-soft border border-warning-border text-text-primary rounded-xs px-2.5 py-1 text-xs font-semibold w-fit">
             <img src={countdownIcon} alt="" aria-hidden="true" className="shrink-0" />
             <span>{depositHold.remainingTimeText}</span>
           </div>
